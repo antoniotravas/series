@@ -55,6 +55,7 @@ if ($form === null) {
             'target'     => $s['target_seconds'] !== null ? fmt_time((float)$s['target_seconds']) : '',
             // numa cópia mantém-se o nº de repetições mas os tempos ficam em branco
             'reps'       => $copyFrom ? array_fill(0, count($s['reps']), '') : array_map(fn($r) => fmt_time($r, 2), $s['reps']),
+            'hr'         => $copyFrom ? [] : $s['hr'],
         ], $src['sets']);
         if ($copyFrom) {
             $form['workout_date'] = date('Y-m-d');

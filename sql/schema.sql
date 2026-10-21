@@ -79,6 +79,7 @@ CREATE TABLE IF NOT EXISTS workout_reps (
     set_id       INT UNSIGNED NOT NULL,
     rep_number   TINYINT UNSIGNED NOT NULL,
     time_seconds DECIMAL(7,2) NOT NULL,
+    hr_avg       SMALLINT UNSIGNED NULL,     -- frequência cardíaca média (bpm)
     INDEX (set_id),
     FOREIGN KEY (set_id) REFERENCES workout_sets(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;

@@ -155,14 +155,14 @@
         var proto = items[items.length - 1];
         for (var i = items.length; i < n; i++) {
           var li = proto.cloneNode(true);
-          li.querySelector('input').value = '';
+          li.querySelectorAll('input').forEach(function (inp) { inp.value = ''; });
           li.querySelector('input').classList.remove('is-invalid');
           list.appendChild(li);
         }
       } else {
         // só remove campos vazios do fim, para não apagar tempos já escritos
         for (var j = items.length - 1; j >= n; j--) {
-          if (items[j].querySelector('input').value.trim() !== '') { n = j + 1; break; }
+          if (items[j].querySelector('[data-rep]').value.trim() !== '') { n = j + 1; break; }
           items[j].remove();
         }
         block.querySelector('[data-rep-count]').value = list.querySelectorAll('li').length;
@@ -315,6 +315,10 @@
     function fillFromGpx(res) {
       form.querySelector('#workout_date').value = res.date;
       form.querySelector('#start_time').value = res.start_time;
+      if (res.temperature_c != null) {
+        form.querySelector('#temperature_c').value = res.temperature_c;
+        form.querySelector('.wform__more').open = true;
+      }
       // deixar só um bloco e reconstruir a partir dele
       setBlocks().slice(1).forEach(function (b) { b.remove(); });
       res.sets.forEach(function (s, i) {
@@ -331,6 +335,7 @@
         setRepCount(block, s.reps.length);
         block.querySelector('[data-rep-count]').value = s.reps.length;
         block.querySelectorAll('[data-rep]').forEach(function (inp, k) { inp.value = fmtTime(s.reps[k], 1); });
+        block.querySelectorAll('[data-rep-hr]').forEach(function (inp, k) { inp.value = s.hr && s.hr[k] != null ? s.hr[k] : ''; });
         updateLive(block);
       });
       renumber();

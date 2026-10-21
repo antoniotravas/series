@@ -12,6 +12,7 @@ $setBlock = function ($i, array $s, ?string $error) use ($quickDistances) {
     if (!$reps) {
         $reps = array_fill(0, 6, '');
     }
+    $hr = array_values((array)($s['hr'] ?? []));   // FC de cada repetição (vem do GPX)
     $n = is_int($i) ? $i + 1 : '__n__';
     ?>
     <fieldset class="setform" data-set>
@@ -57,6 +58,7 @@ $setBlock = function ($i, array $s, ?string $error) use ($quickDistances) {
         <li class="rep">
           <label class="rep__n" for="s<?= $i ?>-r<?= $k ?>"><?= $k + 1 ?></label>
           <input id="s<?= $i ?>-r<?= $k ?>" name="sets[<?= $i ?>][reps][]" inputmode="decimal" autocomplete="off" placeholder="0:00.0" value="<?= e((string)$r) ?>" data-rep aria-label="<?= e(t('w.rep', ['n' => $k + 1])) ?>">
+          <input type="hidden" name="sets[<?= $i ?>][hr][]" value="<?= e((string)($hr[$k] ?? '')) ?>" data-rep-hr>
         </li>
         <?php endforeach; ?>
       </ol>

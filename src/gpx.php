@@ -13,7 +13,7 @@ declare(strict_types=1);
 const TRACK_DISTANCES = [60, 80, 100, 120, 150, 200, 250, 300, 350, 400, 500, 600, 700, 800,
                          1000, 1200, 1500, 1600, 2000, 3000, 5000];
 
-/** Lê os pontos de um GPX: [['t' => unix, 'lat', 'lon', 'hr' => ?int]] */
+/** Lê os pontos de um GPX: [['t' => unix, 'lat', 'lon', 'hr' => ?int, 'temp' => ?float]] */
 function gpx_points(string $path): array
 {
     $x = @simplexml_load_file($path, SimpleXMLElement::class, LIBXML_NONET);
@@ -28,7 +28,11 @@ function gpx_points(string $path): array
             continue;
         }
         $hr = $p->xpath('.//*[local-name()="hr"]');
-        $pts[] = ['t' => $t, 'lat' => (float)$p['lat'], 'lon' => (float)$p['lon'], 'hr' => $hr ? (int)$hr[0] : null];
+        $temp = $p->xpath('.//*[local-name()="atemp"]');
+        $pts[] = [
+            't' => $t, 'lat' => (float)$p['lat'], 'lon' => (float)$p['lon'],
+            'hr' => $hr ? (int)$hr[0] : null, 'temp' => $temp ? (float)$temp[0] : null,
+        ];
     }
     usort($pts, fn($a, $b) => $a['t'] <=> $b['t']);
     return $pts;
@@ -201,10 +205,11 @@ function gpx_detect(string $path): array
         }
         $last = array_key_last($sets);
         if ($last === null || $sets[$last]['distance_m'] !== $r['distance_m']) {
-            $sets[] = ['distance_m' => $r['distance_m'], 'reps' => [], 'rests' => [], 'rest_speeds' => []];
+            $sets[] = ['distance_m' => $r['distance_m'], 'reps' => [], 'hr' => [], 'rests' => [], 'rest_speeds' => []];
             $last = array_key_last($sets);
         }
         $sets[$last]['reps'][] = $r['seconds'];
+        $sets[$last]['hr'][] = $r['hr'];
         if ($rest !== null) {
             $sets[$last]['rests'][] = $rest;
             if ($restSpeed !== null) {
@@ -225,9 +230,13 @@ function gpx_detect(string $path): array
     }
     unset($s);
 
+    // temperatura do sensor do relógio (média da atividade); nem todos os GPX a têm
+    $temps = array_filter(array_column($pts, 'temp'), fn($v) => $v !== null);
+
     return [
         'date'       => date('Y-m-d', $pts[0]['t']),
         'start_time' => date('H:i', $pts[0]['t']),
+        'temperature_c' => $temps ? (int)round(array_sum($temps) / count($temps)) : null,
         'threshold'  => round($threshold, 2),
         'reps'       => array_map(fn($r) => array_diff_key($r, ['from' => 1, 'to' => 1]), $reps),
         'sets'       => $sets,

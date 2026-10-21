@@ -39,7 +39,9 @@ echo json_encode([
     'ok'         => true,
     'date'       => $r['date'],
     'start_time' => $r['start_time'],
-    'summary'    => t('gpx.found', ['s' => sets_summary($r['sets'])]),
+    'temperature_c' => $r['temperature_c'],
+    'summary'    => t('gpx.found', ['s' => sets_summary($r['sets'])])
+                  . ($r['temperature_c'] !== null ? ' ' . t('gpx.temp', ['t' => $r['temperature_c']]) : ''),
     'sets'       => $r['sets'],
     'reps'       => array_map(fn($x) => [
         'label' => fmt_distance($x['distance_m']) . ' · ' . fmt_time((float)$x['seconds'], 0)

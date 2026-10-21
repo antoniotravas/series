@@ -30,7 +30,9 @@ function workout_from_input(array $in): array
     foreach (array_slice(array_values($in['sets'] ?? []), 0, MAX_SETS) as $i => $s) {
         $dist = (int)($s['distance_m'] ?? 0);
         $reps = [];
-        foreach (array_slice(array_values((array)($s['reps'] ?? [])), 0, MAX_REPS) as $raw) {
+        $hr = [];   // FC média de cada repetição, alinhada com $reps
+        $hrIn = array_values((array)($s['hr'] ?? []));
+        foreach (array_slice(array_values((array)($s['reps'] ?? [])), 0, MAX_REPS) as $k => $raw) {
             if (trim((string)$raw) === '') {
                 continue;
             }
@@ -40,6 +42,8 @@ function workout_from_input(array $in): array
                 continue;
             }
             $reps[] = $sec;
+            $bpm = (int)($hrIn[$k] ?? 0);
+            $hr[] = $bpm >= 30 && $bpm <= 250 ? $bpm : null;
         }
         if ($dist === 0 && !$reps) {
             continue; // bloco vazio, ignorar
@@ -59,6 +63,7 @@ function workout_from_input(array $in): array
             'rest_type'      => in_array($s['rest_type'] ?? '', REST_TYPES, true) ? $s['rest_type'] : 'stand',
             'target_seconds' => $target === '' ? null : parse_time($target),
             'reps'           => $reps,
+            'hr'             => $hr,
         ];
     }
     if (!$sets && !isset($errors['sets'])) {
@@ -100,12 +105,12 @@ function save_workout(int $userId, array $data, array $sets, ?int $workoutId = n
             $workoutId = (int)$pdo->lastInsertId();
         }
         $insSet = $pdo->prepare('INSERT INTO workout_sets (workout_id, position, distance_m, rest_seconds, rest_type, target_seconds) VALUES (?, ?, ?, ?, ?, ?)');
-        $insRep = $pdo->prepare('INSERT INTO workout_reps (set_id, rep_number, time_seconds) VALUES (?, ?, ?)');
+        $insRep = $pdo->prepare('INSERT INTO workout_reps (set_id, rep_number, time_seconds, hr_avg) VALUES (?, ?, ?, ?)');
         foreach ($sets as $pos => $s) {
             $insSet->execute([$workoutId, $pos + 1, $s['distance_m'], $s['rest_seconds'], $s['rest_type'], $s['target_seconds']]);
             $setId = (int)$pdo->lastInsertId();
             foreach ($s['reps'] as $n => $sec) {
-                $insRep->execute([$setId, $n + 1, $sec]);
+                $insRep->execute([$setId, $n + 1, $sec, $s['hr'][$n] ?? null]);
             }
         }
         $pdo->commit();
@@ -124,15 +129,17 @@ function find_workout(int $userId, int $id): ?array
     }
     $sets = q('SELECT * FROM workout_sets WHERE workout_id = ? ORDER BY position', [$id])->fetchAll();
     $setIds = array_column($sets, 'id');
-    $reps = [];
+    $reps = $hr = [];
     if ($setIds) {
         $ph = implode(',', array_fill(0, count($setIds), '?'));
         foreach (q("SELECT * FROM workout_reps WHERE set_id IN ($ph) ORDER BY rep_number", $setIds) as $r) {
             $reps[$r['set_id']][] = (float)$r['time_seconds'];
+            $hr[$r['set_id']][] = $r['hr_avg'] === null ? null : (int)$r['hr_avg'];
         }
     }
     foreach ($sets as &$s) {
         $s['reps'] = $reps[$s['id']] ?? [];
+        $s['hr'] = $hr[$s['id']] ?? [];
         $s['stats'] = set_stats($s['reps']);
     }
     unset($s);
