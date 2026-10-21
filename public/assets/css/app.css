@@ -274,6 +274,20 @@ input[type="search"] { -webkit-appearance: none; appearance: none; }
 .wlist__vol { font: 600 1.2rem/1 var(--f-display); font-variant-numeric: tabular-nums; text-align: right; }
 .wlist__vol small { font-size: .75rem; color: var(--muted); margin-left: .15rem; font-family: var(--f-body); }
 
+/* ---------- Importação ---------- */
+.import { max-width: 46rem; }
+.import__help { margin-top: .5rem; color: var(--ink-2); }
+.import__help summary { cursor: pointer; font-weight: 600; }
+.import__help ul { padding-left: 1.2rem; line-height: 1.6; }
+.import__sample { overflow-x: auto; font-size: .8rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-sm); padding: .75rem; }
+.ilist__row { display: grid; grid-template-columns: auto 3.5rem 1fr; gap: 1rem; align-items: center; padding: .85rem .25rem; cursor: pointer; }
+.ilist__row:hover { background: var(--surface); }
+.ilist__row input { width: 1.15rem; height: 1.15rem; accent-color: var(--tartan); }
+.ilist__row--off { cursor: default; opacity: .7; }
+.ilist__badge { font-size: .75rem; font-weight: 600; padding: .1rem .45rem; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--ink-2); }
+.ilist__warn { font-size: .85rem; color: var(--tartan); font-weight: 500; }
+.import__actions { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; position: sticky; bottom: 0; background: var(--bg); padding: 1rem 0; border-top: 1px solid var(--line); }
+
 .filters { display: flex; flex-wrap: wrap; gap: .75rem; align-items: end; margin-bottom: 1.5rem; padding: 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); }
 .filters .field { flex: 1 1 8rem; }
 .filters .field--grow { flex: 2 1 12rem; }

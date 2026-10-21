@@ -7,7 +7,10 @@ $qs = fn(array $extra) => http_build_query(array_filter(array_merge($filters, $e
     <h1><?= e(t('w.list.title')) ?></h1>
     <p class="muted"><?= e(t('w.list.count', ['n' => $result['total']])) ?></p>
   </div>
-  <a class="btn btn--ghost btn--sm" href="<?= url('export.php') ?>"><?= e(t('p.export')) ?></a>
+  <div class="actions">
+    <a class="btn btn--ghost btn--sm" href="<?= url('import.php') ?>"><?= e(t('imp.title')) ?></a>
+    <a class="btn btn--ghost btn--sm" href="<?= url('export.php') ?>"><?= e(t('p.export')) ?></a>
+  </div>
 </header>
 
 <form method="get" class="filters" role="search">

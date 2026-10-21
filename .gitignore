@@ -6,3 +6,7 @@ public/uploads/avatars/*
 
 # credenciais descarregadas do Google Cloud
 client_secret_*.json
+# folhas pessoais na raiz do projeto
+/*.xlsx
+/*.xls
+/*.csv
