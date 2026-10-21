@@ -247,18 +247,18 @@ input[type="search"] { -webkit-appearance: none; appearance: none; }
 .lane--pb .lane__time { color: var(--ink); }
 
 /* Vista "velocidade": barra cresce com a velocidade, intensidade relativa dentro da série */
-.lane__speed, .lane__kmh { display: none; }
+.lane__speed, .lane__pace { display: none; }
 .sets[data-view="speed"] .lane__track, .sets[data-view="speed"] .lane__dev { display: none; }
 .sets[data-view="speed"] .lane__speed { display: block; }
-.sets[data-view="speed"] .lane__kmh { display: block; }
+.sets[data-view="speed"] .lane__pace { display: block; }
 .lane__speed { position: relative; height: 1.1rem; }
 .lane__sbar {
   position: absolute; left: 0; top: 0; bottom: 0; width: var(--len);
   background: color-mix(in oklab, var(--fast) var(--mix), var(--surface));
   border-radius: 0 4px 4px 0;
 }
-.lane__kmh { font: 500 .9rem/1 var(--f-body); font-variant-numeric: tabular-nums; text-align: right; color: var(--ink-2); }
-.lane--head .lane__kmh { font-size: .7rem; color: var(--muted); }
+.lane__pace { font: 500 .9rem/1 var(--f-body); font-variant-numeric: tabular-nums; text-align: right; color: var(--ink-2); }
+.lane--head .lane__pace { font-size: .7rem; color: var(--muted); white-space: nowrap; }
 
 .viewbar[hidden] { display: none; }
 .viewbar { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; margin: 0 0 .75rem; }

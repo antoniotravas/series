@@ -44,7 +44,7 @@ $rest = $set['rest_seconds'] !== null
   <div class="lane lane--head" aria-hidden="true">
     <span></span><span></span><span></span>
     <span class="lane__dev"><?= e(t('w.vs_avg')) ?></span>
-    <span class="lane__kmh">km/h</span>
+    <span class="lane__pace">min/km</span>
     <?php if ($set['target_seconds'] !== null): ?><span class="lane__target"><?= e(t('w.vs_target')) ?></span><?php endif; ?>
   </div>
   <ol class="lanes" aria-label="<?= e(t('w.split_from_avg')) ?>">
@@ -70,7 +70,7 @@ $rest = $set['rest_seconds'] !== null
       <span class="lane__speed" aria-hidden="true" title="<?= e(t('w.rep', ['n' => $i + 1]) . ' · ' . fmt_time($r, 1) . ' · ' . number_format($speed * 3.6, 1) . ' km/h · ' . fmt_pace($dist, $r) . t('w.per_km')) ?>">
         <span class="lane__sbar" style="--len: <?= number_format($len, 2, '.', '') ?>%; --mix: <?= number_format($mix, 1, '.', '') ?>%"></span>
       </span>
-      <span class="lane__kmh"><?= number_format($speed * 3.6, 1) ?><span class="sr-only"> km/h</span></span>
+      <span class="lane__pace"><?= fmt_pace($dist, $r) ?><span class="sr-only"> <?= e(t('w.per_km')) ?></span></span>
       <?php if ($target !== null): ?>
         <?php $dt = round($r - $target, 1); ?>
         <span class="lane__target <?= $dt < 0 ? 'is-fast' : ($dt > 0 ? 'is-slow' : '') ?>"><?= $dt == 0 ? '0.0' : ($dt < 0 ? '−' : '+') . number_format(abs($dt), 1) ?></span>
