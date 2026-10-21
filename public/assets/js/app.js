@@ -336,6 +336,7 @@
         block.querySelector('[data-rep-count]').value = s.reps.length;
         block.querySelectorAll('[data-rep]').forEach(function (inp, k) { inp.value = fmtTime(s.reps[k], 1); });
         block.querySelectorAll('[data-rep-hr]').forEach(function (inp, k) { inp.value = s.hr && s.hr[k] != null ? s.hr[k] : ''; });
+        block.querySelectorAll('[data-rep-hr-max]').forEach(function (inp, k) { inp.value = s.hr_max && s.hr_max[k] != null ? s.hr_max[k] : ''; });
         updateLive(block);
       });
       renumber();

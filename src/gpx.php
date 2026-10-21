@@ -162,6 +162,7 @@ function gpx_detect(string $path): array
             'gps_m' => (int)round($dist), 'distance_m' => $snapped, 'track' => $isTrack,
             'seconds' => $time, 'speed' => $dist / $time,
             'hr' => $hr ? (int)round(array_sum($hr) / count($hr)) : null,
+            'hr_max' => $hr ? max($hr) : null,
         ];
     }
     if (!$reps) {
@@ -205,11 +206,12 @@ function gpx_detect(string $path): array
         }
         $last = array_key_last($sets);
         if ($last === null || $sets[$last]['distance_m'] !== $r['distance_m']) {
-            $sets[] = ['distance_m' => $r['distance_m'], 'reps' => [], 'hr' => [], 'rests' => [], 'rest_speeds' => []];
+            $sets[] = ['distance_m' => $r['distance_m'], 'reps' => [], 'hr' => [], 'hr_max' => [], 'rests' => [], 'rest_speeds' => []];
             $last = array_key_last($sets);
         }
         $sets[$last]['reps'][] = $r['seconds'];
         $sets[$last]['hr'][] = $r['hr'];
+        $sets[$last]['hr_max'][] = $r['hr_max'];
         if ($rest !== null) {
             $sets[$last]['rests'][] = $rest;
             if ($restSpeed !== null) {

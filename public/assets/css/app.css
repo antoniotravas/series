@@ -262,6 +262,8 @@ input[type="search"] { -webkit-appearance: none; appearance: none; }
 
 /* Frequência cardíaca por repetição (coluna extra quando existe) */
 .set--hr .lane { grid-template-columns: 2.25rem 4.75rem 1fr 3.25rem 2.5rem auto; }
+.set--hr.set--hrmax .lane { grid-template-columns: 2.25rem 4.75rem 1fr 3.25rem 2.5rem 2.5rem auto; }
+.lane__hr--max { color: var(--ink); font-weight: 600; }
 .lane__hr { font: 500 .9rem/1 var(--f-body); font-variant-numeric: tabular-nums; text-align: right; color: var(--ink-2); }
 .lane--head .lane__hr { font-size: .7rem; color: var(--muted); }
 
@@ -272,6 +274,9 @@ input[type="search"] { -webkit-appearance: none; appearance: none; }
 @media (max-width: 30rem) {
   .lane { grid-template-columns: 2rem 4.25rem 1fr 2.75rem auto; gap: .45rem; padding-right: .6rem; }
   .set--hr .lane { grid-template-columns: 2rem 4.25rem 1fr 2.75rem 2.1rem auto; }
+  .set--hr.set--hrmax .lane { grid-template-columns: 2rem 4rem 1fr 2.6rem 1.9rem 1.9rem; }
+  /* com FC não há espaço para "vs objetivo": o objetivo continua no topo do bloco */
+  .set--hr .lane__target { display: none; }
   .set__stats { gap: .9rem; flex-wrap: wrap; }
   .set__stats dd { font-size: 1.15rem; }
 }

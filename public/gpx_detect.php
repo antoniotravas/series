@@ -46,7 +46,7 @@ echo json_encode([
     'reps'       => array_map(fn($x) => [
         'label' => fmt_distance($x['distance_m']) . ' · ' . fmt_time((float)$x['seconds'], 0)
                  . ' · ' . t('gpx.gps', ['m' => $x['gps_m']])
-                 . ($x['hr'] ? ' · ' . t('gpx.hr', ['n' => $x['hr']]) : ''),
+                 . ($x['hr'] ? ' · ' . t('gpx.hr', ['n' => $x['hr'], 'max' => $x['hr_max']]) : ''),
         'work'  => $x['work'],
     ], $r['reps']),
 ], JSON_UNESCAPED_UNICODE);
