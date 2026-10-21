@@ -1,0 +1,158 @@
+<?php
+declare(strict_types=1);
+
+const LOGIN_MAX_ATTEMPTS = 8;      // por IP em 15 minutos
+const RESET_TTL_MINUTES  = 60;
+
+function current_user(): ?array
+{
+    static $user = false;
+    if ($user === false) {
+        $user = null;
+        if (!empty($_SESSION['uid'])) {
+            $user = q('SELECT * FROM users WHERE id = ?', [$_SESSION['uid']])->fetch() ?: null;
+            if (!$user) {
+                unset($_SESSION['uid']);
+            }
+        }
+    }
+    return $user;
+}
+
+function require_login(): array
+{
+    $u = current_user();
+    if (!$u) {
+        $_SESSION['after_login'] = $_SERVER['REQUEST_URI'] ?? null;
+        redirect('login.php');
+    }
+    return $u;
+}
+
+function login_user(array $user): void
+{
+    session_regenerate_id(true);
+    $_SESSION['uid'] = (int)$user['id'];
+    $_SESSION['lang'] = $user['lang'];
+}
+
+function logout_user(): void
+{
+    $_SESSION = [];
+    session_regenerate_id(true);
+}
+
+function too_many_attempts(): bool
+{
+    $n = q(
+        'SELECT COUNT(*) FROM login_attempts WHERE ip = ? AND attempted_at > (NOW() - INTERVAL 15 MINUTE)',
+        [client_ip()]
+    )->fetchColumn();
+    return (int)$n >= LOGIN_MAX_ATTEMPTS;
+}
+
+function record_failed_login(string $email): void
+{
+    q('INSERT INTO login_attempts (ip, email) VALUES (?, ?)', [client_ip(), mb_substr($email, 0, 190)]);
+}
+
+function attempt_login(string $email, string $password): ?array
+{
+    $user = q('SELECT * FROM users WHERE email = ?', [mb_strtolower(trim($email))])->fetch();
+    if (!$user || !$user['password_hash'] || !password_verify($password, $user['password_hash'])) {
+        record_failed_login($email);
+        return null;
+    }
+    if (password_needs_rehash($user['password_hash'], PASSWORD_DEFAULT)) {
+        q('UPDATE users SET password_hash = ? WHERE id = ?', [password_hash($password, PASSWORD_DEFAULT), $user['id']]);
+    }
+    q('DELETE FROM login_attempts WHERE ip = ?', [client_ip()]);
+    return $user;
+}
+
+/** Devolve lista de erros (chave do campo => mensagem). */
+function validate_password(string $pw, string $confirm): array
+{
+    $errors = [];
+    if (mb_strlen($pw) < 8) {
+        $errors['password'] = t('error.password_short');
+    }
+    if ($pw !== $confirm) {
+        $errors['password_confirm'] = t('error.password_mismatch');
+    }
+    return $errors;
+}
+
+function register_user(array $in): array
+{
+    $email = mb_strtolower(trim($in['email'] ?? ''));
+    $name  = trim($in['display_name'] ?? '');
+    $errors = [];
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = t('error.email_invalid');
+    } elseif (q('SELECT 1 FROM users WHERE email = ?', [$email])->fetchColumn()) {
+        $errors['email'] = t('error.email_taken');
+    }
+    if ($name === '' || mb_strlen($name) > 80) {
+        $errors['display_name'] = t('error.name_required');
+    }
+    $errors += validate_password($in['password'] ?? '', $in['password_confirm'] ?? '');
+
+    if ($errors) {
+        return ['errors' => $errors];
+    }
+
+    q(
+        'INSERT INTO users (email, password_hash, display_name, lang) VALUES (?, ?, ?, ?)',
+        [$email, password_hash($in['password'], PASSWORD_DEFAULT), $name, current_lang()]
+    );
+    $id = (int)db()->lastInsertId();
+    return ['user' => q('SELECT * FROM users WHERE id = ?', [$id])->fetch()];
+}
+
+function create_password_reset(string $email): void
+{
+    $user = q('SELECT id, email FROM users WHERE email = ?', [mb_strtolower(trim($email))])->fetch();
+    if (!$user) {
+        return; // não revelar se o email existe
+    }
+    $token = bin2hex(random_bytes(32));
+    q('DELETE FROM password_resets WHERE user_id = ?', [$user['id']]);
+    q(
+        'INSERT INTO password_resets (user_id, token_hash, expires_at) VALUES (?, ?, NOW() + INTERVAL ' . RESET_TTL_MINUTES . ' MINUTE)',
+        [$user['id'], hash('sha256', $token)]
+    );
+    $scheme = !empty($_SERVER['HTTPS']) ? 'https' : 'http';
+    $link = $scheme . '://' . $_SERVER['HTTP_HOST'] . url('reset.php?token=' . $token);
+    send_mail($user['email'], t('mail.reset_subject'), t('mail.reset_body', ['link' => $link, 'min' => RESET_TTL_MINUTES]));
+}
+
+function find_password_reset(string $token): ?array
+{
+    if (!preg_match('/^[a-f0-9]{64}$/', $token)) {
+        return null;
+    }
+    return q(
+        'SELECT * FROM password_resets WHERE token_hash = ? AND used_at IS NULL AND expires_at > NOW()',
+        [hash('sha256', $token)]
+    )->fetch() ?: null;
+}
+
+function avatar_url(?array $user): ?string
+{
+    if (!$user || empty($user['avatar'])) {
+        return null;
+    }
+    return url('uploads/avatars/' . $user['avatar']);
+}
+
+function initials(string $name): string
+{
+    $parts = preg_split('/\s+/', trim($name));
+    $i = mb_substr($parts[0] ?? '', 0, 1);
+    if (count($parts) > 1) {
+        $i .= mb_substr(end($parts), 0, 1);
+    }
+    return mb_strtoupper($i);
+}
