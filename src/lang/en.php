@@ -37,6 +37,8 @@ return [
     'auth.has_account'   => 'Already have an account?',
     'auth.google'        => 'Continue with Google',
     'auth.google_soon'   => 'Google sign-in is not configured on this server yet.',
+    'auth.google_error'  => 'Could not sign in with Google. Please try again.',
+    'auth.google_unverified' => 'The email of this Google account is not verified.',
     'auth.or'            => 'or',
     'auth.bad_login'     => 'Wrong email or password.',
     'auth.throttled'     => 'Too many attempts. Wait 15 minutes and try again.',

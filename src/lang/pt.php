@@ -39,6 +39,8 @@ return [
     'auth.has_account'   => 'Já tens conta?',
     'auth.google'        => 'Continuar com Google',
     'auth.google_soon'   => 'O login com Google ainda não está configurado neste servidor.',
+    'auth.google_error'  => 'Não foi possível entrar com o Google. Tenta de novo.',
+    'auth.google_unverified' => 'O email desta conta Google não está verificado.',
     'auth.or'            => 'ou',
     'auth.bad_login'     => 'Email ou password incorretos.',
     'auth.throttled'     => 'Demasiadas tentativas. Espera 15 minutos e tenta de novo.',

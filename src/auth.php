@@ -36,6 +36,18 @@ function login_user(array $user): void
     $_SESSION['lang'] = $user['lang'];
 }
 
+/** Volta à página que pediu login (só caminhos internos) ou ao dashboard. */
+function redirect_after_login(): never
+{
+    $next = $_SESSION['after_login'] ?? null;
+    unset($_SESSION['after_login']);
+    if (is_string($next) && str_starts_with($next, config('base_url') . '/') && !str_contains($next, '//')) {
+        header('Location: ' . $next);
+        exit;
+    }
+    redirect('dashboard.php');
+}
+
 function logout_user(): void
 {
     $_SESSION = [];
@@ -109,6 +121,81 @@ function register_user(array $in): array
     );
     $id = (int)db()->lastInsertId();
     return ['user' => q('SELECT * FROM users WHERE id = ?', [$id])->fetch()];
+}
+
+/**
+ * Troca o "code" do Google por tokens e devolve os dados do id_token
+ * (sub, email, email_verified, name). O id_token chega diretamente do Google
+ * por HTTPS, por isso basta validar emissor, destinatário e validade.
+ */
+function google_exchange_code(string $code, string $clientId, string $clientSecret, string $redirectUri): ?array
+{
+    $ch = curl_init('https://oauth2.googleapis.com/token');
+    curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => http_build_query([
+            'code'          => $code,
+            'client_id'     => $clientId,
+            'client_secret' => $clientSecret,
+            'redirect_uri'  => $redirectUri,
+            'grant_type'    => 'authorization_code',
+        ]),
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 15,
+    ]);
+    $body = curl_exec($ch);
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    $token = is_string($body) ? json_decode($body, true) : null;
+    if ($status !== 200 || empty($token['id_token'])) {
+        error_log('Google OAuth: falha na troca do code (' . $status . '): ' . $body);
+        return null;
+    }
+    $parts = explode('.', $token['id_token']);
+    $claims = json_decode(base64_decode(strtr($parts[1] ?? '', '-_', '+/')), true);
+    if (
+        !is_array($claims)
+        || ($claims['aud'] ?? '') !== $clientId
+        || !in_array($claims['iss'] ?? '', ['https://accounts.google.com', 'accounts.google.com'], true)
+        || ($claims['exp'] ?? 0) < time()
+        || empty($claims['sub']) || empty($claims['email'])
+    ) {
+        return null;
+    }
+    return $claims;
+}
+
+/**
+ * Encontra (ou cria) o utilizador da conta Google. Se já existir uma conta
+ * com o mesmo email, fica ligada ao Google (o email foi verificado pelo Google).
+ */
+function google_login(array $claims): array
+{
+    $sub   = (string)$claims['sub'];
+    $email = mb_strtolower(trim((string)$claims['email']));
+
+    $user = q('SELECT * FROM users WHERE google_id = ?', [$sub])->fetch();
+    if ($user) {
+        return ['user' => $user, 'created' => false];
+    }
+
+    $user = q('SELECT * FROM users WHERE email = ?', [$email])->fetch();
+    if ($user) {
+        q('UPDATE users SET google_id = ? WHERE id = ?', [$sub, $user['id']]);
+        return ['user' => $user, 'created' => false];
+    }
+
+    $name = trim((string)($claims['name'] ?? ''));
+    if ($name === '') {
+        $name = strstr($email, '@', true);
+    }
+    q(
+        'INSERT INTO users (email, google_id, display_name, lang) VALUES (?, ?, ?, ?)',
+        [$email, $sub, mb_substr($name, 0, 80), current_lang()]
+    );
+    $id = (int)db()->lastInsertId();
+    return ['user' => q('SELECT * FROM users WHERE id = ?', [$id])->fetch(), 'created' => true];
 }
 
 function create_password_reset(string $email): void

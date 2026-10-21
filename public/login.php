@@ -13,14 +13,7 @@ if (is_post()) {
         $error = t('auth.throttled');
     } elseif ($user = attempt_login($email, (string)($_POST['password'] ?? ''))) {
         login_user($user);
-        $next = $_SESSION['after_login'] ?? null;
-        unset($_SESSION['after_login']);
-        // só permitir regressar a caminhos internos
-        if (is_string($next) && str_starts_with($next, config('base_url') . '/') && !str_contains($next, '//')) {
-            header('Location: ' . $next);
-            exit;
-        }
-        redirect('dashboard.php');
+        redirect_after_login();
     } else {
         $error = t('auth.bad_login');
     }
