@@ -269,6 +269,74 @@
       else ev.target.blur();
     });
 
+    // ---------- Preencher a partir de um GPX ----------
+
+    var gpxBox = form.querySelector('[data-gpx-fill]');
+    if (gpxBox && window.fetch && window.FormData) {
+      gpxBox.hidden = false;
+      var gpxInput = gpxBox.querySelector('[data-gpx-input]');
+      var gpxOut = gpxBox.querySelector('[data-gpx-result]');
+
+      gpxInput.addEventListener('change', function () {
+        var file = gpxInput.files[0];
+        if (!file) return;
+        var hasTimes = Array.prototype.some.call(form.querySelectorAll('[data-rep]'), function (i) { return i.value.trim() !== ''; });
+        if (hasTimes && !window.confirm(gpxBox.getAttribute('data-replace'))) { gpxInput.value = ''; return; }
+
+        var fd = new FormData();
+        fd.append('gpx', file);
+        fd.append('_csrf', form.querySelector('[name="_csrf"]').value);
+        gpxOut.innerHTML = '<p class="muted small">' + escapeHtml(gpxBox.getAttribute('data-loading')) + '</p>';
+
+        fetch(gpxBox.getAttribute('data-url'), { method: 'POST', body: fd, credentials: 'same-origin' })
+          .then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
+          .then(function (res) {
+            if (!res.ok) throw new Error(res.error || '');
+            fillFromGpx(res);
+            // o mesmo ficheiro fica guardado com o treino
+            var realGpx = form.querySelector('#gpx');
+            if (realGpx && window.DataTransfer) {
+              var dt = new DataTransfer();
+              dt.items.add(file);
+              realGpx.files = dt.files;
+            }
+            gpxOut.innerHTML = '<p class="gpxfill__ok">' + escapeHtml(res.summary) + '</p><ol class="gpxfill__reps">' +
+              res.reps.map(function (r) {
+                return '<li' + (r.work ? '' : ' class="is-ignored"') + '>' + escapeHtml(r.label) +
+                  (r.work ? '' : ' (' + escapeHtml(gpxBox.getAttribute('data-ignored')) + ')') + '</li>';
+              }).join('') + '</ol>';
+          })
+          .catch(function (err) {
+            gpxOut.innerHTML = '<p class="field__error" role="alert">' + escapeHtml(err.message || gpxBox.getAttribute('data-error')) + '</p>';
+          });
+      });
+    }
+
+    function fillFromGpx(res) {
+      form.querySelector('#workout_date').value = res.date;
+      form.querySelector('#start_time').value = res.start_time;
+      // deixar só um bloco e reconstruir a partir dele
+      setBlocks().slice(1).forEach(function (b) { b.remove(); });
+      res.sets.forEach(function (s, i) {
+        var block = setBlocks()[i];
+        if (!block) {
+          block = tpl.content.cloneNode(true).querySelector('[data-set]');
+          setsBox.appendChild(block);
+          renumber();
+        }
+        block.querySelector('[data-distance]').value = s.distance_m;
+        block.querySelector('[name$="[rest]"]').value = s.rest == null ? '' : fmtTime(s.rest, 0);
+        block.querySelector('select').value = s.rest_type;
+        block.querySelectorAll('[data-rep]').forEach(function (inp) { inp.value = ''; });
+        setRepCount(block, s.reps.length);
+        block.querySelector('[data-rep-count]').value = s.reps.length;
+        block.querySelectorAll('[data-rep]').forEach(function (inp, k) { inp.value = fmtTime(s.reps[k], 1); });
+        updateLive(block);
+      });
+      renumber();
+      setBlocks().forEach(renumberReps);
+    }
+
     renumber();
     setBlocks().forEach(updateLive);
   }

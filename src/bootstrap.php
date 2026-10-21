@@ -40,3 +40,4 @@ require ROOT . '/src/i18n.php';
 require ROOT . '/src/auth.php';
 require ROOT . '/src/workouts.php';
 require ROOT . '/src/import.php';
+require ROOT . '/src/gpx.php';

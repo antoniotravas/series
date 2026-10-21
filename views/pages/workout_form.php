@@ -80,6 +80,20 @@ $setBlock = function ($i, array $s, ?string $error) use ($quickDistances) {
     <?php foreach ($locations as $l): ?><option value="<?= e($l) ?>"><?php endforeach; ?>
   </datalist>
 
+  <section class="gpxfill" data-gpx-fill hidden
+           data-url="<?= url('gpx_detect.php') ?>"
+           data-loading="<?= e(t('gpx.loading')) ?>"
+           data-replace="<?= e(t('gpx.replace')) ?>"
+           data-ignored="<?= e(t('gpx.ignored')) ?>"
+           data-error="<?= e(t('error.gpx_invalid')) ?>">
+    <div class="gpxfill__row">
+      <label class="btn btn--ghost btn--sm" for="gpx-auto"><?= e(t('gpx.button')) ?></label>
+      <input id="gpx-auto" type="file" accept=".gpx,application/gpx+xml" class="sr-only" data-gpx-input>
+      <p class="muted small"><?= e(t('gpx.lead')) ?></p>
+    </div>
+    <div class="gpxfill__result" data-gpx-result aria-live="polite"></div>
+  </section>
+
   <section class="wform__meta">
     <div class="field field--wide">
       <label for="title"><?= e(t('w.title')) ?></label>

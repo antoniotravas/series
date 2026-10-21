@@ -292,6 +292,17 @@ input[type="search"] { -webkit-appearance: none; appearance: none; }
 .wlist__vol { font: 600 1.2rem/1 var(--f-display); font-variant-numeric: tabular-nums; text-align: right; }
 .wlist__vol small { font-size: .75rem; color: var(--muted); margin-left: .15rem; font-family: var(--f-body); }
 
+/* ---------- Preencher a partir de GPX (formulário) ---------- */
+.gpxfill { border: 1px dashed var(--line-strong); border-radius: var(--r-md); padding: .75rem 1rem; }
+.gpxfill[hidden] { display: none; }
+.gpxfill__row { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; }
+.gpxfill__row p { margin: 0; flex: 1 1 16rem; }
+.gpxfill__row label.btn { cursor: pointer; }
+.gpxfill__row label.btn:has(+ input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
+.gpxfill__ok { margin: .75rem 0 .25rem; font-weight: 600; }
+.gpxfill__reps { margin: 0; padding-left: 1.4rem; font-size: .875rem; color: var(--ink-2); font-variant-numeric: tabular-nums; line-height: 1.6; }
+.gpxfill__reps .is-ignored { color: var(--muted); }
+
 /* ---------- Importação ---------- */
 .import { max-width: 46rem; }
 .import__help { margin-top: .5rem; color: var(--ink-2); }
