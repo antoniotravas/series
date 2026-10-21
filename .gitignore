@@ -3,3 +3,6 @@ storage/gpx/*
 storage/logs/*
 public/uploads/avatars/*
 !**/.gitkeep
+
+# credenciais descarregadas do Google Cloud
+client_secret_*.json
