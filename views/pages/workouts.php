@@ -50,6 +50,14 @@ $qs = fn(array $extra) => http_build_query(array_filter(array_merge($filters, $e
       <?php endforeach; ?>
     </select>
   </div>
+  <div class="field field--sm">
+    <label for="f-status"><?= e(t('w.filter.status')) ?></label>
+    <select id="f-status" name="status">
+      <option value=""><?= e(t('w.filter.any')) ?></option>
+      <option value="active" <?= $filters['status'] === 'active' ? 'selected' : '' ?>><?= e(t('w.filter.active')) ?></option>
+      <option value="inactive" <?= $filters['status'] === 'inactive' ? 'selected' : '' ?>><?= e(t('w.filter.inactive')) ?></option>
+    </select>
+  </div>
   <div class="field field--sm field--grow">
     <label for="f-q"><?= e(t('w.filter.q')) ?></label>
     <input id="f-q" name="q" type="search" value="<?= e($filters['q']) ?>">
@@ -72,7 +80,18 @@ $qs = fn(array $extra) => http_build_query(array_filter(array_merge($filters, $e
     <?php endif; ?>
   </section>
 <?php else: ?>
-  <?php view('partials/workout_rows', ['rows' => $result['rows']]); ?>
+  <form method="post" action="<?= url('workouts_bulk.php') ?>" class="bulk-form">
+    <?= csrf_field() ?>
+    <input type="hidden" name="back" value="<?= e($_SERVER['REQUEST_URI'] ?? '') ?>">
+    <label class="check bulk__all"><input type="checkbox" data-check-all> <?= e(t('w.bulk.all')) ?></label>
+    <?php view('partials/workout_rows', ['rows' => $result['rows'], 'selectable' => true]); ?>
+    <div class="bulk" role="region" aria-label="<?= e(t('w.bulk.label')) ?>">
+      <span class="bulk__count muted small" data-check-count data-label="<?= e(t('w.bulk.count', ['n' => '%n'])) ?>"></span>
+      <button class="btn btn--ghost btn--sm" type="submit" name="action" value="deactivate" title="<?= e(t('w.inactive_hint')) ?>"><?= e(t('w.deactivate')) ?></button>
+      <button class="btn btn--ghost btn--sm" type="submit" name="action" value="activate"><?= e(t('w.activate')) ?></button>
+      <button class="btn btn--danger btn--sm" type="submit" name="action" value="delete" data-confirm="<?= e(t('w.bulk.delete_confirm')) ?>"><?= e(t('w.delete')) ?></button>
+    </div>
+  </form>
 
   <?php if ($result['pages'] > 1): ?>
   <nav class="pager" aria-label="<?= e(t('pager.page', ['p' => $page, 'n' => $result['pages']])) ?>">

@@ -54,6 +54,7 @@ CREATE TABLE IF NOT EXISTS workouts (
     rpe         TINYINT UNSIGNED NULL,
     notes       TEXT NULL,
     gpx_file    VARCHAR(120) NULL,
+    active      TINYINT(1) NOT NULL DEFAULT 1,   -- 0 = inativo: fica na lista, não conta nas estatísticas
     created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX (user_id, workout_date),

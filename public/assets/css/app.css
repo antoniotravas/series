@@ -284,7 +284,17 @@ input[type="search"] { -webkit-appearance: none; appearance: none; }
 .ilist__row:hover { background: var(--surface); }
 .ilist__row input { width: 1.15rem; height: 1.15rem; accent-color: var(--tartan); }
 .ilist__row--off { cursor: default; opacity: .7; }
-.ilist__badge { font-size: .75rem; font-weight: 600; padding: .1rem .45rem; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--ink-2); }
+.badge { font-size: .75rem; font-weight: 600; padding: .1rem .45rem; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--ink-2); white-space: nowrap; }
+
+/* ---------- Seleção em lote / inativos ---------- */
+.wlist__item--pick { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: .25rem; }
+.wlist__pick { width: 1.15rem; height: 1.15rem; margin: 0 .5rem 0 .25rem; accent-color: var(--tartan); cursor: pointer; }
+.wlist__item--off .wlist__sets, .wlist__item--off .wlist__vol, .wlist__item--off .wlist__day { color: var(--muted); }
+.bulk__all { font-size: .875rem; margin: 0 0 .5rem .25rem; }
+.bulk__all input { width: 1.15rem; height: 1.15rem; accent-color: var(--tartan); }
+.bulk { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; position: sticky; bottom: 0; z-index: 4; background: var(--bg); padding: .75rem 0; border-top: 1px solid var(--line); }
+.bulk__count { margin-right: auto; }
+.bulk-form:not(:has(.wlist__pick:checked)) .bulk { display: none; }
 .ilist__warn { font-size: .85rem; color: var(--tartan); font-weight: 500; }
 .import__actions { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; position: sticky; bottom: 0; background: var(--bg); padding: 1rem 0; border-top: 1px solid var(--line); }
 

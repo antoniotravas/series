@@ -170,6 +170,17 @@ function delete_workout(int $userId, int $id): void
     }
 }
 
+/** Ativa/desativa vários treinos do utilizador. Devolve quantos mudaram. */
+function set_workouts_active(int $userId, array $ids, bool $active): int
+{
+    $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
+    if (!$ids) {
+        return 0;
+    }
+    $ph = implode(',', array_fill(0, count($ids), '?'));
+    return q("UPDATE workouts SET active = ? WHERE user_id = ? AND id IN ($ph)", [(int)$active, $userId, ...$ids])->rowCount();
+}
+
 /** Guarda um ficheiro GPX enviado. Devolve o nome guardado ou lança mensagem de erro. */
 function store_gpx(array $file, int $userId): ?string
 {
@@ -209,6 +220,7 @@ function workout_filters_from_query(array $qs): array
         'month'    => (int)($qs['month'] ?? 0) ?: null,
         'location' => trim((string)($qs['location'] ?? '')) ?: null,
         'q'        => trim((string)($qs['q'] ?? '')) ?: null,
+        'status'   => in_array($qs['status'] ?? '', ['active', 'inactive'], true) ? $qs['status'] : null,
     ];
 }
 
@@ -236,6 +248,9 @@ function list_workouts(int $userId, array $f, int $page = 1, int $perPage = 20):
         $where[] = '(w.title LIKE ? OR w.notes LIKE ? OR w.location LIKE ?)';
         $like = '%' . addcslashes($f['q'], '%_\\') . '%';
         array_push($params, $like, $like, $like);
+    }
+    if (!empty($f['status'])) {
+        $where[] = 'w.active = ' . ($f['status'] === 'active' ? 1 : 0);
     }
     $w = implode(' AND ', $where);
     $total = (int)q("SELECT COUNT(*) FROM workouts w WHERE $w", $params)->fetchColumn();
@@ -296,6 +311,7 @@ function user_locations(int $userId): array
 }
 
 // ---------- Estatísticas (dashboard) ----------
+// Os treinos inativos (active = 0) não contam.
 
 function stats_totals(int $userId): array
 {
@@ -307,7 +323,7 @@ function stats_totals(int $userId): array
            FROM workouts w
       LEFT JOIN workout_sets s ON s.workout_id = w.id
       LEFT JOIN workout_reps r ON r.set_id = s.id
-          WHERE w.user_id = ?',
+          WHERE w.user_id = ? AND w.active = 1',
         [$userId]
     )->fetch();
     // s.distance_m é somado uma vez por repetição graças ao JOIN com reps
@@ -322,18 +338,18 @@ function stats_personal_bests(int $userId, int $limit = 8): array
                 (SELECT w2.id FROM workouts w2
                    JOIN workout_sets s2 ON s2.workout_id = w2.id
                    JOIN workout_reps r2 ON r2.set_id = s2.id
-                  WHERE w2.user_id = ? AND s2.distance_m = x.distance_m AND r2.time_seconds = x.best
+                  WHERE w2.user_id = ? AND w2.active = 1 AND s2.distance_m = x.distance_m AND r2.time_seconds = x.best
                ORDER BY w2.workout_date LIMIT 1) AS workout_id,
                 (SELECT w3.workout_date FROM workouts w3
                    JOIN workout_sets s3 ON s3.workout_id = w3.id
                    JOIN workout_reps r3 ON r3.set_id = s3.id
-                  WHERE w3.user_id = ? AND s3.distance_m = x.distance_m AND r3.time_seconds = x.best
+                  WHERE w3.user_id = ? AND w3.active = 1 AND s3.distance_m = x.distance_m AND r3.time_seconds = x.best
                ORDER BY w3.workout_date LIMIT 1) AS workout_date
            FROM (SELECT s.distance_m, MIN(r.time_seconds) AS best, COUNT(r.id) AS times
                    FROM workouts w
                    JOIN workout_sets s ON s.workout_id = w.id
                    JOIN workout_reps r ON r.set_id = s.id
-                  WHERE w.user_id = ?
+                  WHERE w.user_id = ? AND w.active = 1
                GROUP BY s.distance_m) x
        ORDER BY x.times DESC, x.distance_m
           LIMIT ' . (int)$limit,
@@ -352,7 +368,7 @@ function stats_weekly_volume(int $userId, int $weeks = 12): array
            FROM workouts w
            JOIN workout_sets s ON s.workout_id = w.id
            JOIN workout_reps r ON r.set_id = s.id
-          WHERE w.user_id = ? AND w.workout_date >= ?
+          WHERE w.user_id = ? AND w.active = 1 AND w.workout_date >= ?
        GROUP BY wk",
         [$userId, $start->format('Y-m-d')]
     )->fetchAll();
@@ -380,7 +396,7 @@ function stats_progression(int $userId, int $distance, int $limit = 30): array
            FROM workouts w
            JOIN workout_sets s ON s.workout_id = w.id
            JOIN workout_reps r ON r.set_id = s.id
-          WHERE w.user_id = ? AND s.distance_m = ?
+          WHERE w.user_id = ? AND w.active = 1 AND s.distance_m = ?
        GROUP BY w.id, w.workout_date
        ORDER BY w.workout_date DESC
           LIMIT ' . (int)$limit,
@@ -392,7 +408,7 @@ function stats_progression(int $userId, int $distance, int $limit = 30): array
 function stats_top_locations(int $userId, int $limit = 5): array
 {
     return q(
-        'SELECT location, COUNT(*) AS n FROM workouts WHERE user_id = ? AND location IS NOT NULL
+        'SELECT location, COUNT(*) AS n FROM workouts WHERE user_id = ? AND active = 1 AND location IS NOT NULL
        GROUP BY location ORDER BY n DESC LIMIT ' . (int)$limit,
         [$userId]
     )->fetchAll();
@@ -403,7 +419,7 @@ function stats_week_streak(int $userId): int
 {
     $weeks = q(
         'SELECT DISTINCT DATE_SUB(workout_date, INTERVAL WEEKDAY(workout_date) DAY) AS wk
-           FROM workouts WHERE user_id = ? ORDER BY wk DESC LIMIT 104',
+           FROM workouts WHERE user_id = ? AND active = 1 ORDER BY wk DESC LIMIT 104',
         [$userId]
     )->fetchAll(PDO::FETCH_COLUMN);
     $streak = 0;

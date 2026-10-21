@@ -50,8 +50,29 @@
   // ---------- Confirmações e auto-submit ----------
 
   document.addEventListener('submit', function (ev) {
-    var msg = ev.target.getAttribute('data-confirm');
+    var btn = ev.submitter;
+    var msg = (btn && btn.getAttribute('data-confirm')) || ev.target.getAttribute('data-confirm');
     if (msg && !window.confirm(msg)) ev.preventDefault();
+  });
+
+  // ---------- Seleção em lote (lista de treinos) ----------
+
+  document.querySelectorAll('[data-check-all]').forEach(function (all) {
+    var form = all.form;
+    var boxes = form.querySelectorAll('input[name="ids[]"]');
+    var count = form.querySelector('[data-check-count]');
+    function update() {
+      var n = form.querySelectorAll('input[name="ids[]"]:checked').length;
+      all.checked = n > 0 && n === boxes.length;
+      all.indeterminate = n > 0 && n < boxes.length;
+      if (count) count.textContent = n ? count.getAttribute('data-label').replace('%n', n) : '';
+    }
+    all.addEventListener('change', function () {
+      boxes.forEach(function (b) { b.checked = all.checked; });
+      update();
+    });
+    boxes.forEach(function (b) { b.addEventListener('change', update); });
+    update();
   });
 
   document.querySelectorAll('[data-autosubmit]').forEach(function (el) {

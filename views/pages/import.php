@@ -62,7 +62,7 @@ Data       | 1    | 2    | 3    | Média | Intervalo
         <span class="wlist__body">
           <span class="wlist__sets"><?= e($summary($w['sets'])) ?></span>
           <span class="wlist__meta">
-            <?php if ($it['exists']): ?><span class="ilist__badge"><?= e(t('imp.exists')) ?></span><?php endif; ?>
+            <?php if ($it['exists']): ?><span class="badge"><?= e(t('imp.exists')) ?></span><?php endif; ?>
             <?php if ($w['title']): ?><span><?= e($w['title']) ?></span><?php endif; ?>
             <?php if ($w['notes']): ?><span><?= e(str_replace("\n", ' · ', $w['notes'])) ?></span><?php endif; ?>
           </span>

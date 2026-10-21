@@ -15,7 +15,7 @@ $facts = array_filter([
 
 <header class="page-head page-head--workout">
   <div>
-    <p class="muted"><time datetime="<?= e($w['workout_date']) ?>"><?= e(fmt_date($w['workout_date'], true)) ?></time></p>
+    <p class="muted"><time datetime="<?= e($w['workout_date']) ?>"><?= e(fmt_date($w['workout_date'], true)) ?></time><?php if (!$w['active']): ?> <span class="badge"><?= e(t('w.inactive')) ?></span><?php endif; ?></p>
     <h1><?= e($w['title'] ?: sets_summary($w['sets'])) ?></h1>
     <?php if ($w['title']): ?><p class="lead-sets"><?= e(sets_summary($w['sets'])) ?></p><?php endif; ?>
     <p class="muted"><?= e(t('w.summary_volume', ['km' => fmt_km($volume)])) ?></p>
@@ -23,6 +23,12 @@ $facts = array_filter([
   <div class="actions">
     <a class="btn btn--ghost btn--sm" href="<?= url('workout_edit.php?copy=' . (int)$w['id']) ?>" title="<?= e(t('w.dup_title')) ?>"><?= e(t('w.dup')) ?></a>
     <a class="btn btn--ghost btn--sm" href="<?= url('workout_edit.php?id=' . (int)$w['id']) ?>"><?= e(t('w.edit')) ?></a>
+    <form method="post" action="<?= url('workouts_bulk.php') ?>">
+      <?= csrf_field() ?>
+      <input type="hidden" name="ids[]" value="<?= (int)$w['id'] ?>">
+      <input type="hidden" name="back" value="<?= e($_SERVER['REQUEST_URI'] ?? '') ?>">
+      <button class="btn btn--ghost btn--sm" type="submit" name="action" value="<?= $w['active'] ? 'deactivate' : 'activate' ?>" title="<?= e(t('w.inactive_hint')) ?>"><?= e(t($w['active'] ? 'w.deactivate' : 'w.activate')) ?></button>
+    </form>
     <form method="post" action="<?= url('workout_delete.php') ?>" data-confirm="<?= e(t('w.delete_confirm')) ?>">
       <?= csrf_field() ?>
       <input type="hidden" name="id" value="<?= (int)$w['id'] ?>">
