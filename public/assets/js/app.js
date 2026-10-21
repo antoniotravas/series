@@ -293,13 +293,6 @@
           .then(function (res) {
             if (!res.ok) throw new Error(res.error || '');
             fillFromGpx(res);
-            // o mesmo ficheiro fica guardado com o treino
-            var realGpx = form.querySelector('#gpx');
-            if (realGpx && window.DataTransfer) {
-              var dt = new DataTransfer();
-              dt.items.add(file);
-              realGpx.files = dt.files;
-            }
             gpxOut.innerHTML = '<p class="gpxfill__ok">' + escapeHtml(res.summary) + '</p>' +
               (res.location_note ? '<p class="muted small">' + escapeHtml(res.location_note) + '</p>' : '') +
               '<ol class="gpxfill__reps">' +

@@ -111,9 +111,6 @@ if (is_post()) {
         if ($user['password_hash'] && !password_verify((string)($_POST['current_password'] ?? ''), $user['password_hash'])) {
             $errors['delete_password'] = t('p.pw_wrong');
         } else {
-            foreach (q('SELECT gpx_file FROM workouts WHERE user_id = ? AND gpx_file IS NOT NULL', [$uid]) as $g) {
-                @unlink(ROOT . '/storage/gpx/' . basename($g['gpx_file']));
-            }
             remove_avatar_file($user['avatar']);
             q('DELETE FROM users WHERE id = ?', [$uid]);
             logout_user();

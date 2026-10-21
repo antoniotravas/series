@@ -75,7 +75,7 @@ $setBlock = function ($i, array $s, ?string $error) use ($quickDistances) {
 
 <?php if ($errors): ?><div class="flash flash--error" role="alert"><?= e(t('error.form')) ?></div><?php endif; ?>
 
-<form method="post" enctype="multipart/form-data" class="form wform" novalidate data-workout-form>
+<form method="post" class="form wform" novalidate data-workout-form>
   <?= csrf_field() ?>
   <datalist id="quick-distances">
     <?php foreach ($quickDistances as $qd): ?><option value="<?= $qd ?>"><?php endforeach; ?>
@@ -140,8 +140,8 @@ $setBlock = function ($i, array $s, ?string $error) use ($quickDistances) {
     <button type="button" class="btn btn--ghost" data-add-set><?= e(t('w.set.add')) ?></button>
   </section>
 
-  <details class="wform__more" <?= ($v('notes') || $v('rpe') || $v('weather') || !empty($errors['gpx'])) ? 'open' : '' ?>>
-    <summary><?= e(t('w.notes')) ?>, <?= e(mb_strtolower(t('w.rpe'))) ?>, GPX</summary>
+  <details class="wform__more" <?= ($v('notes') || $v('rpe') || $v('weather')) ? 'open' : '' ?>>
+    <summary><?= e(t('w.notes')) ?>, <?= e(mb_strtolower(t('w.rpe'))) ?>, <?= e(mb_strtolower(t('w.weather'))) ?></summary>
     <div class="wform__meta">
       <div class="field">
         <label for="rpe"><?= e(t('w.rpe')) ?></label>
@@ -161,12 +161,6 @@ $setBlock = function ($i, array $s, ?string $error) use ($quickDistances) {
       <div class="field field--wide">
         <label for="notes"><?= e(t('w.notes')) ?></label>
         <textarea id="notes" name="notes" rows="4" placeholder="<?= e(t('w.notes_ph')) ?>"><?= e((string)$v('notes')) ?></textarea>
-      </div>
-      <div class="field field--wide">
-        <label for="gpx"><?= e(t('w.gpx')) ?></label>
-        <input id="gpx" name="gpx" type="file" accept=".gpx,application/gpx+xml"<?= field_attrs($errors, 'gpx') ?>>
-        <?php if (!empty($existing['gpx_file'])): ?><p class="field__hint"><?= e(t('w.gpx_current', ['f' => 'GPX'])) ?></p><?php endif; ?>
-        <?= field_error($errors, 'gpx') ?>
       </div>
     </div>
   </details>

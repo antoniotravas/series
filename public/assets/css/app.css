@@ -264,7 +264,6 @@ input[type="search"] { -webkit-appearance: none; appearance: none; }
 .set--hr .lane { grid-template-columns: 2.25rem 4.75rem 1fr 3.25rem 2.5rem auto; }.lane__hr { font: 500 .9rem/1 var(--f-body); font-variant-numeric: tabular-nums; text-align: right; color: var(--ink-2); }
 .lane--head .lane__hr { font-size: .7rem; color: var(--muted); }
 
-.gpx-download { margin: 1.5rem 0 0; }
 
 .viewbar[hidden] { display: none; }
 .viewbar { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; margin: 0 0 .75rem; }

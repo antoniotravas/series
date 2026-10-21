@@ -70,7 +70,3 @@ foreach ($w['sets'] as $s) {
   <p><?= nl2br(e($w['notes'])) ?></p>
 </section>
 <?php endif; ?>
-
-<?php if ($w['gpx_file']): ?>
-<p class="gpx-download"><a class="btn btn--ghost btn--sm" href="<?= url('gpx.php?id=' . (int)$w['id']) ?>"><?= e(t('w.gpx_download')) ?></a></p>
-<?php endif; ?>

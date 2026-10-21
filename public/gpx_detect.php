@@ -25,12 +25,15 @@ if ($head === false || stripos($head, '<gpx') === false) {
     $fail(t('error.gpx_invalid'));
 }
 
+// O GPX só serve para preencher o formulário: nunca é guardado no servidor.
 try {
     $r = gpx_detect($file['tmp_name']);
 } catch (Throwable $ex) {
     error_log('Deteção GPX: ' . $ex->getMessage());
+    @unlink($file['tmp_name']);
     $fail(t('error.gpx_invalid'));
 }
+@unlink($file['tmp_name']);
 if (!$r['sets']) {
     $fail(t('gpx.none'));
 }

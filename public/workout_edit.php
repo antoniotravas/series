@@ -16,26 +16,11 @@ $form = null;
 if (is_post()) {
     csrf_check();
     $res = workout_from_input($_POST);
-    $gpxName = null;
-    if (!isset($res['errors'])) {
-        try {
-            $gpxName = store_gpx($_FILES['gpx'] ?? [], $uid);
-        } catch (RuntimeException $ex) {
-            $res['errors']['gpx'] = $ex->getMessage();
-        }
-    }
     if (isset($res['errors'])) {
         $errors = $res['errors'];
         $form = $_POST; // repor o formulário tal como foi enviado
     } else {
-        $data = $res['data'];
-        if ($gpxName) {
-            $data['gpx_file'] = $gpxName;
-            if ($existing && $existing['gpx_file']) {
-                @unlink(ROOT . '/storage/gpx/' . $existing['gpx_file']);
-            }
-        }
-        $newId = save_workout($uid, $data, $res['sets'], $existing ? $id : null);
+        $newId = save_workout($uid, $res['data'], $res['sets'], $existing ? $id : null);
         flash('ok', t('w.saved'));
         redirect('workout.php?id=' . $newId);
     }

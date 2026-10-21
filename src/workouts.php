@@ -174,14 +174,7 @@ function set_stats(array $reps): array
 
 function delete_workout(int $userId, int $id): void
 {
-    $w = q('SELECT gpx_file FROM workouts WHERE id = ? AND user_id = ?', [$id, $userId])->fetch();
-    if (!$w) {
-        return;
-    }
     q('DELETE FROM workouts WHERE id = ? AND user_id = ?', [$id, $userId]);
-    if ($w['gpx_file']) {
-        @unlink(ROOT . '/storage/gpx/' . $w['gpx_file']);
-    }
 }
 
 /** Ativa/desativa vários treinos do utilizador. Devolve quantos mudaram. */
@@ -193,26 +186,6 @@ function set_workouts_active(int $userId, array $ids, bool $active): int
     }
     $ph = implode(',', array_fill(0, count($ids), '?'));
     return q("UPDATE workouts SET active = ? WHERE user_id = ? AND id IN ($ph)", [(int)$active, $userId, ...$ids])->rowCount();
-}
-
-/** Guarda um ficheiro GPX enviado. Devolve o nome guardado ou lança mensagem de erro. */
-function store_gpx(array $file, int $userId): ?string
-{
-    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
-        return null;
-    }
-    if ($file['error'] !== UPLOAD_ERR_OK || $file['size'] > GPX_MAX_BYTES) {
-        throw new RuntimeException(t('error.gpx_upload'));
-    }
-    $head = file_get_contents($file['tmp_name'], false, null, 0, 2048);
-    if ($head === false || stripos($head, '<gpx') === false) {
-        throw new RuntimeException(t('error.gpx_invalid'));
-    }
-    $name = $userId . '_' . bin2hex(random_bytes(8)) . '.gpx';
-    if (!move_uploaded_file($file['tmp_name'], ROOT . '/storage/gpx/' . $name)) {
-        throw new RuntimeException(t('error.gpx_upload'));
-    }
-    return $name;
 }
 
 /** Texto resumo "10 × 500 m + 4 × 200 m" */
