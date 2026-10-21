@@ -55,6 +55,34 @@
     if (msg && !window.confirm(msg)) ev.preventDefault();
   });
 
+  // ---------- Página do treino: tipo de gráfico das séries ----------
+
+  document.querySelectorAll('[data-lanes-toggle]').forEach(function (bar) {
+    var sets = document.querySelector('.sets[data-view]');
+    if (!sets) return;
+    var buttons = bar.querySelectorAll('[data-view]');
+    function show(view) {
+      sets.setAttribute('data-view', view);
+      bar.classList.toggle('is-speed', view === 'speed');
+      buttons.forEach(function (b) {
+        var on = b.getAttribute('data-view') === view;
+        b.classList.toggle('is-on', on);
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+    }
+    buttons.forEach(function (b) {
+      b.addEventListener('click', function () {
+        var view = b.getAttribute('data-view');
+        show(view);
+        try { localStorage.setItem('series.lanesView', view); } catch (e) {}
+      });
+    });
+    var saved = null;
+    try { saved = localStorage.getItem('series.lanesView'); } catch (e) {}
+    show(saved === 'speed' ? 'speed' : 'dev');
+    bar.hidden = false;
+  });
+
   // ---------- Seleção em lote (lista de treinos) ----------
 
   document.querySelectorAll('[data-check-all]').forEach(function (all) {

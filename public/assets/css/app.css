@@ -245,6 +245,30 @@ input[type="search"] { -webkit-appearance: none; appearance: none; }
 .lane__dev.is-slow, .lane__target.is-slow { color: var(--slow); }
 .lane__target { width: 3.75rem; border-left: 1px solid var(--line); padding-left: .5rem; }
 .lane--pb .lane__time { color: var(--ink); }
+
+/* Vista "velocidade": barra cresce com a velocidade, intensidade relativa dentro da série */
+.lane__speed, .lane__kmh { display: none; }
+.sets[data-view="speed"] .lane__track, .sets[data-view="speed"] .lane__dev { display: none; }
+.sets[data-view="speed"] .lane__speed { display: block; }
+.sets[data-view="speed"] .lane__kmh { display: block; }
+.lane__speed { position: relative; height: 1.1rem; }
+.lane__sbar {
+  position: absolute; left: 0; top: 0; bottom: 0; width: var(--len);
+  background: color-mix(in oklab, var(--fast) var(--mix), var(--surface));
+  border-radius: 0 4px 4px 0;
+}
+.lane__kmh { font: 500 .9rem/1 var(--f-body); font-variant-numeric: tabular-nums; text-align: right; color: var(--ink-2); }
+.lane--head .lane__kmh { font-size: .7rem; color: var(--muted); }
+
+.viewbar[hidden] { display: none; }
+.viewbar { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; margin: 0 0 .75rem; }
+.viewtoggle { display: flex; gap: .35rem; }
+.speed-legend { display: none; align-items: center; gap: .5rem; margin: 0; }
+.viewbar.is-speed .speed-legend { display: flex; }
+.speed-legend__ramp {
+  width: 3.5rem; height: .6rem; border-radius: 0 3px 3px 0;
+  background: linear-gradient(90deg, color-mix(in oklab, var(--fast) 45%, var(--surface)), var(--fast));
+}
 .pb { font: 700 .7rem/1 var(--f-body); text-decoration: none; background: var(--pb); color: #16212B; padding: .15rem .3rem; border-radius: 3px; vertical-align: middle; }
 @media (max-width: 30rem) {
   .lane { grid-template-columns: 2rem 4.25rem 1fr 2.75rem auto; gap: .45rem; padding-right: .6rem; }

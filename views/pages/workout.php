@@ -43,9 +43,28 @@ $facts = array_filter([
 </dl>
 <?php endif; ?>
 
-<div class="sets">
+<?php
+$maxSpeed = 0.0;
+foreach ($w['sets'] as $s) {
+    if ($s['reps']) {
+        $maxSpeed = max($maxSpeed, $s['distance_m'] / min($s['reps']));
+    }
+}
+?>
+<div class="viewbar" data-lanes-toggle hidden>
+  <div class="viewtoggle" role="group" aria-label="<?= e(t('w.chart.label')) ?>">
+    <button type="button" class="chip is-on" data-view="dev" aria-pressed="true"><?= e(t('w.chart.dev')) ?></button>
+    <button type="button" class="chip" data-view="speed" aria-pressed="false"><?= e(t('w.chart.speed')) ?></button>
+  </div>
+  <p class="speed-legend small muted">
+    <span class="speed-legend__ramp" aria-hidden="true"></span>
+    <?= e(t('w.chart.speed_hint')) ?>
+  </p>
+</div>
+
+<div class="sets" data-view="dev">
   <?php foreach ($w['sets'] as $i => $s): ?>
-    <?php view('partials/set_lanes', ['set' => $s, 'index' => $i + 1, 'pbs' => $pbs]); ?>
+    <?php view('partials/set_lanes', ['set' => $s, 'index' => $i + 1, 'pbs' => $pbs, 'maxSpeed' => $maxSpeed]); ?>
   <?php endforeach; ?>
 </div>
 

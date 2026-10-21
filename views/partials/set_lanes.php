@@ -5,9 +5,17 @@
  * @var array $set   linha de workout_sets com 'reps' e 'stats'
  * @var int   $index posição da série (1..n)
  * @var array $pbs   distance_m => melhor tempo de sempre
+ * @var float $maxSpeed velocidade máxima (m/s) do treino: escala comum das barras de velocidade
+ *
+ * Vista "velocidade": barra a partir de zero, proporcional à velocidade da repetição;
+ * a intensidade da cor vai do mais lento (45%) ao mais rápido (100%) dentro desta série.
  */
 $st = $set['stats'];
 $dist = (int)$set['distance_m'];
+$speeds = array_map(fn($r) => $dist / $r, $set['reps']);
+$sMin = min($speeds);
+$sMax = max($speeds);
+$maxSpeed = $maxSpeed ?? $sMax;
 $maxDev = 0.0;
 foreach ($set['reps'] as $r) {
     $maxDev = max($maxDev, abs($r - $st['avg']));
@@ -36,6 +44,7 @@ $rest = $set['rest_seconds'] !== null
   <div class="lane lane--head" aria-hidden="true">
     <span></span><span></span><span></span>
     <span class="lane__dev"><?= e(t('w.vs_avg')) ?></span>
+    <span class="lane__kmh">km/h</span>
     <?php if ($set['target_seconds'] !== null): ?><span class="lane__target"><?= e(t('w.vs_target')) ?></span><?php endif; ?>
   </div>
   <ol class="lanes" aria-label="<?= e(t('w.split_from_avg')) ?>">
@@ -44,6 +53,9 @@ $rest = $set['rest_seconds'] !== null
         $pct = min(50, abs($r - $st['avg']) / $maxDev * 50);
         $isPb = $pb !== null && abs($r - $pb) < 0.001;
         $target = $set['target_seconds'] !== null ? (float)$set['target_seconds'] : null;
+        $speed = $speeds[$i];
+        $len = $maxSpeed > 0 ? $speed / $maxSpeed * 100 : 0;
+        $mix = $sMax > $sMin ? 45 + ($speed - $sMin) / ($sMax - $sMin) * 55 : 100;
     ?>
     <li class="lane<?= $isPb ? ' lane--pb' : '' ?>">
       <span class="lane__n"><?= $i + 1 ?></span>
@@ -55,6 +67,10 @@ $rest = $set['rest_seconds'] !== null
         <?= $dev == 0 ? '0.0' : ($dev < 0 ? '−' : '+') . number_format(abs($dev), 1) ?>
         <?php if ($dev != 0): ?><span class="sr-only"><?= e($dev < 0 ? t('w.faster') : t('w.slower')) ?></span><?php endif; ?>
       </span>
+      <span class="lane__speed" aria-hidden="true" title="<?= e(t('w.rep', ['n' => $i + 1]) . ' · ' . fmt_time($r, 1) . ' · ' . number_format($speed * 3.6, 1) . ' km/h · ' . fmt_pace($dist, $r) . t('w.per_km')) ?>">
+        <span class="lane__sbar" style="--len: <?= number_format($len, 2, '.', '') ?>%; --mix: <?= number_format($mix, 1, '.', '') ?>%"></span>
+      </span>
+      <span class="lane__kmh"><?= number_format($speed * 3.6, 1) ?><span class="sr-only"> km/h</span></span>
       <?php if ($target !== null): ?>
         <?php $dt = round($r - $target, 1); ?>
         <span class="lane__target <?= $dt < 0 ? 'is-fast' : ($dt > 0 ? 'is-slow' : '') ?>"><?= $dt == 0 ? '0.0' : ($dt < 0 ? '−' : '+') . number_format(abs($dt), 1) ?></span>
