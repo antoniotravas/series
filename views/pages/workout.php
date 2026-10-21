@@ -72,5 +72,5 @@ foreach ($w['sets'] as $s) {
 <?php endif; ?>
 
 <?php if ($w['gpx_file']): ?>
-<p><a class="btn btn--ghost btn--sm" href="<?= url('gpx.php?id=' . (int)$w['id']) ?>"><?= e(t('w.gpx_download')) ?></a></p>
+<p class="gpx-download"><a class="btn btn--ghost btn--sm" href="<?= url('gpx.php?id=' . (int)$w['id']) ?>"><?= e(t('w.gpx_download')) ?></a></p>
 <?php endif; ?>

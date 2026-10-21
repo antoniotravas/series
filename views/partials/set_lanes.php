@@ -18,11 +18,8 @@ $sMax = max($speeds);
 $maxSpeed = $maxSpeed ?? $sMax;
 // frequência cardíaca por repetição (só existe se veio de um GPX)
 $hr = $set['hr'] ?? [];
-$hrMax = $set['hr_max'] ?? [];
 $hrKnown = array_filter($hr, fn($v) => $v !== null);
 $hrAvg = $hrKnown ? (int)round(array_sum($hrKnown) / count($hrKnown)) : null;
-$hrMaxKnown = array_filter($hrMax, fn($v) => $v !== null);
-$hrPeak = $hrMaxKnown ? max($hrMaxKnown) : null;   // pico do bloco
 $maxDev = 0.0;
 foreach ($set['reps'] as $r) {
     $maxDev = max($maxDev, abs($r - $st['avg']));
@@ -34,7 +31,7 @@ $rest = $set['rest_seconds'] !== null
     ? t('w.rest_desc', ['t' => fmt_time((float)$set['rest_seconds'], 0), 'type' => t('w.rest.' . $set['rest_type'])])
     : null;
 ?>
-<section class="set<?= $hrAvg !== null ? ' set--hr' : '' ?><?= $hrPeak !== null ? ' set--hrmax' : '' ?>" aria-labelledby="set-<?= $index ?>-h">
+<section class="set<?= $hrAvg !== null ? ' set--hr' : '' ?>" aria-labelledby="set-<?= $index ?>-h">
   <header class="set__head">
     <h3 id="set-<?= $index ?>-h" class="set__title">
       <span class="set__reps"><?= count($set['reps']) ?> × <?= e(fmt_distance($dist)) ?></span>
@@ -46,17 +43,13 @@ $rest = $set['rest_seconds'] !== null
       <div><dt><?= e(t('w.best')) ?></dt><dd><?= fmt_time($st['best'], 1) ?></dd></div>
       <div><dt><?= e(t('w.sd')) ?></dt><dd>±<?= number_format($st['sd'], 1) ?>s</dd></div>
       <div><dt><?= e(t('w.pace')) ?></dt><dd><?= fmt_pace($dist, $st['avg']) ?><small><?= e(t('w.per_km')) ?></small></dd></div>
-      <?php if ($hrAvg !== null): ?><div><dt><?= e(t('w.hr_avg')) ?></dt><dd><?= $hrAvg ?><small>bpm</small></dd></div><?php endif; ?>
-      <?php if ($hrPeak !== null): ?><div><dt><?= e(t('w.hr_peak')) ?></dt><dd><?= $hrPeak ?><small>bpm</small></dd></div><?php endif; ?>
-    </dl>
+      <?php if ($hrAvg !== null): ?><div><dt><?= e(t('w.hr_avg')) ?></dt><dd><?= $hrAvg ?><small>bpm</small></dd></div><?php endif; ?>    </dl>
   </header>
   <div class="lane lane--head" aria-hidden="true">
     <span></span><span></span><span></span>
     <span class="lane__dev"><?= e(t('w.vs_avg')) ?></span>
     <span class="lane__pace">min/km</span>
-    <?php if ($hrAvg !== null): ?><span class="lane__hr"><?= e(t('w.hr')) ?></span><?php endif; ?>
-    <?php if ($hrPeak !== null): ?><span class="lane__hr"><?= e(t('w.hr_max')) ?></span><?php endif; ?>
-    <?php if ($set['target_seconds'] !== null): ?><span class="lane__target"><?= e(t('w.vs_target')) ?></span><?php endif; ?>
+    <?php if ($hrAvg !== null): ?><span class="lane__hr"><?= e(t('w.hr')) ?></span><?php endif; ?>    <?php if ($set['target_seconds'] !== null): ?><span class="lane__target"><?= e(t('w.vs_target')) ?></span><?php endif; ?>
   </div>
   <ol class="lanes" aria-label="<?= e(t('w.split_from_avg')) ?>">
     <?php foreach ($set['reps'] as $i => $r):
@@ -84,11 +77,7 @@ $rest = $set['rest_seconds'] !== null
       <span class="lane__pace"><?= fmt_pace($dist, $r) ?><span class="sr-only"> <?= e(t('w.per_km')) ?></span></span>
       <?php if ($hrAvg !== null): ?>
         <span class="lane__hr"><?= isset($hr[$i]) ? (int)$hr[$i] . '<span class="sr-only"> bpm</span>' : '–' ?></span>
-      <?php endif; ?>
-      <?php if ($hrPeak !== null): ?>
-        <span class="lane__hr lane__hr--max"><?= isset($hrMax[$i]) ? (int)$hrMax[$i] . '<span class="sr-only"> bpm ' . e(t('w.hr_max')) . '</span>' : '–' ?></span>
-      <?php endif; ?>
-      <?php if ($target !== null): ?>
+      <?php endif; ?>      <?php if ($target !== null): ?>
         <?php $dt = round($r - $target, 1); ?>
         <span class="lane__target <?= $dt < 0 ? 'is-fast' : ($dt > 0 ? 'is-slow' : '') ?>"><?= $dt == 0 ? '0.0' : ($dt < 0 ? '−' : '+') . number_format(abs($dt), 1) ?></span>
       <?php endif; ?>
