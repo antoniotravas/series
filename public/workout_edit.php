@@ -65,6 +65,7 @@ if ($form === null) {
             $form['rpe'] = '';
             $form['weather'] = '';
             $form['temperature_c'] = '';
+            $form['lat'] = $form['lon'] = '';   // a cópia pode ser feita noutro local
         }
     } else {
         $form = [

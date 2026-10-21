@@ -166,7 +166,8 @@ function gpx_detect(string $path): array
         ];
     }
     if (!$reps) {
-        return ['date' => date('Y-m-d', $pts[0]['t']), 'start_time' => date('H:i', $pts[0]['t']), 'reps' => [], 'sets' => []];
+        return ['date' => date('Y-m-d', $pts[0]['t']), 'start_time' => date('H:i', $pts[0]['t']), 'reps' => [], 'sets' => [],
+                'temperature_c' => null, 'lat' => null, 'lon' => null];
     }
 
     // trechos muito mais lentos que o esforço mais rápido = aquecimento/retorno à calma
@@ -232,6 +233,18 @@ function gpx_detect(string $path): array
     }
     unset($s);
 
+    // local: mediana das posições durante as repetições (o início pode ser no estacionamento)
+    $lats = $lons = [];
+    foreach ($work as $r) {
+        for ($i = $r['from']; $i <= $r['to']; $i++) {
+            $lats[] = $pts[$i]['lat'];
+            $lons[] = $pts[$i]['lon'];
+        }
+    }
+    sort($lats);
+    sort($lons);
+    $mid = intdiv(count($lats), 2);
+
     // temperatura do sensor do relógio (média da atividade); nem todos os GPX a têm
     $temps = array_filter(array_column($pts, 'temp'), fn($v) => $v !== null);
 
@@ -239,6 +252,8 @@ function gpx_detect(string $path): array
         'date'       => date('Y-m-d', $pts[0]['t']),
         'start_time' => date('H:i', $pts[0]['t']),
         'temperature_c' => $temps ? (int)round(array_sum($temps) / count($temps)) : null,
+        'lat'        => $lats ? round($lats[$mid], 6) : null,
+        'lon'        => $lons ? round($lons[$mid], 6) : null,
         'threshold'  => round($threshold, 2),
         'reps'       => array_map(fn($r) => array_diff_key($r, ['from' => 1, 'to' => 1]), $reps),
         'sets'       => $sets,

@@ -116,6 +116,8 @@ $setBlock = function ($i, array $s, ?string $error) use ($quickDistances) {
     <div class="field">
       <label for="location"><?= e(t('w.location')) ?></label>
       <input id="location" name="location" maxlength="120" list="known-locations" placeholder="<?= e(t('w.location_ph')) ?>" value="<?= e((string)$v('location')) ?>">
+      <input type="hidden" name="lat" value="<?= e((string)$v('lat')) ?>" data-lat>
+      <input type="hidden" name="lon" value="<?= e((string)$v('lon')) ?>" data-lon>
     </div>
     <div class="field">
       <label for="venue_type"><?= e(t('w.venue')) ?></label>

@@ -48,6 +48,8 @@ CREATE TABLE IF NOT EXISTS workouts (
     workout_date DATE NOT NULL,
     start_time  TIME NULL,
     location    VARCHAR(120) NULL,
+    lat         DECIMAL(9,6) NULL,           -- centro das repetições (GPX)
+    lon         DECIMAL(9,6) NULL,
     venue_type  ENUM('outdoor','indoor','road','trail','other') NOT NULL DEFAULT 'outdoor',
     weather     VARCHAR(60) NULL,
     temperature_c TINYINT NULL,

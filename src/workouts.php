@@ -82,6 +82,8 @@ function workout_from_input(array $in): array
             'workout_date'  => $date,
             'start_time'    => $time ?: null,
             'location'      => mb_substr(trim($in['location'] ?? ''), 0, 120) ?: null,
+            'lat'           => is_numeric($in['lat'] ?? null) && abs((float)$in['lat']) <= 90 ? round((float)$in['lat'], 6) : null,
+            'lon'           => is_numeric($in['lon'] ?? null) && abs((float)$in['lon']) <= 180 ? round((float)$in['lon'], 6) : null,
             'venue_type'    => $venue,
             'weather'       => mb_substr(trim($in['weather'] ?? ''), 0, 60) ?: null,
             'temperature_c' => $temp,

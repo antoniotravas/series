@@ -35,8 +35,14 @@ if (!$r['sets']) {
     $fail(t('gpx.none'));
 }
 
+$place = $r['lat'] !== null ? place_name((int)$user['id'], $r['lat'], $r['lon']) : null;
+
 echo json_encode([
     'ok'         => true,
+    'lat'        => $r['lat'],
+    'lon'        => $r['lon'],
+    'location'   => $place['name'] ?? null,
+    'location_note' => $place ? t('gpx.place_' . $place['source'], ['n' => $place['name']]) : null,
     'date'       => $r['date'],
     'start_time' => $r['start_time'],
     'temperature_c' => $r['temperature_c'],

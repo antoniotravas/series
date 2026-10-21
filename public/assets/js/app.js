@@ -300,7 +300,9 @@
               dt.items.add(file);
               realGpx.files = dt.files;
             }
-            gpxOut.innerHTML = '<p class="gpxfill__ok">' + escapeHtml(res.summary) + '</p><ol class="gpxfill__reps">' +
+            gpxOut.innerHTML = '<p class="gpxfill__ok">' + escapeHtml(res.summary) + '</p>' +
+              (res.location_note ? '<p class="muted small">' + escapeHtml(res.location_note) + '</p>' : '') +
+              '<ol class="gpxfill__reps">' +
               res.reps.map(function (r) {
                 return '<li' + (r.work ? '' : ' class="is-ignored"') + '>' + escapeHtml(r.label) +
                   (r.work ? '' : ' (' + escapeHtml(gpxBox.getAttribute('data-ignored')) + ')') + '</li>';
@@ -315,6 +317,9 @@
     function fillFromGpx(res) {
       form.querySelector('#workout_date').value = res.date;
       form.querySelector('#start_time').value = res.start_time;
+      form.querySelector('[data-lat]').value = res.lat == null ? '' : res.lat;
+      form.querySelector('[data-lon]').value = res.lon == null ? '' : res.lon;
+      if (res.location) form.querySelector('#location').value = res.location;
       if (res.temperature_c != null) {
         form.querySelector('#temperature_c').value = res.temperature_c;
         form.querySelector('.wform__more').open = true;
