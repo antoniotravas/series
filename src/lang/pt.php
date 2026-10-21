@@ -146,7 +146,6 @@ return [
     'w.chart.label'  => 'Tipo de gráfico',
     'w.chart.dev'    => 'Diferença para a média',
     'w.chart.speed'  => 'Velocidade',
-    'w.chart.speed_hint' => 'Barra maior = mais rápida. Cor mais forte = mais rápida dentro da série.',
     'w.inactive'     => 'Inativo',
     'w.inactive_hint' => 'Um treino inativo fica guardado, mas não conta no painel nem nos melhores tempos.',
     'w.deactivate'   => 'Desativar',

@@ -142,7 +142,6 @@ return [
     'w.chart.label'  => 'Chart type',
     'w.chart.dev'    => 'Difference from average',
     'w.chart.speed'  => 'Speed',
-    'w.chart.speed_hint' => 'Longer bar = faster. Stronger colour = faster within the set.',
     'w.inactive'     => 'Inactive',
     'w.inactive_hint' => 'An inactive workout is kept, but does not count in the dashboard or personal bests.',
     'w.deactivate'   => 'Deactivate',

@@ -63,7 +63,6 @@
     var buttons = bar.querySelectorAll('[data-view]');
     function show(view) {
       sets.setAttribute('data-view', view);
-      bar.classList.toggle('is-speed', view === 'speed');
       buttons.forEach(function (b) {
         var on = b.getAttribute('data-view') === view;
         b.classList.toggle('is-on', on);
