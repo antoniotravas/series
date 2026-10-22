@@ -399,4 +399,11 @@ return [
     'admin.enabled' => 'Account of :name reactivated.',
     'auth.disabled' => 'This account has been deactivated. Contact the administrator.',
     'admin.err_self' => 'This action does not apply to your own account.',
+
+    // manual
+    'nav.help'      => 'Guide',
+    'help.title'    => 'User guide',
+    'help.lead'     => 'Step-by-step use cases: what you want to do and where to press.',
+    'help.toc'      => 'In this guide',
+    'help.print'    => 'Print',
 ];

@@ -38,6 +38,7 @@ $pending = $user ? pending_requests_count((int)$user['id']) : 0;
       <?php if ($user['is_admin']): ?>
       <a href="<?= url('admin.php') ?>" class="nav__extra" <?= $active === 'admin' ? 'aria-current="page"' : '' ?>><?= e(t('nav.admin')) ?></a>
       <?php endif; ?>
+      <a href="<?= url('help.php') ?>" class="nav__help" title="<?= e(t('help.title')) ?>" aria-label="<?= e(t('help.title')) ?>" <?= $active === 'help' ? 'aria-current="page"' : '' ?>>?</a>
       <a href="<?= url('profile.php') ?>" class="nav__me" <?= $active === 'profile' ? 'aria-current="page"' : '' ?>>
         <?php if ($av = avatar_url($user)): ?>
           <img src="<?= e($av) ?>" alt="" class="avatar avatar--sm">
@@ -50,6 +51,7 @@ $pending = $user ? pending_requests_count((int)$user['id']) : 0;
     </nav>
     <?php else: ?>
     <nav class="nav" aria-label="Principal">
+      <a href="<?= url('help.php') ?>" <?= $active === 'help' ? 'aria-current="page"' : '' ?>><?= e(t('nav.help')) ?></a>
       <a href="<?= url('login.php') ?>" <?= $active === 'login' ? 'aria-current="page"' : '' ?>><?= e(t('nav.login')) ?></a>
       <a href="<?= url('register.php') ?>" class="btn btn--primary btn--sm"><?= e(t('nav.register')) ?></a>
     </nav>
@@ -66,7 +68,7 @@ $pending = $user ? pending_requests_count((int)$user['id']) : 0;
 
 <footer class="footer">
   <div class="wrap footer__inner">
-    <span><?= e(config('app_name')) ?>. <?= e(t('app.tagline')) ?></span>
+    <span><?= e(config('app_name')) ?>. <?= e(t('app.tagline')) ?> <a href="<?= url('help.php') ?>"><?= e(t('help.title')) ?></a></span>
     <form method="post" action="<?= url('lang.php') ?>" class="lang">
       <?= csrf_field() ?>
       <input type="hidden" name="back" value="<?= e($here) ?>">
