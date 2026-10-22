@@ -29,5 +29,8 @@ render('workout', [
     'pbs'     => $pbs,
     'isOwner' => $isOwner,
     'owner'   => $owner,
+    // o treinador pode editar e apagar os treinos que registou na conta do atleta
+    'canEdit' => !$isOwner && can_edit_workout($uid, $w),
+    'loggedBy'=> $w['created_by'] && (int)$w['created_by'] !== $ownerId ? find_user((int)$w['created_by']) : null,
     'back'    => $full ? workouts_list_path($ownerId, $isOwner) : 'user.php?id=' . $ownerId,
 ]);

@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS login_attempts (
 CREATE TABLE IF NOT EXISTS workouts (
     id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     user_id     INT UNSIGNED NOT NULL,
+    created_by  INT UNSIGNED NULL,           -- treinador que registou o treino na conta do atleta
     title       VARCHAR(120) NULL,
     workout_date DATE NOT NULL,
     start_time  TIME NULL,
@@ -64,7 +65,8 @@ CREATE TABLE IF NOT EXISTS workouts (
     created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX (user_id, workout_date),
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_workouts_created_by FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Um bloco de repetições: ex. 10 x 500 m com 70 s de recuperação

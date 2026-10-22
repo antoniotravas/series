@@ -295,7 +295,17 @@ $body = function (): void { ?>
       <li>Press an athlete's name to open their <b>dashboard</b>, or <b>Workouts</b> for the full list with filters.</li>
       <li>A "Coach view" bar at the top lets you switch athlete or go back to your own workouts.</li>
     </ol>
-    <p class="tip">You can view and analyse their workouts, but not edit or delete them.</p>
+    <p class="tip">Workouts the athlete logged can only be edited or deleted by the athlete.</p>
+  </article>
+
+  <article class="usecase">
+    <h3>I want to log a workout in an athlete's account</h3>
+    <ol>
+      <li>Open <b>Athletes</b> and go to the athlete's dashboard or workouts.</li>
+      <li>In the "Coach view" bar, press <b>+ Log workout</b>.</li>
+      <li>Fill in the workout as you would your own (the form shows the athlete's name) and press <b>Save workout</b>.</li>
+    </ol>
+    <p>The workout goes into the athlete's account marked "Logged by coach" with your name. You can edit or delete it later; so can the athlete.</p>
   </article>
 
   <article class="usecase">

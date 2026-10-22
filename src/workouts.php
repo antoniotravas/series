@@ -95,7 +95,8 @@ function workout_from_input(array $in): array
     ];
 }
 
-function save_workout(int $userId, array $data, array $sets, ?int $workoutId = null): int
+/** $createdBy: treinador que regista o treino na conta do atleta (só ao criar). */
+function save_workout(int $userId, array $data, array $sets, ?int $workoutId = null, ?int $createdBy = null): int
 {
     $pdo = db();
     $pdo->beginTransaction();
@@ -106,8 +107,8 @@ function save_workout(int $userId, array $data, array $sets, ?int $workoutId = n
             q("UPDATE workouts SET $assign WHERE id = ? AND user_id = ?", [...array_values($data), $workoutId, $userId]);
             q('DELETE FROM workout_sets WHERE workout_id = ?', [$workoutId]);
         } else {
-            $ph = implode(', ', array_fill(0, count($cols) + 1, '?'));
-            q('INSERT INTO workouts (user_id, ' . implode(', ', $cols) . ") VALUES ($ph)", [$userId, ...array_values($data)]);
+            $ph = implode(', ', array_fill(0, count($cols) + 2, '?'));
+            q('INSERT INTO workouts (user_id, created_by, ' . implode(', ', $cols) . ") VALUES ($ph)", [$userId, $createdBy, ...array_values($data)]);
             $workoutId = (int)$pdo->lastInsertId();
         }
         $insSet = $pdo->prepare('INSERT INTO workout_sets (workout_id, position, distance_m, rest_seconds, rest_type, target_seconds) VALUES (?, ?, ?, ?, ?, ?)');
@@ -134,6 +135,17 @@ function find_workout(int $userId, int $id): ?array
 }
 
 /** Treino de qualquer utilizador: quem chama verifica o acesso (can_view_workout). */
+/**
+ * Pode editar e apagar: o dono, ou o treinador que registou o treino
+ * (enquanto continuar a ser treinador desse atleta).
+ */
+function can_edit_workout(int $viewerId, array $w): bool
+{
+    $owner = (int)$w['user_id'];
+    return $owner === $viewerId
+        || ((int)($w['created_by'] ?? 0) === $viewerId && is_coach_of($viewerId, $owner));
+}
+
 function find_workout_any(int $id): ?array
 {
     $w = q('SELECT * FROM workouts WHERE id = ?', [$id])->fetch();

@@ -69,8 +69,17 @@ $setBlock = function ($i, array $s, ?string $error) use ($quickDistances) {
     <?php
 };
 ?>
+<?php $athlete = $athlete ?? null; ?>
 <header class="page-head">
-  <h1><?= e($title) ?></h1>
+  <div>
+    <h1><?= e($title) ?></h1>
+    <?php if ($athlete): ?>
+    <p class="for-athlete">
+      <?php view('partials/avatar', ['u' => $athlete, 'size' => 'sm']); ?>
+      <span><?= t('w.for_athlete', ['name' => '<strong>' . e($athlete['display_name']) . '</strong>']) ?></span>
+    </p>
+    <?php endif; ?>
+  </div>
 </header>
 
 <?php if ($errors): ?><div class="flash flash--error" role="alert"><?= e(t('error.form')) ?></div><?php endif; ?>
@@ -176,6 +185,6 @@ $setBlock = function ($i, array $s, ?string $error) use ($quickDistances) {
 
   <div class="wform__submit">
     <button class="btn btn--primary btn--lg" type="submit"><?= e(t('w.save')) ?></button>
-    <a class="link" href="<?= url($existing ? 'workout.php?id=' . (int)$existing['id'] : 'workouts.php') ?>"><?= e(t('w.cancel')) ?></a>
+    <a class="link" href="<?= url($existing ? 'workout.php?id=' . (int)$existing['id'] : ($athlete ? 'workouts.php?u=' . (int)$athlete['id'] : 'workouts.php')) ?>"><?= e(t('w.cancel')) ?></a>
   </div>
 </form>

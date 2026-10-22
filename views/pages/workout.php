@@ -27,6 +27,7 @@ $facts = array_filter([
     <h1><?= e($w['title'] ?: sets_summary($w['sets'])) ?></h1>
     <?php if ($w['title']): ?><p class="lead-sets"><?= e(sets_summary($w['sets'])) ?></p><?php endif; ?>
     <p class="muted"><?= e(t('w.summary_volume', ['km' => fmt_km($volume)])) ?></p>
+    <?php if ($loggedBy): ?><p class="logged-by"><?= e(t('w.logged_by', ['name' => $loggedBy['display_name']])) ?></p><?php endif; ?>
   </div>
   <?php if ($isOwner): ?>
   <div class="actions">
@@ -39,6 +40,15 @@ $facts = array_filter([
       <input type="hidden" name="back" value="<?= e($_SERVER['REQUEST_URI'] ?? '') ?>">
       <button class="btn btn--ghost btn--sm" type="submit" name="action" value="<?= $w['active'] ? 'deactivate' : 'activate' ?>" title="<?= e(t('w.inactive_hint')) ?>"><?= e(t($w['active'] ? 'w.deactivate' : 'w.activate')) ?></button>
     </form>
+    <form method="post" action="<?= url('workout_delete.php') ?>" data-confirm="<?= e(t('w.delete_confirm')) ?>">
+      <?= csrf_field() ?>
+      <input type="hidden" name="id" value="<?= (int)$w['id'] ?>">
+      <button class="btn btn--danger btn--sm" type="submit"><?= e(t('w.delete')) ?></button>
+    </form>
+  </div>
+  <?php elseif ($canEdit): ?>
+  <div class="actions">
+    <a class="btn btn--ghost btn--sm" href="<?= url('workout_edit.php?id=' . (int)$w['id']) ?>"><?= e(t('w.edit')) ?></a>
     <form method="post" action="<?= url('workout_delete.php') ?>" data-confirm="<?= e(t('w.delete_confirm')) ?>">
       <?= csrf_field() ?>
       <input type="hidden" name="id" value="<?= (int)$w['id'] ?>">

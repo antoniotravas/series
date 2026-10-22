@@ -295,7 +295,17 @@ $body = function (): void { ?>
       <li>Carrega no nome de um atleta para abrir o <b>painel</b> dele, ou em <b>Treinos</b> para veres a lista completa com filtros.</li>
       <li>No topo há uma barra "Vista de treinador" para mudares de atleta ou voltares aos teus treinos.</li>
     </ol>
-    <p class="tip">Vês e analisas os treinos dos atletas, mas não os podes editar nem apagar.</p>
+    <p class="tip">Os treinos que o atleta registou só ele os pode editar ou apagar.</p>
+  </article>
+
+  <article class="usecase">
+    <h3>Quero registar um treino na conta de um atleta</h3>
+    <ol>
+      <li>Abre <b>Atletas</b> e entra no painel ou nos treinos do atleta.</li>
+      <li>Na barra "Vista de treinador", carrega em <b>+ Registar treino</b>.</li>
+      <li>Preenche o treino como farias num teu (aparece "na conta de" e o nome do atleta) e carrega em <b>Guardar treino</b>.</li>
+    </ol>
+    <p>O treino fica na conta do atleta com a nota "Registado pelo treinador" e o teu nome. Podes editá-lo ou apagá-lo mais tarde; o atleta também.</p>
   </article>
 
   <article class="usecase">

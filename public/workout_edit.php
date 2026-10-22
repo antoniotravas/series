@@ -4,10 +4,21 @@ require __DIR__ . '/../src/bootstrap.php';
 $user = require_login();
 $uid = (int)$user['id'];
 $id = (int)($_GET['id'] ?? 0);
-$existing = $id ? find_workout($uid, $id) : null;
-if ($id && !$existing) {
+$existing = $id ? find_workout_any($id) : null;
+if ($id && (!$existing || !can_edit_workout($uid, $existing))) {
     flash('error', t('w.not_found'));
     redirect('workouts.php');
+}
+
+// dono do treino: o próprio, ou o atleta para quem o treinador está a registar (?for=)
+$ownerId = $existing ? (int)$existing['user_id'] : (int)($_GET['for'] ?? $uid);
+if ($ownerId !== $uid && !$existing && !is_coach_of($uid, $ownerId)) {
+    flash('error', t('w.not_found'));
+    redirect('athletes.php');
+}
+$athlete = $ownerId !== $uid ? find_user($ownerId) : null;
+if ($ownerId !== $uid && !$athlete) {
+    redirect('athletes.php');
 }
 
 $errors = [];
@@ -20,7 +31,7 @@ if (is_post()) {
         $errors = $res['errors'];
         $form = $_POST; // repor o formulário tal como foi enviado
     } else {
-        $newId = save_workout($uid, $res['data'], $res['sets'], $existing ? $id : null);
+        $newId = save_workout($ownerId, $res['data'], $res['sets'], $existing ? $id : null, $ownerId !== $uid ? $uid : null);
         flash('ok', t('w.saved'));
         redirect('workout.php?id=' . $newId);
     }
@@ -28,7 +39,7 @@ if (is_post()) {
 
 // Valores iniciais do formulário
 if ($form === null) {
-    $copyFrom = !$existing && isset($_GET['copy']) ? find_workout($uid, (int)$_GET['copy']) : null;
+    $copyFrom = !$existing && isset($_GET['copy']) ? find_workout($ownerId, (int)$_GET['copy']) : null;
     $src = $existing ?? $copyFrom;
     if ($src) {
         $form = $src;
@@ -57,8 +68,8 @@ if ($form === null) {
             'workout_date' => date('Y-m-d'),
             'start_time'   => '',
             'venue_type'   => 'outdoor',
-            'location'     => user_locations($uid)[0] ?? '',
-            'visibility'   => last_visibility($uid),
+            'location'     => user_locations($ownerId)[0] ?? '',
+            'visibility'   => last_visibility($ownerId),
             'sets'         => [['distance_m' => '', 'rest' => '', 'rest_type' => 'stand', 'target' => '', 'reps' => array_fill(0, 6, '')]],
         ];
     }
@@ -66,9 +77,10 @@ if ($form === null) {
 
 render('workout_form', [
     'title'     => $existing ? t('w.edit.title') : t('w.new.title'),
-    'active'    => 'workouts',
+    'active'    => $athlete ? 'athletes' : 'workouts',
     'existing'  => $existing,
     'form'      => $form,
     'errors'    => $errors,
-    'locations' => user_locations($uid),
+    'locations' => user_locations($ownerId),
+    'athlete'   => $athlete,
 ]);

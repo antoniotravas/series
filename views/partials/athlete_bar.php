@@ -15,4 +15,5 @@ $aid = (int)$athlete['id'];
     <a class="chip<?= $current === 'dashboard' ? ' is-on' : '' ?>" href="<?= url('dashboard.php?u=' . $aid) ?>"<?= $current === 'dashboard' ? ' aria-current="page"' : '' ?>><?= e(t('nav.dashboard')) ?></a>
     <a class="chip<?= $current === 'workouts' ? ' is-on' : '' ?>" href="<?= url('workouts.php?u=' . $aid) ?>"<?= $current === 'workouts' ? ' aria-current="page"' : '' ?>><?= e(t('nav.workouts')) ?></a>
   </nav>
+  <a class="btn btn--primary btn--sm athlete-bar__new" href="<?= url('workout_edit.php?for=' . $aid) ?>">+ <?= e(t('athletes.log_for')) ?></a>
 </div>
