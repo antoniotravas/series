@@ -639,6 +639,7 @@ h1 .badge { font: 600 .8rem/1.3 var(--f-body); vertical-align: middle; }
 .share__opts { display: flex; flex-direction: column; gap: 1.1rem; }
 .share__opts fieldset { margin: 0; padding: 0; border: 0; }
 .share__opts legend { font: 600 .8rem/1 var(--f-body); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: .55rem; }
+.share__opts .viewtoggle { flex-wrap: wrap; }
 .share__opts .chip { padding: .55rem .8rem; font-size: .9rem; }
 .share__opts .chip small { opacity: .7; margin-left: .2rem; }
 .share__themes { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }

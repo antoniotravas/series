@@ -577,12 +577,12 @@
   };
 
   var state = { format: 'post', theme: 'night', content: 'chart', clear: false,
-                show: { author: true, date: true, stats: true, pbs: true } };
+                show: { author: true, date: true, stats: true } };
   try {
     var saved = JSON.parse(localStorage.getItem('series.share') || '{}');
     if (SIZES[saved.format]) state.format = saved.format;
     if (THEMES[saved.theme]) state.theme = saved.theme;
-    if (saved.content === 'times' || saved.content === 'none') state.content = saved.content;
+    if (['times', 'lines', 'none'].indexOf(saved.content) >= 0) state.content = saved.content;
     if (saved.show) Object.keys(state.show).forEach(function (k) { if (saved.show[k] === false) state.show[k] = false; });
     state.clear = saved.clear === true;
   } catch (e) { /* sem armazenamento: valores por omissão */ }
@@ -775,7 +775,8 @@
     return y + rows * tH + (rows - 1) * gap;
   }
 
-  function chart(ctx, th, x, y, w, h) {
+  // gráfico de velocidade: barras ou linhas (uma linha por série)
+  function chart(ctx, th, x, y, w, h, lines) {
     // cabeçalho e legenda
     ctx.fillStyle = th.muted;
     spacing(ctx, 2);
@@ -793,6 +794,8 @@
     var hi = Math.max.apply(null, speeds), lo = Math.min.apply(null, speeds);
     var floor = Math.max(0, lo - Math.max((hi - lo) * .6, hi * .01));
     var Y = function (v) { return base - (v - floor) / (hi - floor) * ch * .9; };
+    var avgs = data.sets.map(function (s) { return s.d / s.avg; });
+    var avgHi = Math.max.apply(null, avgs), avgLo = Math.min.apply(null, avgs);
 
     var gapSet = data.sets.length > 1 ? Math.max(24, w * .04) : 0;
     var slot = (w - gapSet * (data.sets.length - 1)) / total;
@@ -805,26 +808,68 @@
       ctx.beginPath(); ctx.moveTo(x, gy); ctx.lineTo(x + w, gy); ctx.stroke();
     }
 
+    function pbMark(px, py) {
+      ctx.fillStyle = th.pb;
+      font(ctx, 700, 30, COND);
+      ctx.textAlign = 'center';
+      ctx.fillText('PB', px, py);
+      ctx.textAlign = 'left';
+    }
+
     var cx = x;
     data.sets.forEach(function (s) {
       var gx = cx, gw = slot * s.reps.length;
-      s.reps.forEach(function (t, i) {
-        var bx = cx + (slot - bw) / 2, by = Y(s.d / t);
+      var pts = s.reps.map(function (t, i) { return [gx + slot * (i + .5), Y(s.d / t)]; });
+      if (lines) {
+        // cada série à altura da sua velocidade média (mais rápida = mais acima)
+        // e com as variações ampliadas dentro de uma faixa, para o ritmo se ver
+        var amp = ch * .17, avgSp = s.d / s.avg;
+        var dev = Math.max.apply(null, s.reps.map(function (t) { return Math.abs(s.d / t - avgSp); }));
+        dev = Math.max(dev, avgSp * .004);
+        var mid = avgHi > avgLo ? base - amp - 20 - (avgSp - avgLo) / (avgHi - avgLo) * (ch * .9 - 2 * amp - 20) : base - ch * .45;
+        pts = s.reps.map(function (t, i) { return [gx + slot * (i + .5), mid - (s.d / t - avgSp) / dev * amp]; });
+        s.mid = mid;
+        var dot = Math.max(5, Math.min(slot * .2, 12));
+        // área por baixo da linha
+        ctx.save();
+        ctx.globalAlpha = .16;
         ctx.fillStyle = th.accent;
-        roundRect(ctx, bx, by, bw, base - by, r);
+        ctx.beginPath();
+        ctx.moveTo(pts[0][0], base);
+        pts.forEach(function (p) { ctx.lineTo(p[0], p[1]); });
+        ctx.lineTo(pts[pts.length - 1][0], base);
+        ctx.closePath();
         ctx.fill();
-        ctx.fillRect(bx, base - r, bw, r);   // base reta
-        if (s.pb[i] && bw >= 18) {
-          ctx.fillStyle = th.pb;
-          font(ctx, 700, 30, COND);
-          ctx.textAlign = 'center';
-          ctx.fillText('PB', bx + bw / 2, by - 12);
-          ctx.textAlign = 'left';
-        }
-        cx += slot;
-      });
+        ctx.restore();
+        ctx.strokeStyle = th.accent;
+        ctx.lineWidth = 6;
+        ctx.lineJoin = ctx.lineCap = 'round';
+        ctx.beginPath();
+        pts.forEach(function (p, i) { if (i) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]); });
+        ctx.stroke();
+        pts.forEach(function (p, i) {
+          ctx.fillStyle = s.pb[i] ? th.pb : th.accent;
+          ctx.beginPath(); ctx.arc(p[0], p[1], s.pb[i] ? dot * 1.35 : dot, 0, Math.PI * 2); ctx.fill();
+          if (!state.clear) {   // aro da cor do fundo, para os pontos se destacarem da linha
+            ctx.strokeStyle = th.bg[1];
+            ctx.lineWidth = 3;
+            ctx.stroke();
+          }
+          if (s.pb[i]) pbMark(p[0], p[1] - dot * 1.35 - 14);
+        });
+      } else {
+        pts.forEach(function (p, i) {
+          var bx = p[0] - bw / 2, by = p[1];
+          ctx.fillStyle = th.accent;
+          roundRect(ctx, bx, by, bw, base - by, r);
+          ctx.fill();
+          ctx.fillRect(bx, base - r, bw, r);   // base reta
+          if (s.pb[i] && bw >= 18) pbMark(p[0], by - 12);
+        });
+      }
+      cx += gw;
       // média da série (tracejado)
-      var ay = Y(s.d / s.avg);
+      var ay = lines ? s.mid : Y(s.d / s.avg);
       ctx.save();
       ctx.setLineDash([10, 8]);
       ctx.strokeStyle = th.ink;
@@ -970,18 +1015,20 @@
     font(ctx, 700, size, COND);
     lines.forEach(function (l) { y += size * .88; ctx.fillText(l, M - 4, y); });
 
-    if (data.pbs && sh.pbs) {
-      y += 34;
+    if (data.pbs) {
+      // etiqueta dourada; maior na história, que se vê no ecrã inteiro do telemóvel
+      var ph = story ? 68 : 52, pf = story ? 40 : 30;
+      y += story ? 40 : 34;
       var label = (data.pbs > 1 ? data.labels.pbn.replace(':n', data.pbs) : data.labels.pb1).toUpperCase();
-      font(ctx, 700, 30, COND);
+      font(ctx, 700, pf, COND);
       spacing(ctx, 2);
       ctx.fillStyle = th.pb;
-      roundRect(ctx, M, y, ctx.measureText(label).width + 72, 52, 26); ctx.fill();
+      roundRect(ctx, M, y, ctx.measureText(label).width + ph * 1.4, ph, ph / 2); ctx.fill();
       ctx.fillStyle = '#16212B';
-      ctx.beginPath(); ctx.arc(M + 30, y + 26, 8, 0, Math.PI * 2); ctx.fill();
-      ctx.fillText(label, M + 50, y + 37);
+      ctx.beginPath(); ctx.arc(M + ph * .58, y + ph / 2, ph * .15, 0, Math.PI * 2); ctx.fill();
+      ctx.fillText(label, M + ph * .96, y + ph / 2 + pf * .36);
       spacing(ctx, 0);
-      y += 52;
+      y += ph;
     }
 
     if (sh.stats) {
@@ -992,7 +1039,10 @@
     // gráfico ou tempos no espaço que sobra até ao rodapé
     var fy = H - bottom - 44;
     var chartTop = y + (story ? 64 : 56), chartH = fy - 50 - chartTop;
-    if (content !== 'none' && chartH > 160) (content === 'times' ? times : chart)(ctx, th, M, chartTop, cw, chartH);
+    if (content !== 'none' && chartH > 160) {
+      if (content === 'times') times(ctx, th, M, chartTop, cw, chartH);
+      else chart(ctx, th, M, chartTop, cw, chartH, content === 'lines');
+    }
 
     // rodapé com a marca
     ctx.fillStyle = th.grid;

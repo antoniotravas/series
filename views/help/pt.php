@@ -228,7 +228,7 @@ $body = function (): void { ?>
     <ol>
       <li>Abre o treino e carrega em <b>Partilhar</b>.</li>
       <li>Escolhe o formato: <b>Publicação</b> (4:5, para o feed) ou <b>História</b> (9:16).</li>
-      <li>Escolhe o que mostrar: o <b>Gráfico</b> da velocidade de cada repetição, os <b>Tempos</b> de todas as repetições ou <b>Nada</b>. Marca ou desmarca também o avatar e nome, a data e local, os números (média, mais rápida, volume e repetições) e os recordes pessoais.</li>
+      <li>Escolhe o que mostrar: a velocidade de cada repetição em <b>Barras</b> ou <b>Linhas</b>, os <b>Tempos</b> de todas as repetições ou <b>Nada</b>. Marca ou desmarca também o avatar e nome, a data e local e os números (média, mais rápida, volume e repetições). Os recordes pessoais batidos no treino aparecem sempre, a dourado.</li>
       <li>Escolhe as cores: <b>Noite</b>, <b>Tartan</b>, <b>Claro</b>, <b>Relva</b> ou <b>Azul</b>. Marca <b>Fundo transparente</b> para pores a imagem por cima de uma foto tua (as cores escolhidas passam a ser as do texto).</li>
       <li>No telemóvel, carrega em <b>Partilhar imagem</b> e escolhe a aplicação. No computador, carrega em <b>Copiar imagem</b> e cola-a onde quiseres (Ctrl+V), ou em <b>Descarregar PNG</b>.</li>
     </ol>

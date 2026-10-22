@@ -102,11 +102,12 @@ foreach ($w['sets'] as $s) {
         <legend><?= e(t('share.content')) ?></legend>
         <div class="viewtoggle" role="group">
           <button type="button" class="chip is-on" data-share-content="chart" aria-pressed="true"><?= e(t('share.content.chart')) ?></button>
+          <button type="button" class="chip" data-share-content="lines" aria-pressed="false"><?= e(t('share.content.lines')) ?></button>
           <button type="button" class="chip" data-share-content="times" aria-pressed="false"><?= e(t('share.content.times')) ?></button>
           <button type="button" class="chip" data-share-content="none" aria-pressed="false"><?= e(t('share.content.none')) ?></button>
         </div>
         <div class="share__show">
-          <?php foreach (['author', 'date', 'stats', 'pbs'] as $k): ?>
+          <?php foreach (['author', 'date', 'stats'] as $k): ?>
           <label class="check"><input type="checkbox" data-share-show="<?= $k ?>" checked> <?= e(t('share.show.' . $k)) ?></label>
           <?php endforeach; ?>
         </div>
