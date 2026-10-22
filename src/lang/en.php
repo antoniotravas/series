@@ -170,6 +170,8 @@ return [
     'w.best'         => 'Best',
     'w.worst'        => 'Slowest',
     'w.sd'           => 'Spread',
+    'w.combined'     => ':d · average of the :n sets',
+    'w.combined_reps'=> ':n reps',
     'w.pace'         => 'Pace',
     'w.per_km'       => '/km',
     'w.total'        => 'Total',

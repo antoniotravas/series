@@ -62,6 +62,30 @@ foreach ($w['sets'] as $s) {
     }
 }
 ?>
+<?php
+// blocos com a mesma distância (ex.: 2 × 5 × 400 m): média de todas as repetições juntas
+$byDist = [];
+foreach ($w['sets'] as $s) {
+    $byDist[(int)$s['distance_m']][] = $s;
+}
+$combined = array_filter($byDist, fn($g) => count($g) > 1);
+?>
+<?php foreach ($combined as $dist => $group):
+    $all = array_merge(...array_map(fn($s) => $s['reps'], $group));
+    $st = set_stats($all);
+?>
+<section class="combined" aria-label="<?= e(t('w.combined', ['d' => fmt_distance($dist), 'n' => count($group)])) ?>">
+  <h2 class="combined__title"><?= e(t('w.combined', ['d' => fmt_distance($dist), 'n' => count($group)])) ?>
+    <span class="set__meta"><?= e(t('w.combined_reps', ['n' => count($all)])) ?></span></h2>
+  <dl class="set__stats">
+    <div><dt><?= e(t('w.avg')) ?></dt><dd><?= fmt_time($st['avg'], 1) ?></dd></div>
+    <div><dt><?= e(t('w.best')) ?></dt><dd><?= fmt_time($st['best'], 1) ?></dd></div>
+    <div><dt><?= e(t('w.sd')) ?></dt><dd>±<?= number_format($st['sd'], 1) ?>s</dd></div>
+    <div><dt><?= e(t('w.pace')) ?></dt><dd><?= fmt_pace($dist, $st['avg']) ?><small><?= e(t('w.per_km')) ?></small></dd></div>
+  </dl>
+</section>
+<?php endforeach; ?>
+
 <div class="viewbar" data-lanes-toggle hidden>
   <div class="viewtoggle" role="group" aria-label="<?= e(t('w.chart.label')) ?>">
     <button type="button" class="chip is-on" data-view="dev" aria-pressed="true"><?= e(t('w.chart.dev')) ?></button>

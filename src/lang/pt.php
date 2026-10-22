@@ -174,6 +174,8 @@ return [
     'w.best'         => 'Melhor',
     'w.worst'        => 'Pior',
     'w.sd'           => 'Desvio',
+    'w.combined'     => ':d · média dos :n blocos',
+    'w.combined_reps'=> ':n repetições',
     'w.pace'         => 'Ritmo',
     'w.per_km'       => '/km',
     'w.total'        => 'Total',
