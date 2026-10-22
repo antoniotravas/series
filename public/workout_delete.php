@@ -7,4 +7,4 @@ if (is_post()) {
     delete_workout((int)$user['id'], (int)($_POST['id'] ?? 0));
     flash('ok', t('w.deleted'));
 }
-redirect('workouts.php');
+redirect(workouts_list_path((int)$user['id']));

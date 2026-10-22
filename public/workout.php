@@ -29,5 +29,5 @@ render('workout', [
     'pbs'     => $pbs,
     'isOwner' => $isOwner,
     'owner'   => $owner,
-    'back'    => $isOwner ? 'workouts.php' : ($full ? 'workouts.php?u=' . $ownerId : 'user.php?id=' . $ownerId),
+    'back'    => $full ? workouts_list_path($ownerId, $isOwner) : 'user.php?id=' . $ownerId,
 ]);

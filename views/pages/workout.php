@@ -11,7 +11,7 @@ $facts = array_filter([
     t('w.rpe')      => $w['rpe'] ? $w['rpe'] . '/10' : null,
 ]);
 ?>
-<p class="back"><a class="link" href="<?= url($back) ?>"><?= e(t($isOwner ? 'w.back' : 'w.back_other')) ?></a></p>
+<p class="back"><a class="link" href="<?= e(url($back)) ?>"><?= e(t($isOwner ? 'w.back' : 'w.back_other')) ?></a></p>
 
 <?php if (!$isOwner): ?>
 <a class="author" href="<?= url('user.php?id=' . (int)$owner['id']) ?>">

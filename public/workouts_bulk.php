@@ -8,7 +8,7 @@ $uid = (int)$user['id'];
 // voltar à página de onde veio (só caminhos internos)
 $back = (string)($_POST['back'] ?? '');
 if (!str_starts_with($back, config('base_url') . '/') || str_contains($back, '//')) {
-    $back = url('workouts.php');
+    $back = url(workouts_list_path($uid));
 }
 
 if (is_post()) {
@@ -31,7 +31,7 @@ if (is_post()) {
         flash('ok', t('w.bulk.deleted', ['n' => count($ids)]));
         // o treino apagado deixou de existir: não voltar à sua página
         if (str_contains($back, 'workout.php')) {
-            $back = url('workouts.php');
+            $back = url(workouts_list_path($uid));
         }
     }
 }

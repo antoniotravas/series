@@ -7,6 +7,7 @@ $uid = (int)$athlete['id'];
 $isOwner = $uid === (int)$user['id'];
 
 $filters = workout_filters_from_query($_GET);
+remember_list_query($uid);
 $page = max(1, (int)($_GET['page'] ?? 1));
 $result = list_workouts($uid, $filters, $page);
 

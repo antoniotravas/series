@@ -209,6 +209,19 @@ function set_workouts_visibility(int $userId, array $ids, string $visibility): i
     return q("UPDATE workouts SET visibility = ? WHERE user_id = ? AND id IN ($ph)", [$visibility, $userId, ...$ids])->rowCount();
 }
 
+/** Guarda os filtros da lista de treinos de $userId para voltar a ela com os mesmos filtros. */
+function remember_list_query(int $userId): void
+{
+    $_SESSION['list_qs'][$userId] = (string)($_SERVER['QUERY_STRING'] ?? '');
+}
+
+/** Caminho da lista de treinos com os últimos filtros usados ($own = lista do próprio, sem ?u=). */
+function workouts_list_path(int $userId, bool $own = true): string
+{
+    $qs = $_SESSION['list_qs'][$userId] ?? ($own ? '' : 'u=' . $userId);
+    return 'workouts.php' . ($qs !== '' ? '?' . $qs : '');
+}
+
 /** Visibilidade do último treino registado: serve de valor por omissão no próximo. */
 function last_visibility(int $userId): string
 {
