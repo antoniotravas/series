@@ -576,12 +576,14 @@
     blue:   { bg: ['#2370C8', '#123C6E'], ink: '#FFFFFF', muted: 'rgba(255,255,255,.74)', accent: '#FFFFFF', fast: '#FFFFFF', slow: 'rgba(10,16,21,.45)', pb: '#F0C02E', grid: 'rgba(255,255,255,.16)', tile: 'rgba(0,0,0,.15)', track: '#0A1015', lane: 'rgba(255,255,255,.5)', trackAlpha: .25 }
   };
 
-  var state = { format: 'post', theme: 'night', content: 'chart', clear: false };
+  var state = { format: 'post', theme: 'night', content: 'chart', clear: false,
+                show: { author: true, date: true, stats: true, pbs: true } };
   try {
     var saved = JSON.parse(localStorage.getItem('series.share') || '{}');
     if (SIZES[saved.format]) state.format = saved.format;
     if (THEMES[saved.theme]) state.theme = saved.theme;
-    if (saved.content === 'times') state.content = 'times';
+    if (saved.content === 'times' || saved.content === 'none') state.content = saved.content;
+    if (saved.show) Object.keys(state.show).forEach(function (k) { if (saved.show[k] === false) state.show[k] = false; });
     state.clear = saved.clear === true;
   } catch (e) { /* sem armazenamento: valores por omissão */ }
 
@@ -685,7 +687,27 @@
     ctx.textBaseline = 'alphabetic';
   }
 
-  function author(ctx, th, x, y, size) {
+  // cabeçalho: avatar e nome e/ou data e local, conforme as opções; devolve a altura usada
+  function header(ctx, th, x, y, size) {
+    var showA = state.show.author, showD = state.show.date;
+    if (!showA && !showD) return 0;
+    if (!showA) {
+      var tw0 = W - 560 - x;
+      ctx.fillStyle = th.ink;
+      font(ctx, 600, 38, BODY);
+      ctx.fillText(clip(ctx, data.date, tw0), x, y + 38);
+      if (data.place) {
+        ctx.fillStyle = th.muted;
+        font(ctx, 500, 30, BODY);
+        ctx.fillText(clip(ctx, data.place, tw0), x, y + 80);
+      }
+      return data.place ? 90 : 48;
+    }
+    author(ctx, th, x, y, size, showD);
+    return size;
+  }
+
+  function author(ctx, th, x, y, size, withDate) {
     var r = size / 2;
     ctx.save();
     ctx.beginPath();
@@ -713,12 +735,13 @@
 
     // o texto pára antes da curva da pista
     var tx = x + size + 34, tw = W - 560 - tx;
-    var dy = data.place ? -18 : 0;
+    var dy = !withDate ? 20 : (data.place ? -18 : 0);
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
     ctx.fillStyle = th.ink;
     font(ctx, 600, 42, BODY);
     ctx.fillText(clip(ctx, data.author, tw), tx, y + r - 6 + dy);
+    if (!withDate) return;
     ctx.fillStyle = th.muted;
     font(ctx, 500, 30, BODY);
     ctx.fillText(clip(ctx, data.date, tw), tx, y + r + 36 + dy);
@@ -893,8 +916,10 @@
     });
   }
 
-  function draw() {
+  // offset: deslocação vertical do conteúdo (para centrar quando sobra espaço)
+  function draw(offset) {
     var H = SIZES[state.format], story = state.format === 'story', th = THEMES[state.theme];
+    var sh = state.show, content = state.content;
     var M = 80, top = story ? 180 : 90, bottom = story ? 200 : 80, cw = W - 2 * M, av = story ? 120 : 104;
     canvas.width = W; canvas.height = H;
     var ctx = canvas.getContext('2d');
@@ -909,8 +934,9 @@
       track(ctx, th);
     }
 
-    author(ctx, th, M, top, av);
-    var y = top + av + 70;
+    var y = top + (offset || 0);
+    var hh = header(ctx, th, M, y, av);
+    y += hh ? hh + 70 : 0;
 
     // título: o nome do treino (se houver) por cima das séries
     if (data.title) {
@@ -922,7 +948,7 @@
       y += story ? 20 : 14;
     }
     ctx.fillStyle = th.ink;
-    var big = state.content === 'times' ? (story ? 160 : 112) : (story ? 190 : 160), size = big;
+    var big = content === 'times' ? (story ? 160 : 112) : content === 'none' ? (story ? 220 : 190) : (story ? 190 : 160), size = big;
     font(ctx, 700, big, COND);
     var tw = Math.min(cw, clearOfTrack(y) - M);
     var lines = wrap(ctx, data.summary.replace(/ × /g, '×'), tw, 2);
@@ -930,7 +956,7 @@
     font(ctx, 700, size, COND);
     lines.forEach(function (l) { y += size * .88; ctx.fillText(l, M - 4, y); });
 
-    if (data.pbs) {
+    if (data.pbs && sh.pbs) {
       y += 34;
       var label = (data.pbs > 1 ? data.labels.pbn.replace(':n', data.pbs) : data.labels.pb1).toUpperCase();
       font(ctx, 700, 30, COND);
@@ -944,13 +970,15 @@
       y += 52;
     }
 
-    y += 50;
-    y = tiles(ctx, th, M, y, cw, story ? 2 : 4, story);
+    if (sh.stats) {
+      y += 50;
+      y = tiles(ctx, th, M, y, cw, story ? 2 : 4, story);
+    }
 
-    // gráfico no espaço que sobra até ao rodapé
+    // gráfico ou tempos no espaço que sobra até ao rodapé
     var fy = H - bottom - 44;
     var chartTop = y + (story ? 64 : 56), chartH = fy - 50 - chartTop;
-    if (chartH > 160) (state.content === 'times' ? times : chart)(ctx, th, M, chartTop, cw, chartH);
+    if (content !== 'none' && chartH > 160) (content === 'times' ? times : chart)(ctx, th, M, chartTop, cw, chartH);
 
     // rodapé com a marca
     ctx.fillStyle = th.grid;
@@ -967,9 +995,20 @@
     }
     preview.setAttribute('data-format', state.format);
     preview.classList.toggle('is-clear', state.clear);
+    return { end: y, room: fy - 28 - top };
   }
 
-  function render() { return Promise.all([fontsReady, avatarReady]).then(draw); }
+  function render() {
+    return Promise.all([fontsReady, avatarReady]).then(function () {
+      var r = draw(0);
+      // sem gráfico nem tempos: o bloco fica a meio, entre o topo e o rodapé
+      if (state.content === 'none') {
+        var used = r.end - (SIZES[state.format] === 1920 ? 180 : 90);
+        var free = r.room - used;
+        if (free > 40) draw(Math.min(free / 2, free - 60));
+      }
+    });
+  }
 
   function blob() {
     return new Promise(function (resolve) { canvas.toBlob(resolve, 'image/png'); });
@@ -986,7 +1025,7 @@
   function choose(key, value) {
     state[key] = value;
     try { localStorage.setItem('series.share', JSON.stringify(state)); } catch (e) { /* ignorar */ }
-    if (key !== 'clear') pick('data-share-' + key, value);
+    if (key !== 'clear' && key !== 'show') pick('data-share-' + key, value);
     render();
   }
 
@@ -1008,6 +1047,13 @@
         a.remove();
         setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
       });
+    } else if (b.hasAttribute('data-share-copy')) {
+      // o Safari exige a promessa dentro do ClipboardItem, no mesmo clique
+      navigator.clipboard.write([new ClipboardItem({ 'image/png': blob() })]).then(function () {
+        var label = b.textContent;
+        b.textContent = b.getAttribute('data-done');
+        setTimeout(function () { b.textContent = label; }, 2000);
+      }).catch(function () { /* sem permissão */ });
     } else if (b.hasAttribute('data-share-send')) {
       blob().then(function (bl) {
         var file = new File([bl], data.file, { type: 'image/png' });
@@ -1023,14 +1069,25 @@
   } catch (e) { sendBtn.hidden = true; }
   if (sendBtn.hidden) dlg.querySelector('[data-share-download]').className = 'btn btn--primary';
 
+  var copyBtn = dlg.querySelector('[data-share-copy]');
+  copyBtn.hidden = !(window.ClipboardItem && navigator.clipboard && navigator.clipboard.write);
+
   var clearBox = dlg.querySelector('[data-share-clear]');
   clearBox.addEventListener('change', function () { choose('clear', clearBox.checked); });
+  var showBoxes = dlg.querySelectorAll('[data-share-show]');
+  showBoxes.forEach(function (box) {
+    box.addEventListener('change', function () {
+      state.show[box.getAttribute('data-share-show')] = box.checked;
+      choose('show', state.show);
+    });
+  });
 
   opener.addEventListener('click', function () {
     pick('data-share-format', state.format);
     pick('data-share-theme', state.theme);
     pick('data-share-content', state.content);
     clearBox.checked = state.clear;
+    showBoxes.forEach(function (box) { box.checked = state.show[box.getAttribute('data-share-show')]; });
     dlg.showModal();
     render();
   });

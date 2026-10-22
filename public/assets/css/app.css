@@ -643,6 +643,7 @@ h1 .badge { font: 600 .8rem/1.3 var(--f-body); vertical-align: middle; }
 .share__opts .chip small { opacity: .7; margin-left: .2rem; }
 .share__themes { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
 .share__clear { margin-top: .7rem; font-size: .9rem; }
+.share__show { display: grid; gap: .35rem; margin-top: .7rem; font-size: .9rem; }
 /* xadrez por trás da imagem quando o fundo é transparente */
 .share__preview.is-clear canvas {
   background: repeating-conic-gradient(#7F8891 0 25%, #9AA2AA 0 50%) 0 0 / 22px 22px;
