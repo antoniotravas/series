@@ -12,11 +12,10 @@ $toc = [
     'coach'     => 'I am a coach',
     'athlete'   => 'I have a coach',
     'profile'   => 'Profile and account',
-    'admin'     => 'Administration',
     'faq'       => 'FAQ',
 ];
 
-$body = function (bool $isAdmin): void { ?>
+$body = function (): void { ?>
 
 <section id="start" class="help__section">
   <h2>Getting started</h2>
@@ -52,7 +51,7 @@ $body = function (bool $isAdmin): void { ?>
       <li><b>Workouts</b>: list with filters, import and export.</li>
       <li><b>Network</b>: people, requests and shared workouts. The number next to it shows requests waiting for you.</li>
       <li><b>Athletes</b>: only shown to coaches.</li>
-      <li><b>Profile</b>: your photo or initials.</li>
+      <li><b>Your photo or initials</b>: opens a small menu with <b>View profile</b>, where you edit your details, and <b>Log out</b>.</li>
       <li><b>Log workout</b>: the red button. On phones it stays in the bottom right corner.</li>
       <li><b>?</b>: opens this guide.</li>
     </ul>
@@ -261,7 +260,7 @@ $body = function (bool $isAdmin): void { ?>
   <article class="usecase">
     <h3>I want to turn on the coach profile</h3>
     <ol>
-      <li>Open <b>Profile</b>.</li>
+      <li>Press your photo at the top right, then <b>View profile</b>.</li>
       <li>Under personal details, tick <b>I am a coach</b> and press <b>Save profile</b>.</li>
       <li>The <b>Athletes</b> menu appears, and a "Coach" badge by your name. On phones, open Athletes from the <b>Network</b> page.</li>
     </ol>
@@ -321,7 +320,7 @@ $body = function (bool $isAdmin): void { ?>
 
   <article class="usecase">
     <h3>I want to update my details</h3>
-    <p>In <b>Profile</b> you can change your display name, avatar (JPG, PNG or WebP up to 2 MB), birth date, sex, weight, height, club, country, main event and language. Press <b>Save profile</b> at the end.</p>
+    <p>Press your photo and <b>View profile</b>. There you can change your display name, avatar (JPG, PNG or WebP up to 2 MB), birth date, sex, weight, height, club, country, main event and language. Press <b>Save profile</b> at the end.</p>
   </article>
 
   <article class="usecase">
@@ -332,29 +331,11 @@ $body = function (bool $isAdmin): void { ?>
   <article class="usecase">
     <h3>I want to log out or delete my account</h3>
     <ul>
-      <li><b>Log out</b> is at the top of Profile.</li>
+      <li><b>Log out</b>: press your photo at the top right and choose <b>Log out</b>.</li>
       <li><b>Delete account</b> is at the bottom of Profile. It removes the account and every workout for good. Export the CSV first if you want to keep your data.</li>
     </ul>
   </article>
 </section>
-
-<?php if ($isAdmin): ?>
-<section id="admin" class="help__section">
-  <h2>Administration</h2>
-  <p>Only administrators see this section.</p>
-
-  <article class="usecase">
-    <h3>I want to manage users</h3>
-    <ol>
-      <li>Open <b>Admin</b> in the menu, or from Profile.</li>
-      <li>The top shows the number of users, coaches, workouts and connections.</li>
-      <li>Search by name, email or club.</li>
-      <li>For each user you can <b>Make coach</b> or <b>Remove coach</b>, <b>Make admin</b> or <b>Remove admin</b>, and <b>Deactivate</b> or <b>Reactivate</b>.</li>
-    </ol>
-    <p class="tip">A disabled account can no longer log in and disappears from the network, but its workouts are kept. Admins cannot delete accounts or change their own account.</p>
-  </article>
-</section>
-<?php endif; ?>
 
 <section id="faq" class="help__section">
   <h2>FAQ</h2>

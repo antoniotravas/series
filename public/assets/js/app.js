@@ -47,6 +47,26 @@
     return m + ':' + String(s).padStart(2, '0');
   }
 
+  // ---------- Menu do avatar ----------
+
+  document.querySelectorAll('[data-menu]').forEach(function (box) {
+    var btn = box.querySelector('button[aria-expanded]');
+    var menu = box.querySelector('.me__menu');
+    function set(open) {
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      menu.classList.toggle('is-open', open);
+    }
+    btn.addEventListener('click', function () {
+      var open = btn.getAttribute('aria-expanded') !== 'true';
+      set(open);
+      if (open) { var first = menu.querySelector('a, button'); if (first) first.focus(); }
+    });
+    document.addEventListener('click', function (e) { if (!box.contains(e.target)) set(false); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && btn.getAttribute('aria-expanded') === 'true') { set(false); btn.focus(); }
+    });
+  });
+
   // ---------- Confirmações e auto-submit ----------
 
   document.addEventListener('submit', function (ev) {

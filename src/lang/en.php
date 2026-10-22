@@ -401,6 +401,8 @@ return [
     'admin.err_self' => 'This action does not apply to your own account.',
 
     // manual
+    'nav.view_profile' => 'View profile',
+    'nav.account'   => 'Account',
     'nav.help'      => 'Guide',
     'help.title'    => 'User guide',
     'help.lead'     => 'Step-by-step use cases: what you want to do and where to press.',

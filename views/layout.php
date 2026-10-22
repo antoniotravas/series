@@ -39,14 +39,27 @@ $pending = $user ? pending_requests_count((int)$user['id']) : 0;
       <a href="<?= url('admin.php') ?>" class="nav__extra" <?= $active === 'admin' ? 'aria-current="page"' : '' ?>><?= e(t('nav.admin')) ?></a>
       <?php endif; ?>
       <a href="<?= url('help.php') ?>" class="nav__help" title="<?= e(t('help.title')) ?>" aria-label="<?= e(t('help.title')) ?>" <?= $active === 'help' ? 'aria-current="page"' : '' ?>>?</a>
-      <a href="<?= url('profile.php') ?>" class="nav__me" <?= $active === 'profile' ? 'aria-current="page"' : '' ?>>
-        <?php if ($av = avatar_url($user)): ?>
-          <img src="<?= e($av) ?>" alt="" class="avatar avatar--sm">
-        <?php else: ?>
-          <span class="avatar avatar--sm" aria-hidden="true"><?= e(initials($user['display_name'])) ?></span>
-        <?php endif; ?>
-        <span class="nav__label"><?= e(t('nav.profile')) ?></span>
-      </a>
+      <div class="me" data-menu>
+        <button type="button" class="nav__me<?= $active === 'profile' ? ' is-current' : '' ?>" aria-expanded="false" aria-controls="me-menu" aria-label="<?= e(t('nav.account')) ?>">
+          <?php if ($av = avatar_url($user)): ?>
+            <img src="<?= e($av) ?>" alt="" class="avatar avatar--sm">
+          <?php else: ?>
+            <span class="avatar avatar--sm" aria-hidden="true"><?= e(initials($user['display_name'])) ?></span>
+          <?php endif; ?>
+          <span class="nav__label"><?= e(t('nav.profile')) ?></span>
+          <svg class="me__caret" width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="me__menu" id="me-menu">
+          <p class="me__who"><strong><?= e($user['display_name']) ?></strong><small><?= e($user['email']) ?></small></p>
+          <a href="<?= url('profile.php') ?>"><?= e(t('nav.view_profile')) ?></a>
+          <?php if ($user['is_coach']): ?><a href="<?= url('athletes.php') ?>" class="me__extra"><?= e(t('nav.athletes')) ?></a><?php endif; ?>
+          <?php if ($user['is_admin']): ?><a href="<?= url('admin.php') ?>" class="me__extra"><?= e(t('nav.admin')) ?></a><?php endif; ?>
+          <form method="post" action="<?= url('logout.php') ?>">
+            <?= csrf_field() ?>
+            <button type="submit"><?= e(t('nav.logout')) ?></button>
+          </form>
+        </div>
+      </div>
       <a href="<?= url('workout_edit.php') ?>" class="btn btn--primary btn--sm nav__new"><?= e(t('nav.new')) ?></a>
     </nav>
     <?php else: ?>

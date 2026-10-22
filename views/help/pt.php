@@ -12,11 +12,10 @@ $toc = [
     'treinador'  => 'Sou treinador',
     'atleta'     => 'Tenho treinador',
     'perfil'     => 'Perfil e conta',
-    'admin'      => 'Administração',
     'faq'        => 'Perguntas frequentes',
 ];
 
-$body = function (bool $isAdmin): void { ?>
+$body = function (): void { ?>
 
 <section id="inicio" class="help__section">
   <h2>Primeiros passos</h2>
@@ -52,7 +51,7 @@ $body = function (bool $isAdmin): void { ?>
       <li><b>Treinos</b>: lista com filtros, importação e exportação.</li>
       <li><b>Rede</b>: pessoas, pedidos e treinos partilhados. O número ao lado mostra os pedidos por responder.</li>
       <li><b>Atletas</b>: só aparece a treinadores.</li>
-      <li><b>Perfil</b>: a tua fotografia ou iniciais.</li>
+      <li><b>A tua fotografia ou iniciais</b>: abre um pequeno menu com <b>Ver perfil</b>, onde editas os teus dados, e <b>Sair</b>.</li>
       <li><b>Registar treino</b>: o botão vermelho. No telemóvel fica fixo no canto inferior direito.</li>
       <li><b>?</b>: abre este manual.</li>
     </ul>
@@ -261,7 +260,7 @@ $body = function (bool $isAdmin): void { ?>
   <article class="usecase">
     <h3>Quero ativar o perfil de treinador</h3>
     <ol>
-      <li>Abre o <b>Perfil</b>.</li>
+      <li>Carrega na tua fotografia, no canto superior direito, e em <b>Ver perfil</b>.</li>
       <li>Em Dados pessoais, marca <b>Sou treinador</b> e carrega em <b>Guardar perfil</b>.</li>
       <li>Aparece o menu <b>Atletas</b>, e a etiqueta "Treinador" junto ao teu nome. No telemóvel, os Atletas abrem-se a partir da página <b>Rede</b>.</li>
     </ol>
@@ -321,7 +320,7 @@ $body = function (bool $isAdmin): void { ?>
 
   <article class="usecase">
     <h3>Quero atualizar os meus dados</h3>
-    <p>No <b>Perfil</b> podes mudar o nome a apresentar, o avatar (JPG, PNG ou WebP até 2 MB), a data de nascimento, o sexo, o peso, a altura, o clube, o país, a prova principal e o idioma. Carrega em <b>Guardar perfil</b> no fim.</p>
+    <p>Carrega na tua fotografia e em <b>Ver perfil</b>. Aí podes mudar o nome a apresentar, o avatar (JPG, PNG ou WebP até 2 MB), a data de nascimento, o sexo, o peso, a altura, o clube, o país, a prova principal e o idioma. Carrega em <b>Guardar perfil</b> no fim.</p>
   </article>
 
   <article class="usecase">
@@ -332,29 +331,11 @@ $body = function (bool $isAdmin): void { ?>
   <article class="usecase">
     <h3>Quero sair ou apagar a conta</h3>
     <ul>
-      <li><b>Sair</b> está no topo do Perfil.</li>
+      <li><b>Sair</b>: carrega na tua fotografia, no canto superior direito, e escolhe <b>Sair</b>.</li>
       <li><b>Apagar conta</b> está no fundo do Perfil. Apaga a conta e todos os treinos para sempre. Exporta primeiro o CSV se quiseres guardar os dados.</li>
     </ul>
   </article>
 </section>
-
-<?php if ($isAdmin): ?>
-<section id="admin" class="help__section">
-  <h2>Administração</h2>
-  <p>Esta secção só aparece a administradores.</p>
-
-  <article class="usecase">
-    <h3>Quero gerir os utilizadores</h3>
-    <ol>
-      <li>Abre <b>Admin</b> no menu, ou a partir do Perfil.</li>
-      <li>No topo vês o número de utilizadores, treinadores, treinos e conexões.</li>
-      <li>Procura por nome, email ou clube.</li>
-      <li>Em cada utilizador podes: <b>Tornar treinador</b> ou <b>Retirar treinador</b>, <b>Tornar admin</b> ou <b>Retirar admin</b>, e <b>Desativar</b> ou <b>Reativar</b>.</li>
-    </ol>
-    <p class="tip">Uma conta desativada deixa de poder entrar e desaparece da rede, mas os treinos ficam guardados. O administrador não apaga contas, e não pode alterar a sua própria conta.</p>
-  </article>
-</section>
-<?php endif; ?>
 
 <section id="faq" class="help__section">
   <h2>Perguntas frequentes</h2>

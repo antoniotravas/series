@@ -6,9 +6,6 @@ if (!is_file($file)) {
     $file = ROOT . '/views/help/pt.php';
 }
 require $file;
-if (!$isAdmin) {
-    unset($toc['admin']);
-}
 ?>
 <header class="page-head">
   <div>
@@ -28,6 +25,6 @@ if (!$isAdmin) {
     </ol>
   </nav>
   <div class="help__body">
-    <?php $body($isAdmin); ?>
+    <?php $body(); ?>
   </div>
 </div>

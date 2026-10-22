@@ -407,6 +407,8 @@ return [
     'admin.err_self' => 'Esta ação não se aplica à tua própria conta.',
 
     // manual
+    'nav.view_profile' => 'Ver perfil',
+    'nav.account'   => 'Conta',
     'nav.help'      => 'Manual',
     'help.title'    => 'Manual de utilização',
     'help.lead'     => 'Casos de uso passo a passo: o que queres fazer e onde carregar.',
