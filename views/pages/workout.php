@@ -130,6 +130,6 @@ foreach ($w['sets'] as $s) {
       <p class="muted share__hint"><?= e(t('share.hint')) ?></p>
     </div>
   </div>
-  <script type="application/json" data-share-data><?= json_encode(share_card_data($w, $owner, $pbs) + ['site' => config('site_host', 'www.series.corrias.eu')], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
+  <script type="application/json" data-share-data><?= json_encode(share_card_data($w, $owner, $pbs) + ['site' => config('site_host', 'www.series.corridas.eu')], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
 </dialog>
 <?php endif; ?>

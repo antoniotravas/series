@@ -232,7 +232,7 @@ $body = function (): void { ?>
       <li>Escolhe as cores: <b>Noite</b>, <b>Tartan</b>, <b>Claro</b>, <b>Relva</b> ou <b>Azul</b>. Marca <b>Fundo transparente</b> para pores a imagem por cima de uma foto tua (as cores escolhidas passam a ser as do texto).</li>
       <li>No telemóvel, carrega em <b>Partilhar imagem</b> e escolhe a aplicação. No computador, carrega em <b>Copiar imagem</b> e cola-a onde quiseres (Ctrl+V), ou em <b>Descarregar PNG</b>.</li>
     </ol>
-    <p>A imagem leva o teu avatar, a média, a repetição mais rápida, o volume, os recordes pessoais do dia e o gráfico ou os tempos, com o endereço www.series.corrias.eu no rodapé.</p>
+    <p>A imagem leva o teu avatar, a média, a repetição mais rápida, o volume, os recordes pessoais do dia e o gráfico ou os tempos, com o endereço www.series.corridas.eu no rodapé.</p>
     <p class="tip">Só o autor pode criar a imagem. Os treinadores não veem o botão nos treinos dos atletas.</p>
   </article>
 </section>

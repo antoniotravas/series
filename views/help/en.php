@@ -232,7 +232,7 @@ $body = function (): void { ?>
       <li>Pick the colours: <b>Night</b>, <b>Tartan</b>, <b>Light</b>, <b>Grass</b> or <b>Blue</b>. Tick <b>Transparent background</b> to place the image over one of your photos (the colours then apply to the text).</li>
       <li>On a phone, press <b>Share image</b> and choose the app. On a computer, press <b>Copy image</b> and paste it anywhere (Ctrl+V), or <b>Download PNG</b>.</li>
     </ol>
-    <p>The image shows your avatar, the average, the fastest rep, the volume, the day's personal bests and the chart or the times, with the address www.series.corrias.eu at the bottom.</p>
+    <p>The image shows your avatar, the average, the fastest rep, the volume, the day's personal bests and the chart or the times, with the address www.series.corridas.eu at the bottom.</p>
     <p class="tip">Only the author can make the image. Coaches don't see the button on their athletes' workouts.</p>
   </article>
 </section>
