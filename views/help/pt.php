@@ -222,6 +222,18 @@ $body = function (): void { ?>
     <p>Um treino novo usa a mesma opção do último que registaste. Para mudar vários de uma vez, usa a seleção na lista <b>Treinos</b>.</p>
     <p class="tip">Os teus treinadores veem sempre todos os teus treinos, incluindo os que estão em "Só eu".</p>
   </article>
+
+  <article class="usecase">
+    <h3>Quero publicar um treino no Instagram ou noutra rede social</h3>
+    <ol>
+      <li>Abre o treino e carrega em <b>Partilhar</b>.</li>
+      <li>Escolhe o formato: <b>Publicação</b> (4:5, para o feed) ou <b>História</b> (9:16).</li>
+      <li>Escolhe as cores: <b>Noite</b>, <b>Tartan</b> ou <b>Claro</b>.</li>
+      <li>No telemóvel, carrega em <b>Partilhar imagem</b> e escolhe a aplicação. No computador, carrega em <b>Descarregar PNG</b>.</li>
+    </ol>
+    <p>A imagem leva o teu avatar, a média, a repetição mais rápida, o volume, os recordes pessoais do dia e um gráfico com a velocidade de cada repetição.</p>
+    <p class="tip">Só o autor pode criar a imagem. Os treinadores não veem o botão nos treinos dos atletas.</p>
+  </article>
 </section>
 
 <section id="rede" class="help__section">

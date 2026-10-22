@@ -487,3 +487,67 @@ function stats_week_streak(int $userId): int
     }
     return $streak;
 }
+
+// ---------- Imagem para partilhar ----------
+
+/**
+ * Dados do cartão de partilha (desenhado no navegador): textos já formatados
+ * e, por série, os tempos de cada repetição para o gráfico.
+ */
+function share_card_data(array $w, array $owner, array $pbs): array
+{
+    $reps = $sets = [];
+    $dist = $time = 0.0;
+    $pbCount = 0;
+    foreach ($w['sets'] as $s) {
+        $d = (int)$s['distance_m'];
+        $pb = $pbs[$d] ?? null;
+        $flags = [];
+        foreach ($s['reps'] as $r) {
+            $reps[] = ['d' => $d, 't' => (float)$r];
+            $dist += $d;
+            $time += $r;
+            $isPb = $pb !== null && abs($r - $pb) < 0.001;
+            $flags[] = $isPb ? 1 : 0;
+            $pbCount += $isPb ? 1 : 0;
+        }
+        $sets[] = [
+            'label' => count($s['reps']) . '×' . fmt_distance($d),
+            'd'     => $d,
+            'reps'  => array_map('floatval', $s['reps']),
+            'avg'   => $s['stats']['avg'],
+            'pb'    => $flags,
+        ];
+    }
+    $single = count(array_unique(array_column($reps, 'd'))) === 1;
+    // mais rápida = maior velocidade (com distâncias diferentes o tempo não compara)
+    usort($reps, fn($a, $b) => $b['d'] / $b['t'] <=> $a['d'] / $a['t']);
+    $fast = $reps[0] ?? null;
+    $avgTime = $reps ? $time / count($reps) : null;
+
+    return [
+        'title'   => $w['title'] ?: '',
+        'summary' => sets_summary($w['sets']),
+        'date'    => fmt_date($w['workout_date'], true),
+        'place'   => $w['location'] ?: '',
+        'author'  => $owner['display_name'],
+        'initials'=> initials($owner['display_name']),
+        'avatar'  => avatar_url($owner),
+        'pbs'     => $pbCount,
+        'stats'   => [
+            ['k' => t('share.avg'), 'v' => $single ? fmt_time($avgTime, 1) : fmt_pace((int)$dist, $time), 'u' => $single ? fmt_distance($reps[0]['d']) : 'min/km'],
+            ['k' => t('share.fastest'), 'v' => $fast ? fmt_time($fast['t'], 1) : '–', 'u' => $fast ? ($single ? fmt_pace($fast['d'], $fast['t']) . t('w.per_km') : fmt_distance($fast['d'])) : ''],
+            ['k' => t('share.volume'), 'v' => fmt_km($dist), 'u' => 'km'],
+            ['k' => t('share.reps'), 'v' => (string)count($reps), 'u' => t(count($sets) === 1 ? 'share.sets.one' : 'share.sets.n', ['n' => count($sets)])],
+        ],
+        'sets'    => $sets,
+        'labels'  => [
+            'chart'  => t('share.chart'),
+            'faster' => t('share.faster'),
+            'slower' => t('share.slower'),
+            'pb1'    => t('share.pb.one'),
+            'pbn'    => t('share.pb.n'),
+        ],
+        'file'    => 'series-' . $w['workout_date'] . '.png',
+    ];
+}

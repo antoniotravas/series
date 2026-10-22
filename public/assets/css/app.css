@@ -620,3 +620,44 @@ h1 .badge { font: 600 .8rem/1.3 var(--f-body); vertical-align: middle; }
   .help { display: block; } .usecase { break-inside: avoid; }
   body { background: #fff; }
 }
+
+/* ---------- Partilhar treino ---------- */
+.icon { width: 1.05em; height: 1.05em; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.share {
+  width: min(56rem, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); padding: 0;
+  border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); color: var(--ink);
+  box-shadow: 0 24px 60px rgba(10, 16, 21, .35);
+}
+.share::backdrop { background: rgba(10, 16, 21, .62); backdrop-filter: blur(3px); }
+.share[open] { display: flex; flex-direction: column; animation: share-in .22s ease-out; }
+@keyframes share-in { from { opacity: 0; transform: translateY(12px) scale(.98); } }
+.share__head { display: flex; align-items: center; justify-content: space-between; padding: .9rem 1.25rem; border-bottom: 1px solid var(--line); }
+.share__head h2 { margin: 0; font: 700 1.6rem/1 var(--f-display); }
+.share__body { display: grid; grid-template-columns: minmax(0, 1fr) 17rem; gap: 1.5rem; padding: 1.25rem; overflow: auto; }
+.share__preview { margin: 0; display: grid; place-items: center; background: var(--bg); border-radius: var(--r-md); padding: 1rem; }
+.share__preview canvas { display: block; width: auto; height: auto; max-width: 100%; max-height: min(68dvh, 40rem); border-radius: 6px; box-shadow: 0 8px 28px rgba(10, 16, 21, .28); }
+.share__opts { display: flex; flex-direction: column; gap: 1.1rem; }
+.share__opts fieldset { margin: 0; padding: 0; border: 0; }
+.share__opts legend { font: 600 .8rem/1 var(--f-body); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: .55rem; }
+.share__opts .chip { padding: .55rem .8rem; font-size: .9rem; }
+.share__opts .chip small { opacity: .7; margin-left: .2rem; }
+.share__themes { display: flex; gap: .5rem; }
+.swatch {
+  flex: 1; display: flex; align-items: flex-end; height: 4.2rem; padding: .45rem .5rem; cursor: pointer;
+  border: 2px solid transparent; border-radius: var(--r-sm); outline: 1px solid var(--line); outline-offset: -1px;
+  font: 600 .8rem/1 var(--f-body); position: relative; overflow: hidden;
+}
+.swatch::before { content: ""; position: absolute; right: -1.2rem; top: -1.2rem; width: 3rem; height: 3rem; border-radius: 50%; border: 6px solid var(--sw-track); }
+.swatch span { position: relative; }
+.swatch.is-on { border-color: var(--ink); outline-color: transparent; }
+.swatch--night { background: linear-gradient(160deg, #1B2833, #0D141A); color: #F5F7F4; --sw-track: #C2362B; }
+.swatch--tartan { background: linear-gradient(160deg, #CC3B2F, #952619); color: #fff; --sw-track: rgba(22, 33, 43, .35); }
+.swatch--light { background: linear-gradient(160deg, #fff, #ECEFEA); color: #16212B; --sw-track: #C2362B; }
+.share__actions { display: flex; flex-direction: column; gap: .5rem; margin: auto 0 0; }
+.share__hint { font-size: .85rem; margin: 0; }
+@media (max-width: 44rem) {
+  .share { width: 100vw; max-width: 100vw; max-height: 100dvh; height: 100dvh; margin: 0; border-radius: 0; border: 0; }
+  .share__body { grid-template-columns: 1fr; padding: 1rem; }
+  .share__preview { padding: .75rem; }
+  .share__preview canvas { max-height: 52dvh; }
+}

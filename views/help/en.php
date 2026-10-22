@@ -222,6 +222,18 @@ $body = function (): void { ?>
     <p>A new workout uses the same option as the last one you logged. To change several at once, use the selection in <b>Workouts</b>.</p>
     <p class="tip">Your coaches always see all your workouts, including "Only me" ones.</p>
   </article>
+
+  <article class="usecase">
+    <h3>I want to post a workout on Instagram or another social network</h3>
+    <ol>
+      <li>Open the workout and press <b>Share</b>.</li>
+      <li>Pick the format: <b>Post</b> (4:5, for the feed) or <b>Story</b> (9:16).</li>
+      <li>Pick the colours: <b>Night</b>, <b>Tartan</b> or <b>Light</b>.</li>
+      <li>On a phone, press <b>Share image</b> and choose the app. On a computer, press <b>Download PNG</b>.</li>
+    </ol>
+    <p>The image shows your avatar, the average, the fastest rep, the volume, the day's personal bests and a chart with the speed of each rep.</p>
+    <p class="tip">Only the author can make the image. Coaches don't see the button on their athletes' workouts.</p>
+  </article>
 </section>
 
 <section id="network" class="help__section">

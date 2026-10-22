@@ -30,6 +30,7 @@ $facts = array_filter([
   </div>
   <?php if ($isOwner): ?>
   <div class="actions">
+    <?php if ($w['sets']): ?><button type="button" class="btn btn--primary btn--sm" data-share-open><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg><?= e(t('share.btn')) ?></button><?php endif; ?>
     <a class="btn btn--ghost btn--sm" href="<?= url('workout_edit.php?copy=' . (int)$w['id']) ?>" title="<?= e(t('w.dup_title')) ?>"><?= e(t('w.dup')) ?></a>
     <a class="btn btn--ghost btn--sm" href="<?= url('workout_edit.php?id=' . (int)$w['id']) ?>"><?= e(t('w.edit')) ?></a>
     <form method="post" action="<?= url('workouts_bulk.php') ?>">
@@ -79,4 +80,39 @@ foreach ($w['sets'] as $s) {
   <h2><?= e(t('w.notes')) ?></h2>
   <p><?= nl2br(e($w['notes'])) ?></p>
 </section>
+<?php endif; ?>
+
+<?php if ($isOwner && $w['sets']): ?>
+<dialog class="share" data-share aria-labelledby="share-h">
+  <div class="share__head">
+    <h2 id="share-h"><?= e(t('share.title')) ?></h2>
+    <button type="button" class="btn btn--icon" data-share-close aria-label="<?= e(t('share.close')) ?>">✕</button>
+  </div>
+  <div class="share__body">
+    <figure class="share__preview" data-format="post"><canvas data-share-canvas role="img" aria-label="<?= e(t('share.preview')) ?>"></canvas></figure>
+    <div class="share__opts">
+      <fieldset>
+        <legend><?= e(t('share.format')) ?></legend>
+        <div class="viewtoggle" role="group">
+          <button type="button" class="chip is-on" data-share-format="post" aria-pressed="true"><?= e(t('share.post')) ?> <small>4:5</small></button>
+          <button type="button" class="chip" data-share-format="story" aria-pressed="false"><?= e(t('share.story')) ?> <small>9:16</small></button>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend><?= e(t('share.theme')) ?></legend>
+        <div class="share__themes" role="group">
+          <button type="button" class="swatch swatch--night is-on" data-share-theme="night" aria-pressed="true"><span><?= e(t('share.theme.night')) ?></span></button>
+          <button type="button" class="swatch swatch--tartan" data-share-theme="tartan" aria-pressed="false"><span><?= e(t('share.theme.tartan')) ?></span></button>
+          <button type="button" class="swatch swatch--light" data-share-theme="light" aria-pressed="false"><span><?= e(t('share.theme.light')) ?></span></button>
+        </div>
+      </fieldset>
+      <p class="share__actions">
+        <button type="button" class="btn btn--primary" data-share-send hidden><?= e(t('share.send')) ?></button>
+        <button type="button" class="btn btn--ghost" data-share-download><?= e(t('share.download')) ?></button>
+      </p>
+      <p class="muted share__hint"><?= e(t('share.hint')) ?></p>
+    </div>
+  </div>
+  <script type="application/json" data-share-data><?= json_encode(share_card_data($w, $owner, $pbs) + ['site' => ($_SERVER['HTTP_HOST'] ?? '') . config('base_url')], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
+</dialog>
 <?php endif; ?>
