@@ -403,8 +403,8 @@ return [
 
     'mode.coach'      => 'Coach mode',
     'mode.athlete'    => 'Athlete mode',
-    'mode.to_athlete' => 'Switch to my own workouts (athlete)',
-    'mode.to_coach'   => 'Switch to my athletes (coach)',
+    'mode.to_athlete' => 'Switch to athlete',
+    'mode.to_coach'   => 'Switch to coach',
     'athletes.title' => 'Athletes',
     'athletes.lead' => 'The athletes you coach. You see every workout and each dashboard.',
     'athletes.invite' => 'Invite athlete',

@@ -409,8 +409,8 @@ return [
 
     'mode.coach'      => 'Modo treinador',
     'mode.athlete'    => 'Modo atleta',
-    'mode.to_athlete' => 'Mudar para os meus treinos (atleta)',
-    'mode.to_coach'   => 'Mudar para os meus atletas (treinador)',
+    'mode.to_athlete' => 'Mudar para atleta',
+    'mode.to_coach'   => 'Mudar para treinador',
     'athletes.title' => 'Atletas',
     'athletes.lead' => 'Os atletas que treinas. Vês todos os treinos e o painel de cada um.',
     'athletes.invite' => 'Convidar atleta',

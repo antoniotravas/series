@@ -280,7 +280,7 @@ $body = function (): void { ?>
 
   <article class="usecase">
     <h3>Também treino e quero registar os meus treinos</h3>
-    <p>Carrega na tua fotografia e em <b>Mudar para os meus treinos (atleta)</b>. Em <b>modo atleta</b> vês a aplicação como qualquer atleta: o teu painel, os teus treinos e a Rede. Para voltares, carrega outra vez na fotografia e em <b>Mudar para os meus atletas (treinador)</b>.</p>
+    <p>Carrega na tua fotografia e em <b>Mudar para atleta</b>. Em <b>modo atleta</b> vês a aplicação como qualquer atleta: o teu painel, os teus treinos e a Rede. Para voltares, carrega outra vez na fotografia e em <b>Mudar para treinador</b>.</p>
     <p class="tip">A aplicação lembra-se do último modo que usaste neste dispositivo.</p>
   </article>
 

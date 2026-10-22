@@ -280,7 +280,7 @@ $body = function (): void { ?>
 
   <article class="usecase">
     <h3>I also train and want to log my own workouts</h3>
-    <p>Press your photo and <b>Switch to my own workouts (athlete)</b>. In <b>athlete mode</b> you see the app like any athlete: your dashboard, your workouts and the Network. To go back, press your photo again and <b>Switch to my athletes (coach)</b>.</p>
+    <p>Press your photo and <b>Switch to athlete</b>. In <b>athlete mode</b> you see the app like any athlete: your dashboard, your workouts and the Network. To go back, press your photo again and <b>Switch to coach</b>.</p>
     <p class="tip">The app remembers the last mode you used on this device.</p>
   </article>
 
