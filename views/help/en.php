@@ -274,8 +274,14 @@ $body = function (): void { ?>
     <ol>
       <li>Press your photo at the top right, then <b>View profile</b>.</li>
       <li>Press <b>Edit profile</b>, tick <b>I am a coach</b> and press <b>Save profile</b>.</li>
-      <li>The <b>Athletes</b> menu appears, and a "Coach" badge by your name. On phones, open Athletes from the <b>Network</b> page.</li>
+      <li>You now use the app in <b>coach mode</b>: the menu shows <b>Athletes</b>, <b>Workouts</b> (all your athletes' workouts) and <b>Network</b>.</li>
     </ol>
+  </article>
+
+  <article class="usecase">
+    <h3>I also train and want to log my own workouts</h3>
+    <p>Press your photo and <b>Switch to my own workouts (athlete)</b>. In <b>athlete mode</b> you see the app like any athlete: your dashboard, your workouts and the Network. To go back, press your photo again and <b>Switch to my athletes (coach)</b>.</p>
+    <p class="tip">The app remembers the last mode you used on this device.</p>
   </article>
 
   <article class="usecase">
@@ -293,7 +299,7 @@ $body = function (): void { ?>
     <ol>
       <li>Open <b>Athletes</b>. The table shows each athlete's last workout, and their workouts and km over the last 30 days.</li>
       <li>Press an athlete's name to open their <b>dashboard</b>, or <b>Workouts</b> for the full list with filters.</li>
-      <li>A "Coach view" bar at the top lets you switch athlete or go back to your own workouts.</li>
+      <li>In <b>Workouts</b> you see all your athletes' workouts together, with each name; the <b>Athlete</b> filter shows just one.</li>
     </ol>
     <p class="tip">Workouts the athlete logged can only be edited or deleted by the athlete.</p>
   </article>
@@ -301,8 +307,8 @@ $body = function (): void { ?>
   <article class="usecase">
     <h3>I want to log a workout in an athlete's account</h3>
     <ol>
-      <li>Open <b>Athletes</b> and go to the athlete's dashboard or workouts.</li>
-      <li>In the "Coach view" bar, press <b>+ Log workout</b>.</li>
+      <li>Press <b>Log workout</b> at the top and pick the athlete (with only one athlete, the form opens straight away).</li>
+      <li>You can also press <b>+ Log workout</b> in the "Coach view" bar, on an athlete's dashboard or workouts.</li>
       <li>Fill in the workout as you would your own (the form shows the athlete's name) and press <b>Save workout</b>.</li>
     </ol>
     <p>The workout goes into the athlete's account marked "Logged by coach" with your name. You can edit or delete it later; so can the athlete.</p>

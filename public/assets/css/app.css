@@ -127,6 +127,10 @@ small, .small { font-size: .875rem; }
 .me__menu a:hover, .me__menu button:hover, .me__menu a:focus-visible, .me__menu button:focus-visible { background: var(--bg); color: var(--ink); }
 .me__menu form { margin: .3rem 0 0; padding-top: .3rem; border-top: 1px solid var(--line); }
 .me__menu form button { color: var(--tartan); }
+/* troca de modo (treinadores): o modo atual e o botão para o outro */
+.me__menu .me__mode { margin: 0 0 .3rem; padding: 0 0 .3rem; border-top: 0; border-bottom: 1px solid var(--line); }
+.me__mode-now { display: block; padding: .35rem .7rem .3rem; font: 600 .7rem/1.4 var(--f-body); text-transform: uppercase; letter-spacing: .06em; color: var(--grass); }
+.me__menu .me__mode button { color: var(--ink); font-weight: 600; }
 .me__extra { display: none !important; }
 @media (max-width: 40rem) {
   .me__extra { display: block !important; }
@@ -685,3 +689,10 @@ h1 .badge { font: 600 .8rem/1.3 var(--f-body); vertical-align: middle; }
   .share__preview { padding: .75rem; }
   .share__preview canvas { max-height: 52dvh; }
 }
+
+/* escolher o atleta antes de registar um treino (modo treinador) */
+.pick-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .6rem; max-width: 32rem; }
+.pick-list a { display: flex; align-items: center; gap: .8rem; padding: .8rem 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); text-decoration: none; color: var(--ink); }
+.pick-list a:hover, .pick-list a:focus-visible { border-color: var(--tartan); }
+.pick-list span { display: grid; }
+.pick-list small { color: var(--muted); }

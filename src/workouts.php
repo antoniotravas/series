@@ -264,10 +264,11 @@ function workout_filters_from_query(array $qs): array
     ];
 }
 
-function list_workouts(int $userId, array $f, int $page = 1, int $perPage = 20): array
+/** $userIds: um utilizador, ou vários (treinador a ver todos os atletas, com o autor em cada linha). */
+function list_workouts(int|array $userIds, array $f, int $page = 1, int $perPage = 20): array
 {
-    $where = ['w.user_id = ?'];
-    $params = [$userId];
+    [$in, $params] = ids_in($userIds);
+    $where = ["w.user_id IN ($in)"];
     if ($f['distance']) {
         $where[] = 'EXISTS (SELECT 1 FROM workout_sets s WHERE s.workout_id = w.id AND s.distance_m = ?)';
         $params[] = $f['distance'];
@@ -301,7 +302,9 @@ function list_workouts(int $userId, array $f, int $page = 1, int $perPage = 20):
     $total = (int)q("SELECT COUNT(*) FROM workouts w WHERE $w", $params)->fetchColumn();
     $offset = max(0, ($page - 1) * $perPage);
     $rows = q(
-        "SELECT w.* FROM workouts w WHERE $w ORDER BY w.workout_date DESC, w.start_time DESC, w.id DESC LIMIT $perPage OFFSET $offset",
+        "SELECT w.*, u.display_name AS author_name, u.avatar AS author_avatar
+           FROM workouts w JOIN users u ON u.id = w.user_id
+          WHERE $w ORDER BY w.workout_date DESC, w.start_time DESC, w.id DESC LIMIT $perPage OFFSET $offset",
         $params
     )->fetchAll();
     return ['rows' => attach_sets($rows), 'total' => $total, 'pages' => (int)ceil($total / $perPage)];
@@ -335,27 +338,37 @@ function attach_sets(array $rows): array
     return $rows;
 }
 
-function user_distances(int $userId): array
+/** Marcadores "?, ?, ?" e os ids, para um WHERE ... IN (...). */
+function ids_in(int|array $userIds): array
 {
+    $ids = array_map('intval', (array)$userIds) ?: [0];
+    return [implode(',', array_fill(0, count($ids), '?')), $ids];
+}
+
+function user_distances(int|array $userIds): array
+{
+    [$in, $ids] = ids_in($userIds);
     return q(
-        'SELECT DISTINCT s.distance_m FROM workout_sets s JOIN workouts w ON w.id = s.workout_id
-          WHERE w.user_id = ? ORDER BY s.distance_m',
-        [$userId]
+        "SELECT DISTINCT s.distance_m FROM workout_sets s JOIN workouts w ON w.id = s.workout_id
+          WHERE w.user_id IN ($in) ORDER BY s.distance_m",
+        $ids
     )->fetchAll(PDO::FETCH_COLUMN);
 }
 
-function user_years(int $userId): array
+function user_years(int|array $userIds): array
 {
-    return q('SELECT DISTINCT YEAR(workout_date) FROM workouts WHERE user_id = ? ORDER BY 1 DESC', [$userId])
+    [$in, $ids] = ids_in($userIds);
+    return q("SELECT DISTINCT YEAR(workout_date) FROM workouts WHERE user_id IN ($in) ORDER BY 1 DESC", $ids)
         ->fetchAll(PDO::FETCH_COLUMN);
 }
 
-function user_locations(int $userId): array
+function user_locations(int|array $userIds): array
 {
+    [$in, $ids] = ids_in($userIds);
     return q(
-        'SELECT location FROM workouts WHERE user_id = ? AND location IS NOT NULL
-       GROUP BY location ORDER BY COUNT(*) DESC, location LIMIT 50',
-        [$userId]
+        "SELECT location FROM workouts WHERE user_id IN ($in) AND location IS NOT NULL
+       GROUP BY location ORDER BY COUNT(*) DESC, location LIMIT 50",
+        $ids
     )->fetchAll(PDO::FETCH_COLUMN);
 }
 

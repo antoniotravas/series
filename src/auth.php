@@ -270,3 +270,34 @@ function initials(string $name): string
     }
     return mb_strtoupper($i);
 }
+
+// ---------- Modo treinador / modo atleta ----------
+// Um treinador vê a aplicação como treinador (os seus atletas) ou como atleta
+// (os seus treinos). Quem não é treinador está sempre em modo atleta.
+
+const MODE_COOKIE = 'series_mode';
+
+function coach_mode(?array $user = null): bool
+{
+    $user ??= current_user();
+    return $user && !empty($user['is_coach']) && ($_COOKIE[MODE_COOKIE] ?? 'coach') !== 'athlete';
+}
+
+function set_mode(string $mode): void
+{
+    $mode = $mode === 'athlete' ? 'athlete' : 'coach';
+    setcookie(MODE_COOKIE, $mode, [
+        'expires'  => time() + 365 * 86400,
+        'path'     => config('base_url') . '/',
+        'secure'   => !empty($_SERVER['HTTPS']),
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
+    $_COOKIE[MODE_COOKIE] = $mode;
+}
+
+/** Página inicial de cada modo. */
+function home_path(?array $user = null): string
+{
+    return coach_mode($user) ? 'athletes.php' : 'dashboard.php';
+}

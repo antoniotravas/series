@@ -1,10 +1,12 @@
 <?php
-$hasFilters = array_filter($filters) !== [];
-$u = $isOwner ? [] : ['u' => (int)$athlete['id']];   // treinador a ver um atleta
+$coachAll = $coachAll ?? false;   // treinador: os treinos de todos os atletas
+$pick = $pick ?? 0;
+$hasFilters = array_filter($filters) !== [] || $pick;
+$u = $coachAll ? ($pick ? ['a' => $pick] : []) : ($isOwner ? [] : ['u' => (int)$athlete['id']]);
 $qs = fn(array $extra) => http_build_query(array_filter(array_merge($filters, $u, $extra)));
-$listUrl = url('workouts.php' . ($u ? '?u=' . $u['u'] : ''));
+$listUrl = url('workouts.php' . ($u && !$coachAll ? '?u=' . $u['u'] : ''));
 ?>
-<?php if (!$isOwner): ?>
+<?php if (!$isOwner && !$coachAll): ?>
   <?php view('partials/athlete_bar', ['athlete' => $athlete, 'current' => 'workouts']); ?>
 <?php endif; ?>
 <header class="page-head">
@@ -21,7 +23,18 @@ $listUrl = url('workouts.php' . ($u ? '?u=' . $u['u'] : ''));
 </header>
 
 <form method="get" class="filters" role="search">
-  <?php if ($u): ?><input type="hidden" name="u" value="<?= $u['u'] ?>"><?php endif; ?>
+  <?php if ($u && !$coachAll): ?><input type="hidden" name="u" value="<?= $u['u'] ?>"><?php endif; ?>
+  <?php if ($coachAll): ?>
+  <div class="field field--sm">
+    <label for="f-athlete"><?= e(t('w.filter.athlete')) ?></label>
+    <select id="f-athlete" name="a">
+      <option value=""><?= e(t('w.filter.all_athletes')) ?></option>
+      <?php foreach ($athletes as $a): ?>
+        <option value="<?= (int)$a['id'] ?>" <?= (int)$a['id'] === $pick ? 'selected' : '' ?>><?= e($a['display_name']) ?></option>
+      <?php endforeach; ?>
+    </select>
+  </div>
+  <?php endif; ?>
   <div class="field field--sm">
     <label for="f-distance"><?= e(t('w.filter.distance')) ?></label>
     <select id="f-distance" name="distance">
@@ -81,6 +94,9 @@ $listUrl = url('workouts.php' . ($u ? '?u=' . $u['u'] : ''));
     <?php if ($hasFilters): ?>
       <p><?= e(t('w.list.empty')) ?></p>
       <a class="link" href="<?= e($listUrl) ?>"><?= e(t('w.list.clear')) ?></a>
+    <?php elseif ($coachAll): ?>
+      <p><?= e(t($athletes ? 'w.list.empty_athletes' : 'athletes.empty.title')) ?></p>
+      <a class="link" href="<?= url('athletes.php') ?>"><?= e(t('athletes.title')) ?></a>
     <?php elseif (!$isOwner): ?>
       <p><?= e(t('athletes.no_workouts')) ?></p>
     <?php else: ?>
@@ -90,7 +106,7 @@ $listUrl = url('workouts.php' . ($u ? '?u=' . $u['u'] : ''));
     <?php endif; ?>
   </section>
 <?php elseif (!$isOwner): ?>
-  <?php view('partials/workout_rows', ['rows' => $result['rows']]); ?>
+  <?php view('partials/workout_rows', ['rows' => $result['rows'], 'showAuthor' => $coachAll]); ?>
 <?php else: ?>
   <form method="post" action="<?= url('workouts_bulk.php') ?>" class="bulk-form">
     <?= csrf_field() ?>
@@ -111,12 +127,12 @@ $listUrl = url('workouts.php' . ($u ? '?u=' . $u['u'] : ''));
       <button class="btn btn--danger btn--sm" type="submit" name="action" value="delete" data-confirm="<?= e(t('w.bulk.delete_confirm')) ?>"><?= e(t('w.delete')) ?></button>
     </div>
   </form>
+<?php endif; ?>
 
-  <?php if ($result['pages'] > 1): ?>
+  <?php if ($result['rows'] && $result['pages'] > 1): ?>
   <nav class="pager" aria-label="<?= e(t('pager.page', ['p' => $page, 'n' => $result['pages']])) ?>">
     <?php if ($page > 1): ?><a class="btn btn--ghost btn--sm" href="?<?= e($qs(['page' => $page - 1])) ?>"><?= e(t('pager.prev')) ?></a><?php endif; ?>
     <span class="muted small"><?= e(t('pager.page', ['p' => $page, 'n' => $result['pages']])) ?></span>
     <?php if ($page < $result['pages']): ?><a class="btn btn--ghost btn--sm" href="?<?= e($qs(['page' => $page + 1])) ?>"><?= e(t('pager.next')) ?></a><?php endif; ?>
   </nav>
   <?php endif; ?>
-<?php endif; ?>

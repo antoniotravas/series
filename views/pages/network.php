@@ -4,9 +4,6 @@
     <h1><?= e($title) ?></h1>
     <p class="muted"><?= e(t('net.lead')) ?></p>
   </div>
-  <?php if ($u['is_coach']): ?>
-  <div class="actions"><a class="btn btn--ghost btn--sm" href="<?= url('athletes.php') ?>"><?= e(t('athletes.title')) ?></a></div>
-  <?php endif; ?>
 </header>
 
 <div class="net">
@@ -54,7 +51,7 @@
     <?php endif; ?>
   </section>
 
-  <?php if ($coaches): ?>
+  <?php if ($coaches && !coach_mode($u)): ?>
   <section class="panel" aria-labelledby="coaches-h">
     <h2 id="coaches-h"><?= e(t('coach.my_coaches')) ?></h2>
     <p class="small muted"><?= e(t('coach.my_coaches_note')) ?></p>

@@ -274,8 +274,14 @@ $body = function (): void { ?>
     <ol>
       <li>Carrega na tua fotografia, no canto superior direito, e em <b>Ver perfil</b>.</li>
       <li>Carrega em <b>Editar perfil</b>, marca <b>Sou treinador</b> e carrega em <b>Guardar perfil</b>.</li>
-      <li>Aparece o menu <b>Atletas</b>, e a etiqueta "Treinador" junto ao teu nome. No telemóvel, os Atletas abrem-se a partir da página <b>Rede</b>.</li>
+      <li>Passas a usar a aplicação em <b>modo treinador</b>: o menu mostra <b>Atletas</b>, <b>Treinos</b> (os treinos de todos os teus atletas) e <b>Rede</b>.</li>
     </ol>
+  </article>
+
+  <article class="usecase">
+    <h3>Também treino e quero registar os meus treinos</h3>
+    <p>Carrega na tua fotografia e em <b>Mudar para os meus treinos (atleta)</b>. Em <b>modo atleta</b> vês a aplicação como qualquer atleta: o teu painel, os teus treinos e a Rede. Para voltares, carrega outra vez na fotografia e em <b>Mudar para os meus atletas (treinador)</b>.</p>
+    <p class="tip">A aplicação lembra-se do último modo que usaste neste dispositivo.</p>
   </article>
 
   <article class="usecase">
@@ -293,7 +299,7 @@ $body = function (): void { ?>
     <ol>
       <li>Abre <b>Atletas</b>. A tabela mostra o último treino, os treinos e os km dos últimos 30 dias de cada atleta.</li>
       <li>Carrega no nome de um atleta para abrir o <b>painel</b> dele, ou em <b>Treinos</b> para veres a lista completa com filtros.</li>
-      <li>No topo há uma barra "Vista de treinador" para mudares de atleta ou voltares aos teus treinos.</li>
+      <li>Em <b>Treinos</b> vês os treinos de todos os atletas juntos, com o nome de cada um; o filtro <b>Atleta</b> mostra só um.</li>
     </ol>
     <p class="tip">Os treinos que o atleta registou só ele os pode editar ou apagar.</p>
   </article>
@@ -301,8 +307,8 @@ $body = function (): void { ?>
   <article class="usecase">
     <h3>Quero registar um treino na conta de um atleta</h3>
     <ol>
-      <li>Abre <b>Atletas</b> e entra no painel ou nos treinos do atleta.</li>
-      <li>Na barra "Vista de treinador", carrega em <b>+ Registar treino</b>.</li>
+      <li>Carrega em <b>Registar treino</b>, no topo, e escolhe o atleta (se só tiveres um, passa logo ao formulário).</li>
+      <li>Também podes carregar em <b>+ Registar treino</b> na barra "Vista de treinador", no painel ou nos treinos de um atleta.</li>
       <li>Preenche o treino como farias num teu (aparece "na conta de" e o nome do atleta) e carrega em <b>Guardar treino</b>.</li>
     </ol>
     <p>O treino fica na conta do atleta com a nota "Registado pelo treinador" e o teu nome. Podes editá-lo ou apagá-lo mais tarde; o atleta também.</p>

@@ -10,6 +10,20 @@ if ($id && (!$existing || !can_edit_workout($uid, $existing))) {
     redirect('workouts.php');
 }
 
+// modo treinador: primeiro escolhe-se o atleta
+if (coach_mode($user) && !$existing && !isset($_GET['for'])) {
+    $athletes = list_athletes($uid);
+    if (count($athletes) === 1) {
+        redirect('workout_edit.php?for=' . (int)$athletes[0]['id']);
+    }
+    if (!$athletes) {
+        flash('error', t('athletes.empty.title'));
+        redirect('athletes.php');
+    }
+    render('pick_athlete', ['title' => t('w.new.title'), 'active' => 'workouts', 'athletes' => $athletes]);
+    exit;
+}
+
 // dono do treino: o próprio, ou o atleta para quem o treinador está a registar (?for=)
 $ownerId = $existing ? (int)$existing['user_id'] : (int)($_GET['for'] ?? $uid);
 if ($ownerId !== $uid && !$existing && !is_coach_of($uid, $ownerId)) {

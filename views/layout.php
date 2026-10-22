@@ -23,18 +23,21 @@ $pending = $user ? pending_requests_count((int)$user['id']) : 0;
 <a class="skip" href="#main"><?= e(t('nav.skip')) ?></a>
 <header class="topbar">
   <div class="wrap topbar__inner">
-    <a class="brand" href="<?= url($user ? 'dashboard.php' : '') ?>" aria-label="<?= e(config('app_name')) ?>">
+    <?php $coachMode = $user && coach_mode($user); ?>
+    <a class="brand" href="<?= url($user ? home_path($user) : '') ?>" aria-label="<?= e(config('app_name')) ?>">
       <span class="brand__lanes" aria-hidden="true"><i></i><i></i><i></i></span>
       <span class="brand__name"><?= e(config('app_name')) ?></span>
     </a>
     <?php if ($user): ?>
     <nav class="nav" aria-label="Principal">
+      <?php if ($coachMode): ?>
+      <a href="<?= url('athletes.php') ?>" <?= $active === 'athletes' ? 'aria-current="page"' : '' ?>><?= e(t('nav.athletes')) ?></a>
+      <a href="<?= url('workouts.php') ?>" <?= $active === 'workouts' ? 'aria-current="page"' : '' ?>><?= e(t('nav.workouts')) ?></a>
+      <?php else: ?>
       <a href="<?= url('dashboard.php') ?>" <?= $active === 'dashboard' ? 'aria-current="page"' : '' ?>><?= e(t('nav.dashboard')) ?></a>
       <a href="<?= url('workouts.php') ?>" <?= $active === 'workouts' ? 'aria-current="page"' : '' ?>><?= e(t('nav.workouts')) ?></a>
-      <a href="<?= url('network.php') ?>" <?= $active === 'network' ? 'aria-current="page"' : '' ?>><?= e(t('nav.network')) ?><?php if ($pending): ?> <span class="count" aria-label="<?= e(t('net.pending_count', ['n' => $pending])) ?>"><?= $pending ?></span><?php endif; ?></a>
-      <?php if ($user['is_coach']): ?>
-      <a href="<?= url('athletes.php') ?>" class="nav__extra" <?= $active === 'athletes' ? 'aria-current="page"' : '' ?>><?= e(t('nav.athletes')) ?></a>
       <?php endif; ?>
+      <a href="<?= url('network.php') ?>" <?= $active === 'network' ? 'aria-current="page"' : '' ?>><?= e(t('nav.network')) ?><?php if ($pending): ?> <span class="count" aria-label="<?= e(t('net.pending_count', ['n' => $pending])) ?>"><?= $pending ?></span><?php endif; ?></a>
       <?php if ($user['is_admin']): ?>
       <a href="<?= url('admin.php') ?>" class="nav__extra" <?= $active === 'admin' ? 'aria-current="page"' : '' ?>><?= e(t('nav.admin')) ?></a>
       <?php endif; ?>
@@ -50,8 +53,14 @@ $pending = $user ? pending_requests_count((int)$user['id']) : 0;
         </button>
         <div class="me__menu" id="me-menu">
           <p class="me__who"><strong><?= e($user['display_name']) ?></strong><small><?= e($user['email']) ?></small></p>
+          <?php if ($user['is_coach']): ?>
+          <form method="post" action="<?= url('mode.php') ?>" class="me__mode">
+            <?= csrf_field() ?>
+            <span class="me__mode-now"><?= e(t($coachMode ? 'mode.coach' : 'mode.athlete')) ?></span>
+            <button type="submit" name="mode" value="<?= $coachMode ? 'athlete' : 'coach' ?>"><?= e(t($coachMode ? 'mode.to_athlete' : 'mode.to_coach')) ?></button>
+          </form>
+          <?php endif; ?>
           <a href="<?= url('profile.php') ?>"><?= e(t('nav.view_profile')) ?></a>
-          <?php if ($user['is_coach']): ?><a href="<?= url('athletes.php') ?>" class="me__extra"><?= e(t('nav.athletes')) ?></a><?php endif; ?>
           <?php if ($user['is_admin']): ?><a href="<?= url('admin.php') ?>" class="me__extra"><?= e(t('nav.admin')) ?></a><?php endif; ?>
           <a href="<?= url('help.php') ?>"><?= e(t('help.title')) ?></a>
           <form method="post" action="<?= url('logout.php') ?>">

@@ -35,7 +35,7 @@ $hidden = fn(string $action, array $extra = []) => csrf_field()
     <?php endif; ?>
 
     <?php // Treinador: eu treino o outro ?>
-    <?php if ($me['is_coach']): $l = $rel['as_coach']; ?>
+    <?php if (coach_mode($me)): $l = $rel['as_coach']; ?>
       <?php if (!$l): ?>
         <form method="post" action="<?= url('network_action.php') ?>"><?= $hidden('coach_invite', ['user_id' => $oid]) ?>
           <button class="btn btn--ghost btn--sm" type="submit"><?= e(t('coach.invite')) ?></button></form>
@@ -49,7 +49,7 @@ $hidden = fn(string $action, array $extra = []) => csrf_field()
     <?php endif; ?>
 
     <?php // Atleta: o outro é treinador e pode treinar-me ?>
-    <?php if ($other['is_coach']): $l = $rel['as_athlete']; ?>
+    <?php if ($other['is_coach'] && !coach_mode($me)): $l = $rel['as_athlete']; ?>
       <?php if (!$l): ?>
         <form method="post" action="<?= url('network_action.php') ?>"><?= $hidden('coach_ask', ['user_id' => $oid]) ?>
           <button class="btn btn--ghost btn--sm" type="submit" title="<?= e(t('coach.accept_note')) ?>"><?= e(t('coach.ask')) ?></button></form>
