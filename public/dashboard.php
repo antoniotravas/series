@@ -24,6 +24,7 @@ render('dashboard', [
     'streak'      => stats_week_streak($uid),
     'pbs'         => $pbs,
     'pbsByDistance' => $pbsByDistance,
+    'trained'     => stats_trained_distances($uid),
     'weekly'      => stats_weekly_volume($uid),
     'progDist'    => $progDist,
     'progression' => $progDist ? stats_progression($uid, $progDist) : [],

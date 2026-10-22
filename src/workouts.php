@@ -442,6 +442,18 @@ function stats_progression(int $userId, int $distance, int $limit = 30): array
     return array_reverse($rows);
 }
 
+/** Distâncias mais treinadas: em quantos treinos aparece cada distância (5 × 300 m conta um). */
+function stats_trained_distances(int $userId, int $limit = 8): array
+{
+    return q(
+        'SELECT s.distance_m, COUNT(DISTINCT w.id) AS workouts
+           FROM workouts w JOIN workout_sets s ON s.workout_id = w.id
+          WHERE w.user_id = ? AND w.active = 1
+       GROUP BY s.distance_m ORDER BY workouts DESC, s.distance_m LIMIT ' . (int)$limit,
+        [$userId]
+    )->fetchAll();
+}
+
 function stats_top_locations(int $userId, int $limit = 5): array
 {
     return q(

@@ -375,7 +375,7 @@ input[type="search"] { -webkit-appearance: none; appearance: none; }
   /* no telemóvel: placard, totais, gráficos, distâncias, últimos treinos */
   .dash__side, .dash__main { display: contents; }
   .board { order: 1; } .totals { order: 2; } .panel--weekly { order: 3; }
-  .panel--progress { order: 4; } .panel--dist { order: 5; } .panel--recent { order: 6; }
+  .panel--progress { order: 4; } .panel--dist { order: 5; } .panel--trained { order: 5; } .panel--recent { order: 6; }
 }
 @media (min-width: 60rem) {
   .dash { grid-template-columns: 21rem 1fr; align-items: start; }

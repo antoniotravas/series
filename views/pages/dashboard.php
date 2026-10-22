@@ -72,6 +72,23 @@ $link = function (string $page, string $qs = '') use ($uq): string {
       <?php endforeach; ?>
     </ul>
   </section>
+
+  <?php if ($trained): ?>
+  <section class="panel panel--trained" aria-labelledby="tr-h">
+    <h2 id="tr-h"><?= e(t('dash.trained')) ?></h2>
+    <p class="muted small"><?= e(t('dash.trained.lead')) ?></p>
+    <?php $maxW = max(array_map(fn($d) => (int)$d['workouts'], $trained)); ?>
+    <ul class="hbars">
+      <?php foreach ($trained as $d): ?>
+      <li>
+        <a href="<?= $link('workouts.php', 'distance=' . (int)$d['distance_m']) ?>"><?= e(fmt_distance((int)$d['distance_m'])) ?></a>
+        <span class="hbars__bar" style="--w: <?= round((int)$d['workouts'] / $maxW * 100, 1) ?>%"></span>
+        <span class="hbars__n"><?= e(t((int)$d['workouts'] === 1 ? 'dash.trained.one' : 'dash.trained.n', ['n' => (int)$d['workouts']])) ?></span>
+      </li>
+      <?php endforeach; ?>
+    </ul>
+  </section>
+  <?php endif; ?>
 </div>
 <div class="dash__main">
   <section class="panel panel--weekly" aria-labelledby="wk-h">
