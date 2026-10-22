@@ -76,11 +76,13 @@
       if (busy) return;
       busy = true;
       btn.disabled = true;
-      fetch(more.getAttribute('data-feed-more') + '?offset=' + more.getAttribute('data-next'), { credentials: 'same-origin' })
+      fetch(more.getAttribute('data-feed-more') + '?offset=' + more.getAttribute('data-next'), { credentials: 'same-origin', cache: 'no-store' })
         .then(function (r) { return r.ok ? r.text().then(function (html) { return { html: html, more: r.headers.get('X-Feed-More') === '1' }; }) : Promise.reject(); })
         .then(function (res) {
           var tmp = document.createElement('div');
           tmp.innerHTML = res.html;
+          var flag = tmp.querySelector('[data-feed-has-more]');
+          if (flag) res.more = flag.getAttribute('data-feed-has-more') === '1';
           var items = tmp.querySelectorAll('.wlist__item');
           var months = list.querySelectorAll('.wlist__month');
           var lastMonth = months.length ? months[months.length - 1].getAttribute('data-month') : null;
@@ -90,10 +92,16 @@
             list.appendChild(li);
           });
           more.setAttribute('data-next', parseInt(more.getAttribute('data-next'), 10) + items.length);
-          if (!res.more || !items.length) { if (io) io.disconnect(); more.remove(); }
+          if (!res.more || !items.length) { if (io) io.disconnect(); more.remove(); return 'end'; }
+          return 'ok';
         })
-        .catch(function () {})
-        .then(function () { busy = false; btn.disabled = false; });
+        .catch(function () { return 'error'; })   // fica o botão para tentar de novo
+        .then(function (end) {
+          busy = false;
+          btn.disabled = false;
+          // se o fim da lista continua à vista, carrega já a página seguinte
+          if (end === 'ok' && io && more.getBoundingClientRect().top < window.innerHeight + 200) load();
+        });
     };
     btn.addEventListener('click', load);
     var io = 'IntersectionObserver' in window ? new IntersectionObserver(function (en) {

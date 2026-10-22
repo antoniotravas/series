@@ -342,7 +342,7 @@ return [
     'net.lead'      => 'Connect with other athletes and coaches and see the workouts they share.',
     'net.requests'  => 'Requests received',
     'net.sent'      => 'Requests sent',
-    'net.feed.more' => 'Show more',
+    'net.feed.more' => 'Load older workouts',
     'net.feed'      => 'Recent activity',
     'net.feed.empty' => 'No shared workouts yet. Workouts from your connections marked "Connections" or "Public" show up here.',
     'net.search'    => 'Find people',

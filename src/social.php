@@ -270,7 +270,7 @@ function search_users(int $me, string $term, int $limit = 30): array
 }
 
 /** Treinos recentes das conexões (os que me deixam ver) e de todos os meus atletas. */
-const FEED_PAGE = 10;
+const FEED_PAGE = 20;
 
 /** Treinos partilhados pelas conexões e treinos dos atletas, mais recentes primeiro. */
 function activity_feed(int $uid, int $limit = FEED_PAGE, int $offset = 0): array

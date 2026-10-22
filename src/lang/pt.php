@@ -348,7 +348,7 @@ return [
     'net.lead'      => 'Liga-te a outros atletas e treinadores e vê os treinos que partilham.',
     'net.requests'  => 'Pedidos recebidos',
     'net.sent'      => 'Pedidos enviados',
-    'net.feed.more' => 'Ver mais',
+    'net.feed.more' => 'Carregar treinos mais antigos',
     'net.feed'      => 'Atividade recente',
     'net.feed.empty' => 'Ainda não há treinos partilhados. Os treinos das tuas conexões marcados como "Conexões" ou "Público" aparecem aqui.',
     'net.search'    => 'Procurar pessoas',
