@@ -25,7 +25,12 @@
   <section class="panel" aria-labelledby="feed-h">
     <h2 id="feed-h"><?= e(t('net.feed')) ?></h2>
     <?php if ($feed): ?>
-      <?php view('partials/workout_rows', ['rows' => $feed, 'showAuthor' => true]); ?>
+      <?php view('partials/workout_rows', ['rows' => array_slice($feed, 0, FEED_PAGE), 'showAuthor' => true]); ?>
+      <?php if (count($feed) > FEED_PAGE): ?>
+        <p class="feed-more" data-feed-more="<?= e(url('feed.php')) ?>" data-next="<?= FEED_PAGE ?>">
+          <button class="btn btn--ghost btn--sm" type="button"><?= e(t('net.feed.more')) ?></button>
+        </p>
+      <?php endif; ?>
     <?php else: ?>
       <p class="muted"><?= e(t('net.feed.empty')) ?></p>
     <?php endif; ?>

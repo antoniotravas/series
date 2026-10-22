@@ -67,6 +67,35 @@
     });
   });
 
+  // ---------- Feed da rede: carregar mais ao descer ----------
+
+  var more = document.querySelector('[data-feed-more]');
+  if (more) {
+    var list = more.previousElementSibling, busy = false, btn = more.querySelector('button');
+    var load = function () {
+      if (busy) return;
+      busy = true;
+      btn.disabled = true;
+      fetch(more.getAttribute('data-feed-more') + '?offset=' + more.getAttribute('data-next'), { credentials: 'same-origin' })
+        .then(function (r) { return r.ok ? r.text().then(function (html) { return { html: html, more: r.headers.get('X-Feed-More') === '1' }; }) : Promise.reject(); })
+        .then(function (res) {
+          var tmp = document.createElement('div');
+          tmp.innerHTML = res.html;
+          var items = tmp.querySelectorAll('.wlist__item');
+          items.forEach(function (li) { list.appendChild(li); });
+          more.setAttribute('data-next', parseInt(more.getAttribute('data-next'), 10) + items.length);
+          if (!res.more || !items.length) { if (io) io.disconnect(); more.remove(); }
+        })
+        .catch(function () {})
+        .then(function () { busy = false; btn.disabled = false; });
+    };
+    btn.addEventListener('click', load);
+    var io = 'IntersectionObserver' in window ? new IntersectionObserver(function (en) {
+      if (en[0].isIntersecting) load();
+    }, { rootMargin: '200px' }) : null;
+    if (io) io.observe(more);
+  }
+
   // ---------- Confirmações e auto-submit ----------
 
   document.addEventListener('submit', function (ev) {

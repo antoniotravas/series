@@ -17,5 +17,6 @@ render('network', [
     'coachOut'    => array_values(array_filter($coaching, fn($r) => !$r['incoming'])),
     'connections' => list_connections($uid),
     'coaches'     => list_coaches($uid),
-    'feed'        => activity_feed($uid),
+    // mais um do que se mostra, para saber se há mais para carregar
+    'feed'        => activity_feed($uid, FEED_PAGE + 1),
 ]);

@@ -21,7 +21,7 @@ $showAuthor = $showAuthor ?? false;        // feed: nome de quem treinou
       <span class="wlist__body">
         <span class="wlist__sets"><?= e(sets_summary($r['sets'])) ?></span>
         <span class="wlist__meta">
-          <?php if ($showAuthor): ?><span class="wlist__author"><?= e($r['author_name']) ?></span><?php endif; ?>
+          <?php if ($showAuthor): ?><span class="wlist__author"><?php view('partials/avatar', ['u' => ['avatar' => $r['author_avatar'], 'display_name' => $r['author_name']], 'size' => 'xs']); ?><?= e($r['author_name']) ?></span><?php endif; ?>
           <?php if ($showVis && $r['visibility'] !== 'private'): ?><span class="badge badge--vis-<?= e($r['visibility']) ?>"><?= e(t('vis.' . $r['visibility'])) ?></span><?php endif; ?>
           <?php if (!$r['active']): ?><span class="badge"><?= e(t('w.inactive')) ?></span><?php endif; ?>
           <?php if ($r['title']): ?><span><?= e($r['title']) ?></span><?php endif; ?>

@@ -270,7 +270,10 @@ function search_users(int $me, string $term, int $limit = 30): array
 }
 
 /** Treinos recentes das conexões (os que me deixam ver) e de todos os meus atletas. */
-function activity_feed(int $uid, int $limit = 20): array
+const FEED_PAGE = 10;
+
+/** Treinos partilhados pelas conexões e treinos dos atletas, mais recentes primeiro. */
+function activity_feed(int $uid, int $limit = FEED_PAGE, int $offset = 0): array
 {
     $rows = q(
         "SELECT w.*, u.display_name AS author_name, u.avatar AS author_avatar
@@ -283,7 +286,7 @@ function activity_feed(int $uid, int $limit = 20): array
                     SELECT ca.athlete_id FROM coach_athletes ca JOIN users cu ON cu.id = ca.coach_id
                      WHERE ca.coach_id = ? AND ca.status = 'accepted' AND cu.is_coach = 1))
        ORDER BY w.workout_date DESC, w.start_time DESC, w.id DESC
-          LIMIT " . (int)$limit,
+          LIMIT " . (int)$limit . ' OFFSET ' . max(0, $offset),
         [$uid, $uid, $uid, $uid]
     )->fetchAll();
     return attach_sets($rows);

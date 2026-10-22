@@ -76,7 +76,6 @@ $link = function (string $page, string $qs = '') use ($uq): string {
   <?php if ($trained): ?>
   <section class="panel panel--trained" aria-labelledby="tr-h">
     <h2 id="tr-h"><?= e(t('dash.trained')) ?></h2>
-    <p class="muted small"><?= e(t('dash.trained.lead')) ?></p>
     <?php $maxW = max(array_map(fn($d) => (int)$d['workouts'], $trained)); ?>
     <ul class="hbars">
       <?php foreach ($trained as $d): ?>
