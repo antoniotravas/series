@@ -82,7 +82,13 @@
           var tmp = document.createElement('div');
           tmp.innerHTML = res.html;
           var items = tmp.querySelectorAll('.wlist__item');
-          items.forEach(function (li) { list.appendChild(li); });
+          var months = list.querySelectorAll('.wlist__month');
+          var lastMonth = months.length ? months[months.length - 1].getAttribute('data-month') : null;
+          tmp.querySelectorAll('.wlist > li').forEach(function (li) {
+            // o mês que continua da página anterior não repete o cabeçalho
+            if (li.classList.contains('wlist__month') && li.getAttribute('data-month') === lastMonth) return;
+            list.appendChild(li);
+          });
           more.setAttribute('data-next', parseInt(more.getAttribute('data-next'), 10) + items.length);
           if (!res.more || !items.length) { if (io) io.disconnect(); more.remove(); }
         })

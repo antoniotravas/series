@@ -6,17 +6,22 @@ $showVis = $showVis ?? $selectable;        // marcar treinos partilhados (lista 
 $showAuthor = $showAuthor ?? false;        // feed: nome de quem treinou
 ?>
 <ul class="wlist">
-  <?php foreach ($rows as $r):
+  <?php $month = null; foreach ($rows as $r):
       $ts = strtotime($r['workout_date']);
+      // cabeçalho do mês (fica fixo no topo ao descer, até chegar o mês seguinte)
+      if (date('Y-m', $ts) !== $month):
+          $month = date('Y-m', $ts);
   ?>
+  <li class="wlist__month" data-month="<?= $month ?>"><span class="wlist__mname"><?= e(month_name((int)date('n', $ts))) ?></span> <span class="wlist__year"><?= date('Y', $ts) ?></span></li>
+  <?php endif; ?>
   <li class="wlist__item<?= $r['active'] ? '' : ' wlist__item--off' ?><?= $selectable ? ' wlist__item--pick' : '' ?>">
     <?php if ($selectable): ?>
       <input type="checkbox" class="wlist__pick" name="ids[]" value="<?= (int)$r['id'] ?>" aria-label="<?= e(t('w.bulk.pick', ['d' => fmt_date($r['workout_date'])])) ?>">
     <?php endif; ?>
     <a href="<?= url('workout.php?id=' . (int)$r['id']) ?>" class="wlist__link">
-      <time class="wlist__date" datetime="<?= e($r['workout_date']) ?>">
-        <span class="wlist__day"><?= date('j', $ts) ?></span>
-        <span class="wlist__mon"><?= e(mb_substr(month_name((int)date('n', $ts)), 0, 3)) ?> <?= date('Y', $ts) ?></span>
+      <time class="cal" datetime="<?= e($r['workout_date']) ?>">
+        <span class="cal__wd"><?= e(mb_strtolower(mb_substr(t('weekday.' . date('N', $ts)), 0, 3))) ?></span>
+        <span class="cal__day"><?= date('j', $ts) ?></span>
       </time>
       <span class="wlist__body">
         <span class="wlist__sets"><?= e(sets_summary($r['sets'])) ?></span>

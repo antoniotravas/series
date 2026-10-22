@@ -47,17 +47,21 @@ Data       | 1    | 2    | 3    | Média | Intervalo
 <form method="post" class="import">
   <?= csrf_field() ?>
   <ul class="wlist ilist">
-    <?php foreach ($items as $i => $it):
+    <?php $month = null; foreach ($items as $i => $it):
         $w = $it['input'];
         $ts = strtotime($w['workout_date']);
         $ok = !$it['errors'];
+        if (date('Y-m', $ts) !== $month):
+            $month = date('Y-m', $ts);
     ?>
+    <li class="wlist__month"><span class="wlist__mname"><?= e(month_name((int)date('n', $ts))) ?></span> <span class="wlist__year"><?= date('Y', $ts) ?></span></li>
+    <?php endif; ?>
     <li class="wlist__item">
       <label class="ilist__row<?= $ok ? '' : ' ilist__row--off' ?>">
         <input type="checkbox" name="pick[]" value="<?= $i ?>" <?= $ok && !$it['exists'] ? 'checked' : '' ?> <?= $ok ? '' : 'disabled' ?>>
-        <time class="wlist__date" datetime="<?= e($w['workout_date']) ?>">
-          <span class="wlist__day"><?= date('j', $ts) ?></span>
-          <span class="wlist__mon"><?= e(mb_substr(month_name((int)date('n', $ts)), 0, 3)) ?> <?= date('Y', $ts) ?></span>
+        <time class="cal" datetime="<?= e($w['workout_date']) ?>">
+          <span class="cal__wd"><?= e(mb_strtolower(mb_substr(t('weekday.' . date('N', $ts)), 0, 3))) ?></span>
+          <span class="cal__day"><?= date('j', $ts) ?></span>
         </time>
         <span class="wlist__body">
           <span class="wlist__sets"><?= e($summary($w['sets'])) ?></span>
