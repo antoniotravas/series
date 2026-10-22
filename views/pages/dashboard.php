@@ -1,10 +1,17 @@
 <?php
-$u = current_user();
 $hasData = $totals['workouts'] > 0;
+$uq = $isOwner ? '' : 'u=' . (int)$athlete['id'];   // manter o atleta nos links (treinador)
+$link = function (string $page, string $qs = '') use ($uq): string {
+    $all = implode('&', array_filter([$qs, $uq]));
+    return url($page . ($all !== '' ? '?' . $all : ''));
+};
 ?>
+<?php if (!$isOwner): ?>
+  <?php view('partials/athlete_bar', ['athlete' => $athlete, 'current' => 'dashboard']); ?>
+<?php endif; ?>
 <header class="page-head">
   <div>
-    <h1><?= e(t('dash.hello', ['name' => $u['display_name']])) ?></h1>
+    <h1><?= e($isOwner ? t('dash.hello', ['name' => $athlete['display_name']]) : $title) ?></h1>
     <?php if ($hasData): ?>
       <p class="muted">
         <?= e(t('dash.totals.30d', ['n' => (int)$totals['workouts_30d'], 'km' => fmt_km($totals['meters_30d'])])) ?>
@@ -14,7 +21,13 @@ $hasData = $totals['workouts'] > 0;
   </div>
 </header>
 
-<?php if (!$hasData): ?>
+<?php if ($athletes): ?>
+  <?php view('partials/athletes_table', ['athletes' => $athletes, 'compact' => true]); ?>
+<?php endif; ?>
+
+<?php if (!$hasData && !$isOwner): ?>
+  <section class="empty empty--sm"><p><?= e(t('athletes.no_workouts')) ?></p></section>
+<?php elseif (!$hasData): ?>
   <section class="empty">
     <span class="brand__lanes brand__lanes--lg" aria-hidden="true"><i></i><i></i><i></i></span>
     <h2><?= e(t('dash.empty.title')) ?></h2>
@@ -30,7 +43,7 @@ $hasData = $totals['workouts'] > 0;
     <ol class="board__rows">
       <?php foreach ($pbsByDistance as $pb): ?>
       <li>
-        <a href="<?= url('workout.php?id=' . (int)$pb['workout_id']) ?>">
+        <a href="<?= $link('workout.php', 'id=' . (int)$pb['workout_id']) ?>">
           <span class="board__dist"><?= e(fmt_distance((int)$pb['distance_m'])) ?></span>
           <span class="board__time"><?= fmt_time((float)$pb['best'], 1) ?></span>
           <span class="board__date"><?= e(fmt_date($pb['workout_date'])) ?></span>
@@ -52,7 +65,7 @@ $hasData = $totals['workouts'] > 0;
     <ul class="hbars">
       <?php foreach ($pbs as $pb): ?>
       <li>
-        <a href="<?= url('workouts.php?distance=' . (int)$pb['distance_m']) ?>"><?= e(fmt_distance((int)$pb['distance_m'])) ?></a>
+        <a href="<?= $link('workouts.php', 'distance=' . (int)$pb['distance_m']) ?>"><?= e(fmt_distance((int)$pb['distance_m'])) ?></a>
         <span class="hbars__bar" style="--w: <?= round((int)$pb['times'] / $maxTimes * 100, 1) ?>%"></span>
         <span class="hbars__n"><?= e(t('dash.pbs.times', ['n' => (int)$pb['times']])) ?></span>
       </li>
@@ -83,6 +96,7 @@ $hasData = $totals['workouts'] > 0;
         <p class="muted small"><?= e(t('dash.progress.lead')) ?></p>
       </div>
       <form method="get" class="inline-select">
+        <?php if (!$isOwner): ?><input type="hidden" name="u" value="<?= (int)$athlete['id'] ?>"><?php endif; ?>
         <label class="sr-only" for="d"><?= e(t('w.filter.distance')) ?></label>
         <select id="d" name="d" data-autosubmit>
           <?php foreach ($pbsByDistance as $pb): ?>
@@ -113,7 +127,7 @@ $hasData = $totals['workouts'] > 0;
   <section class="panel panel--recent" aria-labelledby="rc-h">
     <h2 id="rc-h"><?= e(t('dash.recent')) ?></h2>
     <?php view('partials/workout_rows', ['rows' => $recent]); ?>
-    <p><a class="link" href="<?= url('workouts.php') ?>"><?= e(t('dash.see_all')) ?></a></p>
+    <p><a class="link" href="<?= $link('workouts.php') ?>"><?= e(t('dash.see_all')) ?></a></p>
   </section>
 </div>
 </div>

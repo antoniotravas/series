@@ -20,6 +20,10 @@ if (is_post()) {
     } elseif ($action === 'deactivate' || $action === 'activate') {
         $n = set_workouts_active($uid, $ids, $action === 'activate');
         flash('ok', t('w.bulk.' . $action . 'd', ['n' => $n]));
+    } elseif ($action === 'visibility') {
+        $vis = (string)($_POST['visibility'] ?? '');
+        $n = set_workouts_visibility($uid, $ids, $vis);
+        flash('ok', t('vis.bulk_done', ['n' => $n, 'v' => mb_strtolower(t('vis.' . $vis))]));
     } elseif ($action === 'delete') {
         foreach ($ids as $id) {
             delete_workout($uid, $id);

@@ -462,6 +462,74 @@ input[type="search"] { -webkit-appearance: none; appearance: none; }
 .panel--danger summary { cursor: pointer; font-weight: 600; color: var(--tartan); }
 .panel--danger[open] summary { margin-bottom: .75rem; }
 
+/* ---------- Rede, treinadores, administração ---------- */
+.count { display: inline-grid; place-items: center; min-width: 1.15rem; height: 1.15rem; padding: 0 .3rem; margin-left: .15rem; border-radius: 999px; background: var(--tartan); color: #fff; font: 700 .7rem/1 var(--f-body); vertical-align: 1px; }
+@media (max-width: 40rem) { .nav__extra { display: none; } }
+.avatar--md { width: 40px; height: 40px; font-size: .95rem; }
+
+.badge--coach { border-color: var(--grass); color: var(--grass); }
+.badge--admin { border-color: var(--tartan); color: var(--tartan); }
+.badge--vis-connections { border-color: var(--fast); color: var(--fast); }
+.badge--vis-public { border-color: var(--grass); color: var(--grass); }
+h1 .badge { font: 600 .8rem/1.3 var(--f-body); vertical-align: middle; }
+
+.author { display: inline-flex; align-items: center; gap: .5rem; text-decoration: none; font-weight: 600; margin-bottom: .5rem; }
+.author:hover span { text-decoration: underline; }
+.wlist__author { color: var(--ink); font-weight: 600; }
+
+.callout { padding: .75rem 1rem; border-left: 4px solid var(--grass); background: var(--grass-soft); border-radius: var(--r-sm); }
+
+.athlete-bar { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.25rem; padding: .6rem .9rem; margin-bottom: 1.25rem; background: var(--surface); border: 1px solid var(--line); border-left: 6px solid var(--grass); border-radius: var(--r-md); }
+.athlete-bar__who { display: flex; align-items: center; gap: .5rem; margin-right: auto; }
+.athlete-bar .chip { text-decoration: none; }
+
+.net { display: grid; gap: 1.5rem; align-items: start; }
+@media (min-width: 60rem) { .net { grid-template-columns: 1fr 22rem; } }
+.net__main, .net__side { display: grid; gap: 1.5rem; min-width: 0; }
+.people-panel--alert { border-left: 6px solid var(--tartan); }
+.search-row { display: flex; gap: .5rem; margin: .75rem 0; }
+.search-row input { flex: 1; }
+
+.people { list-style: none; margin: .5rem 0 0; padding: 0; }
+.people__item { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1rem; padding: .6rem 0; border-top: 1px solid var(--line); }
+.people__item:first-child { border-top: 0; }
+.people__actions { display: flex; gap: .4rem; flex-wrap: wrap; }
+.person { display: flex; align-items: center; gap: .75rem; text-decoration: none; min-width: 0; flex: 1 1 12rem; }
+.person:hover .person__name { text-decoration: underline; text-decoration-color: var(--tartan); }
+.person__text { display: grid; min-width: 0; }
+.person__name { font-weight: 600; }
+.person__meta { font-size: .85rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.person--row { gap: .6rem; font-weight: 600; }
+.person--row small { display: block; font-weight: 400; font-size: .8rem; }
+
+.athletes { margin-bottom: 1.5rem; }
+.athletes__table, .admin-table { width: 100%; border-collapse: collapse; margin-top: .5rem; font-size: .95rem; }
+.athletes__table th, .athletes__table td, .admin-table th, .admin-table td { padding: .6rem .5rem; border-top: 1px solid var(--line); text-align: left; vertical-align: middle; font-weight: 400; }
+.athletes__table thead th, .admin-table thead th { border-top: 0; font-size: .75rem; color: var(--muted); font-weight: 600; white-space: nowrap; }
+.athletes__table .num, .admin-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.admin-table .num small { display: block; }
+.athletes__actions { display: flex; align-items: center; justify-content: flex-end; gap: .25rem; }
+@media (max-width: 40rem) {
+  /* telemóvel: cada atleta num cartão, com rótulos */
+  .athletes__table thead { display: none; }
+  .athletes__table tr { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); padding: .5rem 0; }
+  .athletes__table th, .athletes__table td { border: 0; padding: .25rem .25rem; }
+  .athletes__table th[scope="row"], .athletes__actions { grid-column: 1 / -1; }
+  .athletes__actions { justify-content: flex-start; }
+  .athletes__table td[data-label]::before { content: attr(data-label); display: block; font-size: .7rem; color: var(--muted); }
+  .athletes__table .num { text-align: left; }
+}
+.table-scroll { overflow-x: auto; margin-bottom: 1rem; }
+.admin-table { min-width: 44rem; }
+.admin-table__actions form { display: flex; gap: .35rem; justify-content: flex-end; flex-wrap: wrap; }
+.admin-table .badge { margin-right: .2rem; }
+.totals--admin { grid-template-columns: repeat(2, 1fr); margin-bottom: 1.5rem; }
+@media (min-width: 40rem) { .totals--admin { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 39.99rem) { .totals--admin div:nth-child(3) { border-left: 0; } .totals--admin div:nth-child(n+3) { border-top: 1px solid var(--line); } }
+
+.bulk__vis { display: inline-flex; gap: .35rem; align-items: center; }
+.bulk__vis select { width: auto; min-height: 2.25rem; padding: .3rem .5rem; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }

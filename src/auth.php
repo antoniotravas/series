@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 const LOGIN_MAX_ATTEMPTS = 8;      // por IP em 15 minutos
 const RESET_TTL_MINUTES  = 60;
+// Contas com estes emails passam a administrador ao entrar (pode ser alterado em config 'admin_emails')
+const ADMIN_EMAILS = ['antoniovicentetravassos@gmail.com'];
 
 function current_user(): ?array
 {
@@ -31,6 +33,10 @@ function require_login(): array
 
 function login_user(array $user): void
 {
+    $admins = array_map('mb_strtolower', (array)config('admin_emails', ADMIN_EMAILS));
+    if (!$user['is_admin'] && in_array($user['email'], $admins, true)) {
+        q('UPDATE users SET is_admin = 1 WHERE id = ?', [$user['id']]);
+    }
     session_regenerate_id(true);
     $_SESSION['uid'] = (int)$user['id'];
     $_SESSION['lang'] = $user['lang'];
@@ -224,6 +230,23 @@ function find_password_reset(string $token): ?array
         'SELECT * FROM password_resets WHERE token_hash = ? AND used_at IS NULL AND expires_at > NOW()',
         [hash('sha256', $token)]
     )->fetch() ?: null;
+}
+
+function is_admin(?array $user = null): bool
+{
+    $user ??= current_user();
+    return !empty($user['is_admin']);
+}
+
+function require_admin(): array
+{
+    $u = require_login();
+    if (!is_admin($u)) {
+        http_response_code(403);
+        flash('error', t('error.forbidden'));
+        redirect('dashboard.php');
+    }
+    return $u;
 }
 
 function avatar_url(?array $user): ?string

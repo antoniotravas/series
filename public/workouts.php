@@ -2,15 +2,19 @@
 require __DIR__ . '/../src/bootstrap.php';
 
 $user = require_login();
-$uid = (int)$user['id'];
+$athlete = viewed_athlete($user);   // o próprio, ou um atleta do treinador (?u=)
+$uid = (int)$athlete['id'];
+$isOwner = $uid === (int)$user['id'];
 
 $filters = workout_filters_from_query($_GET);
 $page = max(1, (int)($_GET['page'] ?? 1));
 $result = list_workouts($uid, $filters, $page);
 
 render('workouts', [
-    'title'     => t('w.list.title'),
-    'active'    => 'workouts',
+    'title'     => $isOwner ? t('w.list.title') : t('w.list.title_of', ['name' => $athlete['display_name']]),
+    'active'    => $isOwner ? 'workouts' : 'athletes',
+    'athlete'   => $athlete,
+    'isOwner'   => $isOwner,
     'filters'   => $filters,
     'page'      => $page,
     'result'    => $result,

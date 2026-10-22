@@ -10,7 +10,7 @@ $isSection = fn(string $s) => $section === $s;
       <span class="avatar avatar--lg" aria-hidden="true"><?= e(initials($u['display_name'])) ?></span>
     <?php endif; ?>
     <div>
-      <h1><?= e($u['display_name']) ?></h1>
+      <h1><?= e($u['display_name']) ?><?php if ($u['is_coach']): ?> <span class="badge badge--coach"><?= e(t('coach.badge')) ?></span><?php endif; ?><?php if ($u['is_admin']): ?> <span class="badge badge--admin"><?= e(t('admin.role.admin')) ?></span><?php endif; ?></h1>
       <p class="muted"><?= e(t('p.member_since', ['d' => fmt_date(substr($u['created_at'], 0, 10))])) ?></p>
     </div>
   </div>
@@ -80,6 +80,10 @@ $isSection = fn(string $s) => $section === $s;
           <?php foreach (LANGS as $code => $label): ?><option value="<?= $code ?>" <?= $o('lang') === $code ? 'selected' : '' ?>><?= e($label) ?></option><?php endforeach; ?>
         </select>
       </div>
+      <div class="field field--wide">
+        <label class="check"><input type="checkbox" name="is_coach" value="1" <?= ($isSection('profile') ? old('is_coach') : $u['is_coach']) ? 'checked' : '' ?>> <?= e(t('coach.profile_toggle')) ?></label>
+        <p class="field__hint"><?= e(t('coach.profile_hint')) ?></p>
+      </div>
     </div>
     <button class="btn btn--primary" type="submit"><?= e(t('p.save')) ?></button>
   </form>
@@ -130,6 +134,7 @@ $isSection = fn(string $s) => $section === $s;
     </form>
 
     <p><a class="btn btn--ghost btn--block" href="<?= url('export.php') ?>"><?= e(t('p.export')) ?></a></p>
+    <?php if ($u['is_admin']): ?><p><a class="btn btn--ghost btn--block" href="<?= url('admin.php') ?>"><?= e(t('admin.title')) ?></a></p><?php endif; ?>
 
     <details class="panel panel--danger" <?= $isSection('delete') ? 'open' : '' ?>>
       <summary><?= e(t('p.danger')) ?></summary>

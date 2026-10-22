@@ -11,15 +11,24 @@ $facts = array_filter([
     t('w.rpe')      => $w['rpe'] ? $w['rpe'] . '/10' : null,
 ]);
 ?>
-<p class="back"><a class="link" href="<?= url('workouts.php') ?>"><?= e(t('w.back')) ?></a></p>
+<p class="back"><a class="link" href="<?= url($back) ?>"><?= e(t($isOwner ? 'w.back' : 'w.back_other')) ?></a></p>
+
+<?php if (!$isOwner): ?>
+<a class="author" href="<?= url('user.php?id=' . (int)$owner['id']) ?>">
+  <?php view('partials/avatar', ['u' => $owner, 'size' => 'sm']); ?>
+  <span><?= e($owner['display_name']) ?></span>
+</a>
+<?php endif; ?>
 
 <header class="page-head page-head--workout">
   <div>
-    <p class="muted"><time datetime="<?= e($w['workout_date']) ?>"><?= e(fmt_date($w['workout_date'], true)) ?></time><?php if (!$w['active']): ?> <span class="badge"><?= e(t('w.inactive')) ?></span><?php endif; ?></p>
+    <p class="muted"><time datetime="<?= e($w['workout_date']) ?>"><?= e(fmt_date($w['workout_date'], true)) ?></time><?php if (!$w['active']): ?> <span class="badge"><?= e(t('w.inactive')) ?></span><?php endif; ?>
+      <?php if ($isOwner): ?> <span class="badge badge--vis-<?= e($w['visibility']) ?>" title="<?= e(t('vis.label')) ?>"><?= e(t('vis.' . $w['visibility'])) ?></span><?php endif; ?></p>
     <h1><?= e($w['title'] ?: sets_summary($w['sets'])) ?></h1>
     <?php if ($w['title']): ?><p class="lead-sets"><?= e(sets_summary($w['sets'])) ?></p><?php endif; ?>
     <p class="muted"><?= e(t('w.summary_volume', ['km' => fmt_km($volume)])) ?></p>
   </div>
+  <?php if ($isOwner): ?>
   <div class="actions">
     <a class="btn btn--ghost btn--sm" href="<?= url('workout_edit.php?copy=' . (int)$w['id']) ?>" title="<?= e(t('w.dup_title')) ?>"><?= e(t('w.dup')) ?></a>
     <a class="btn btn--ghost btn--sm" href="<?= url('workout_edit.php?id=' . (int)$w['id']) ?>"><?= e(t('w.edit')) ?></a>
@@ -35,6 +44,7 @@ $facts = array_filter([
       <button class="btn btn--danger btn--sm" type="submit"><?= e(t('w.delete')) ?></button>
     </form>
   </div>
+  <?php endif; ?>
 </header>
 
 <?php if ($facts): ?>

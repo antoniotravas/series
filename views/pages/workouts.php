@@ -1,19 +1,27 @@
 <?php
 $hasFilters = array_filter($filters) !== [];
-$qs = fn(array $extra) => http_build_query(array_filter(array_merge($filters, $extra)));
+$u = $isOwner ? [] : ['u' => (int)$athlete['id']];   // treinador a ver um atleta
+$qs = fn(array $extra) => http_build_query(array_filter(array_merge($filters, $u, $extra)));
+$listUrl = url('workouts.php' . ($u ? '?u=' . $u['u'] : ''));
 ?>
+<?php if (!$isOwner): ?>
+  <?php view('partials/athlete_bar', ['athlete' => $athlete, 'current' => 'workouts']); ?>
+<?php endif; ?>
 <header class="page-head">
   <div>
-    <h1><?= e(t('w.list.title')) ?></h1>
+    <h1><?= e($title) ?></h1>
     <p class="muted"><?= e(t('w.list.count', ['n' => $result['total']])) ?></p>
   </div>
+  <?php if ($isOwner): ?>
   <div class="actions">
     <a class="btn btn--ghost btn--sm" href="<?= url('import.php') ?>"><?= e(t('imp.title')) ?></a>
     <a class="btn btn--ghost btn--sm" href="<?= url('export.php') ?>"><?= e(t('p.export')) ?></a>
   </div>
+  <?php endif; ?>
 </header>
 
 <form method="get" class="filters" role="search">
+  <?php if ($u): ?><input type="hidden" name="u" value="<?= $u['u'] ?>"><?php endif; ?>
   <div class="field field--sm">
     <label for="f-distance"><?= e(t('w.filter.distance')) ?></label>
     <select id="f-distance" name="distance">
@@ -64,7 +72,7 @@ $qs = fn(array $extra) => http_build_query(array_filter(array_merge($filters, $e
   </div>
   <div class="filters__actions">
     <button class="btn btn--primary btn--sm" type="submit"><?= e(t('w.filter.apply')) ?></button>
-    <?php if ($hasFilters): ?><a class="link small" href="<?= url('workouts.php') ?>"><?= e(t('w.list.clear')) ?></a><?php endif; ?>
+    <?php if ($hasFilters): ?><a class="link small" href="<?= e($listUrl) ?>"><?= e(t('w.list.clear')) ?></a><?php endif; ?>
   </div>
 </form>
 
@@ -72,13 +80,17 @@ $qs = fn(array $extra) => http_build_query(array_filter(array_merge($filters, $e
   <section class="empty empty--sm">
     <?php if ($hasFilters): ?>
       <p><?= e(t('w.list.empty')) ?></p>
-      <a class="link" href="<?= url('workouts.php') ?>"><?= e(t('w.list.clear')) ?></a>
+      <a class="link" href="<?= e($listUrl) ?>"><?= e(t('w.list.clear')) ?></a>
+    <?php elseif (!$isOwner): ?>
+      <p><?= e(t('athletes.no_workouts')) ?></p>
     <?php else: ?>
       <h2><?= e(t('dash.empty.title')) ?></h2>
       <p><?= e(t('dash.empty.lead')) ?></p>
       <a class="btn btn--primary" href="<?= url('workout_edit.php') ?>"><?= e(t('nav.new')) ?></a>
     <?php endif; ?>
   </section>
+<?php elseif (!$isOwner): ?>
+  <?php view('partials/workout_rows', ['rows' => $result['rows']]); ?>
 <?php else: ?>
   <form method="post" action="<?= url('workouts_bulk.php') ?>" class="bulk-form">
     <?= csrf_field() ?>
@@ -89,6 +101,13 @@ $qs = fn(array $extra) => http_build_query(array_filter(array_merge($filters, $e
       <span class="bulk__count muted small" data-check-count data-label="<?= e(t('w.bulk.count', ['n' => '%n'])) ?>"></span>
       <button class="btn btn--ghost btn--sm" type="submit" name="action" value="deactivate" title="<?= e(t('w.inactive_hint')) ?>"><?= e(t('w.deactivate')) ?></button>
       <button class="btn btn--ghost btn--sm" type="submit" name="action" value="activate"><?= e(t('w.activate')) ?></button>
+      <span class="bulk__vis">
+        <label class="sr-only" for="bulk-vis"><?= e(t('vis.label')) ?></label>
+        <select id="bulk-vis" name="visibility">
+          <?php foreach (VISIBILITIES as $vis): ?><option value="<?= $vis ?>"><?= e(t('vis.' . $vis)) ?></option><?php endforeach; ?>
+        </select>
+        <button class="btn btn--ghost btn--sm" type="submit" name="action" value="visibility"><?= e(t('vis.apply')) ?></button>
+      </span>
       <button class="btn btn--danger btn--sm" type="submit" name="action" value="delete" data-confirm="<?= e(t('w.bulk.delete_confirm')) ?>"><?= e(t('w.delete')) ?></button>
     </div>
   </form>

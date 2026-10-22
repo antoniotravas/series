@@ -58,6 +58,7 @@ if ($form === null) {
             'start_time'   => '',
             'venue_type'   => 'outdoor',
             'location'     => user_locations($uid)[0] ?? '',
+            'visibility'   => last_visibility($uid),
             'sets'         => [['distance_m' => '', 'rest' => '', 'rest_type' => 'stand', 'target' => '', 'reps' => array_fill(0, 6, '')]],
         ];
     }

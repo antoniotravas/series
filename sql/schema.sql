@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS users (
     country       CHAR(2) NULL,
     main_event    VARCHAR(40) NULL,
     lang          CHAR(2) NOT NULL DEFAULT 'pt',
+    is_admin      TINYINT(1) NOT NULL DEFAULT 0,
+    is_coach      TINYINT(1) NOT NULL DEFAULT 0,
     created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -57,6 +59,7 @@ CREATE TABLE IF NOT EXISTS workouts (
     notes       TEXT NULL,
     gpx_file    VARCHAR(120) NULL,
     active      TINYINT(1) NOT NULL DEFAULT 1,   -- 0 = inativo: fica na lista, não conta nas estatísticas
+    visibility  ENUM('private','connections','public') NOT NULL DEFAULT 'private',
     created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX (user_id, workout_date),
@@ -85,4 +88,33 @@ CREATE TABLE IF NOT EXISTS workout_reps (
     hr_max       SMALLINT UNSIGNED NULL,     -- frequência cardíaca máxima (bpm)
     INDEX (set_id),
     FOREIGN KEY (set_id) REFERENCES workout_sets(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Rede: conexões entre utilizadores e ligação treinador -> atleta
+CREATE TABLE IF NOT EXISTS connections (
+    id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    requester_id INT UNSIGNED NOT NULL,
+    addressee_id INT UNSIGNED NOT NULL,
+    status       ENUM('pending','accepted') NOT NULL DEFAULT 'pending',
+    created_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    accepted_at  DATETIME NULL,
+    UNIQUE KEY (requester_id, addressee_id),
+    INDEX (addressee_id, status),
+    FOREIGN KEY (requester_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (addressee_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Treinador -> atleta. Depois de aceite, o treinador vê todos os treinos do atleta.
+CREATE TABLE IF NOT EXISTS coach_athletes (
+    id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    coach_id     INT UNSIGNED NOT NULL,
+    athlete_id   INT UNSIGNED NOT NULL,
+    requested_by INT UNSIGNED NOT NULL,
+    status       ENUM('pending','accepted') NOT NULL DEFAULT 'pending',
+    created_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    accepted_at  DATETIME NULL,
+    UNIQUE KEY (coach_id, athlete_id),
+    INDEX (athlete_id, status),
+    FOREIGN KEY (coach_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (athlete_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;

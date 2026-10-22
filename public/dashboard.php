@@ -2,7 +2,9 @@
 require __DIR__ . '/../src/bootstrap.php';
 
 $user = require_login();
-$uid = (int)$user['id'];
+$athlete = viewed_athlete($user);   // o próprio, ou um atleta do treinador (?u=)
+$uid = (int)$athlete['id'];
+$isOwner = $uid === (int)$user['id'];
 
 $pbs = stats_personal_bests($uid);
 $pbsByDistance = $pbs;
@@ -14,8 +16,10 @@ if (!in_array($progDist, $distances, true)) {
 }
 
 render('dashboard', [
-    'title'       => t('nav.dashboard'),
-    'active'      => 'dashboard',
+    'title'       => $isOwner ? t('nav.dashboard') : t('dash.of', ['name' => $athlete['display_name']]),
+    'active'      => $isOwner ? 'dashboard' : 'athletes',
+    'athlete'     => $athlete,
+    'isOwner'     => $isOwner,
     'totals'      => stats_totals($uid),
     'streak'      => stats_week_streak($uid),
     'pbs'         => $pbs,
@@ -24,4 +28,6 @@ render('dashboard', [
     'progDist'    => $progDist,
     'progression' => $progDist ? stats_progression($uid, $progDist) : [],
     'recent'      => list_workouts($uid, workout_filters_from_query([]), 1, 5)['rows'],
+    // treinadores: os atletas aparecem no painel de quem treina
+    'athletes'    => $isOwner && $user['is_coach'] ? list_athletes($uid) : [],
 ]);

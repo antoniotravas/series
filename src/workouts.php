@@ -89,6 +89,7 @@ function workout_from_input(array $in): array
             'temperature_c' => $temp,
             'rpe'           => $rpe,
             'notes'         => trim($in['notes'] ?? '') ?: null,
+            'visibility'    => in_array($in['visibility'] ?? '', VISIBILITIES, true) ? $in['visibility'] : 'private',
         ],
         'sets' => $sets,
     ];
@@ -129,9 +130,19 @@ function save_workout(int $userId, array $data, array $sets, ?int $workoutId = n
 function find_workout(int $userId, int $id): ?array
 {
     $w = q('SELECT * FROM workouts WHERE id = ? AND user_id = ?', [$id, $userId])->fetch();
-    if (!$w) {
-        return null;
-    }
+    return $w ? load_workout_sets($w) : null;
+}
+
+/** Treino de qualquer utilizador: quem chama verifica o acesso (can_view_workout). */
+function find_workout_any(int $id): ?array
+{
+    $w = q('SELECT * FROM workouts WHERE id = ?', [$id])->fetch();
+    return $w ? load_workout_sets($w) : null;
+}
+
+function load_workout_sets(array $w): array
+{
+    $id = (int)$w['id'];
     $sets = q('SELECT * FROM workout_sets WHERE workout_id = ? ORDER BY position', [$id])->fetchAll();
     $setIds = array_column($sets, 'id');
     $reps = $hr = $hrMax = [];
@@ -188,6 +199,23 @@ function set_workouts_active(int $userId, array $ids, bool $active): int
     return q("UPDATE workouts SET active = ? WHERE user_id = ? AND id IN ($ph)", [(int)$active, $userId, ...$ids])->rowCount();
 }
 
+function set_workouts_visibility(int $userId, array $ids, string $visibility): int
+{
+    $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
+    if (!$ids || !in_array($visibility, VISIBILITIES, true)) {
+        return 0;
+    }
+    $ph = implode(',', array_fill(0, count($ids), '?'));
+    return q("UPDATE workouts SET visibility = ? WHERE user_id = ? AND id IN ($ph)", [$visibility, $userId, ...$ids])->rowCount();
+}
+
+/** Visibilidade do último treino registado: serve de valor por omissão no próximo. */
+function last_visibility(int $userId): string
+{
+    return q('SELECT visibility FROM workouts WHERE user_id = ? ORDER BY created_at DESC, id DESC LIMIT 1', [$userId])
+        ->fetchColumn() ?: 'private';
+}
+
 /** Texto resumo "10 × 500 m + 4 × 200 m" */
 function sets_summary(array $sets): string
 {
@@ -239,6 +267,11 @@ function list_workouts(int $userId, array $f, int $page = 1, int $perPage = 20):
     if (!empty($f['status'])) {
         $where[] = 'w.active = ' . ($f['status'] === 'active' ? 1 : 0);
     }
+    if (isset($f['visibility'])) {
+        // só os treinos que quem vê pode ver (perfil de outro utilizador)
+        $levels = array_values(array_intersect($f['visibility'], VISIBILITIES)) ?: ['public'];
+        $where[] = "w.visibility IN ('" . implode("','", $levels) . "')";
+    }
     $w = implode(' AND ', $where);
     $total = (int)q("SELECT COUNT(*) FROM workouts w WHERE $w", $params)->fetchColumn();
     $offset = max(0, ($page - 1) * $perPage);
@@ -246,8 +279,12 @@ function list_workouts(int $userId, array $f, int $page = 1, int $perPage = 20):
         "SELECT w.* FROM workouts w WHERE $w ORDER BY w.workout_date DESC, w.start_time DESC, w.id DESC LIMIT $perPage OFFSET $offset",
         $params
     )->fetchAll();
+    return ['rows' => attach_sets($rows), 'total' => $total, 'pages' => (int)ceil($total / $perPage)];
+}
 
-    // carregar séries em lote
+/** Junta a cada treino o resumo das suas séries (carregadas em lote) e o volume. */
+function attach_sets(array $rows): array
+{
     $ids = array_column($rows, 'id');
     $byWorkout = [];
     if ($ids) {
@@ -270,7 +307,7 @@ function list_workouts(int $userId, array $f, int $page = 1, int $perPage = 20):
         $r['volume_m'] = array_sum(array_map(fn($s) => $s['distance_m'] * $s['n'], $r['sets']));
     }
     unset($r);
-    return ['rows' => $rows, 'total' => $total, 'pages' => (int)ceil($total / $perPage)];
+    return $rows;
 }
 
 function user_distances(int $userId): array

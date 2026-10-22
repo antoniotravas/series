@@ -4,6 +4,7 @@ $user = current_user();
 $docTitle = isset($title) ? $title . ' | ' . config('app_name') : config('app_name');
 $active = $active ?? '';
 $here = $_SERVER['REQUEST_URI'] ?? url();
+$pending = $user ? pending_requests_count((int)$user['id']) : 0;
 ?><!doctype html>
 <html lang="<?= e(current_lang()) ?>">
 <head>
@@ -30,6 +31,13 @@ $here = $_SERVER['REQUEST_URI'] ?? url();
     <nav class="nav" aria-label="Principal">
       <a href="<?= url('dashboard.php') ?>" <?= $active === 'dashboard' ? 'aria-current="page"' : '' ?>><?= e(t('nav.dashboard')) ?></a>
       <a href="<?= url('workouts.php') ?>" <?= $active === 'workouts' ? 'aria-current="page"' : '' ?>><?= e(t('nav.workouts')) ?></a>
+      <a href="<?= url('network.php') ?>" <?= $active === 'network' ? 'aria-current="page"' : '' ?>><?= e(t('nav.network')) ?><?php if ($pending): ?> <span class="count" aria-label="<?= e(t('net.pending_count', ['n' => $pending])) ?>"><?= $pending ?></span><?php endif; ?></a>
+      <?php if ($user['is_coach']): ?>
+      <a href="<?= url('athletes.php') ?>" class="nav__extra" <?= $active === 'athletes' ? 'aria-current="page"' : '' ?>><?= e(t('nav.athletes')) ?></a>
+      <?php endif; ?>
+      <?php if ($user['is_admin']): ?>
+      <a href="<?= url('admin.php') ?>" class="nav__extra" <?= $active === 'admin' ? 'aria-current="page"' : '' ?>><?= e(t('nav.admin')) ?></a>
+      <?php endif; ?>
       <a href="<?= url('profile.php') ?>" class="nav__me" <?= $active === 'profile' ? 'aria-current="page"' : '' ?>>
         <?php if ($av = avatar_url($user)): ?>
           <img src="<?= e($av) ?>" alt="" class="avatar avatar--sm">

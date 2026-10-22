@@ -45,6 +45,7 @@ if (is_post()) {
         $sex = in_array($_POST['sex'] ?? '', ['M', 'F', 'X'], true) ? $_POST['sex'] : null;
         $country = strtoupper(substr(preg_replace('/[^a-z]/i', '', (string)($_POST['country'] ?? '')), 0, 2)) ?: null;
         $lang = isset(LANGS[$_POST['lang'] ?? '']) ? $_POST['lang'] : $user['lang'];
+        $isCoach = empty($_POST['is_coach']) ? 0 : 1;
 
         // avatar
         $avatar = $user['avatar'];
@@ -69,13 +70,13 @@ if (is_post()) {
         if (!$errors) {
             q(
                 'UPDATE users SET display_name = ?, birth_date = ?, sex = ?, weight_kg = ?, height_cm = ?,
-                        club = ?, country = ?, main_event = ?, lang = ?, avatar = ? WHERE id = ?',
+                        club = ?, country = ?, main_event = ?, lang = ?, avatar = ?, is_coach = ? WHERE id = ?',
                 [
                     $name, $birth ?: null, $sex, $weight, $height === null ? null : (int)$height,
                     mb_substr(trim((string)($_POST['club'] ?? '')), 0, 120) ?: null,
                     $country,
                     mb_substr(trim((string)($_POST['main_event'] ?? '')), 0, 40) ?: null,
-                    $lang, $avatar, $uid,
+                    $lang, $avatar, $isCoach, $uid,
                 ]
             );
             set_lang($lang);

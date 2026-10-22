@@ -127,6 +127,15 @@ $setBlock = function ($i, array $s, ?string $error) use ($quickDistances) {
         <?php endforeach; ?>
       </select>
     </div>
+    <div class="field">
+      <label for="visibility"><?= e(t('vis.label')) ?></label>
+      <select id="visibility" name="visibility" aria-describedby="visibility-hint">
+        <?php foreach (VISIBILITIES as $vis): ?>
+          <option value="<?= $vis ?>" <?= $v('visibility', 'private') === $vis ? 'selected' : '' ?>><?= e(t('vis.' . $vis)) ?></option>
+        <?php endforeach; ?>
+      </select>
+      <p class="field__hint" id="visibility-hint"><?= e(t('vis.hint')) ?></p>
+    </div>
   </section>
 
   <section class="wform__sets" aria-labelledby="sets-h">
