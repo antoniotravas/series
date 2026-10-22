@@ -949,10 +949,24 @@
     }
     ctx.fillStyle = th.ink;
     var big = content === 'times' ? (story ? 160 : 112) : content === 'none' ? (story ? 220 : 190) : (story ? 190 : 160), size = big;
-    font(ctx, 700, big, COND);
-    var tw = Math.min(cw, clearOfTrack(y) - M);
-    var lines = wrap(ctx, data.summary.replace(/ × /g, '×'), tw, 2);
-    lines.forEach(function (l) { size = Math.min(size, fit(ctx, l, 700, big, 70, COND, tw)); });
+    // cada linha pode ir até à curva da pista à sua altura; o maior tamanho
+    // em que o título inteiro cabe em 3 linhas, sem cortar
+    var words = data.summary.replace(/ × /g, '×').split(' '), lines;
+    function layTitle(sz) {
+      font(ctx, 700, sz, COND);
+      var out = [''], k = 0;
+      var width = function (n) { return Math.min(cw, clearOfTrack(y + n * sz * .88) - M); };
+      for (var i = 0; i < words.length; i++) {
+        var next = out[k] ? out[k] + ' ' + words[i] : words[i];
+        if (ctx.measureText(next).width <= width(k)) { out[k] = next; continue; }
+        if (!out[k] || ++k > 2) return null;
+        out[k] = words[i];
+        if (ctx.measureText(out[k]).width > width(k)) return null;
+      }
+      return out;
+    }
+    for (; size > 56; size -= 4) { if ((lines = layTitle(size))) break; }
+    if (!lines) { font(ctx, 700, size, COND); lines = wrap(ctx, words.join(' '), cw, 3); }
     font(ctx, 700, size, COND);
     lines.forEach(function (l) { y += size * .88; ctx.fillText(l, M - 4, y); });
 
