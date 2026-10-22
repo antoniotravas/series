@@ -4,7 +4,7 @@ require __DIR__ . '/../src/bootstrap.php';
 $user = require_login();
 if (!$user['is_coach']) {
     flash('error', t('athletes.not_coach'));
-    redirect('profile.php');
+    redirect('profile.php?edit=1');
 }
 $uid = (int)$user['id'];
 

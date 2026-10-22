@@ -51,9 +51,8 @@ $body = function (): void { ?>
       <li><b>Treinos</b>: lista com filtros, importação e exportação.</li>
       <li><b>Rede</b>: pessoas, pedidos e treinos partilhados. O número ao lado mostra os pedidos por responder.</li>
       <li><b>Atletas</b>: só aparece a treinadores.</li>
-      <li><b>A tua fotografia ou iniciais</b>: abre um pequeno menu com <b>Ver perfil</b>, onde editas os teus dados, e <b>Sair</b>.</li>
+      <li><b>A tua fotografia ou iniciais</b>: abre um pequeno menu com <b>Ver perfil</b>, <b>Manual de utilização</b> e <b>Sair</b>.</li>
       <li><b>Registar treino</b>: o botão vermelho. No telemóvel fica fixo no canto inferior direito.</li>
-      <li><b>?</b>: abre este manual.</li>
     </ul>
   </article>
 </section>
@@ -205,7 +204,7 @@ $body = function (): void { ?>
 
   <article class="usecase">
     <h3>Quero os meus dados numa folha de cálculo</h3>
-    <p>Em <b>Treinos</b> ou no <b>Perfil</b>, carrega em <b>Exportar treinos (CSV)</b>. O ficheiro abre no Excel, no Numbers ou no Google Sheets.</p>
+    <p>Em <b>Treinos</b> ou em <b>Ver perfil</b>, carrega em <b>Exportar treinos (CSV)</b>. O ficheiro abre no Excel, no Numbers ou no Google Sheets.</p>
   </article>
 </section>
 
@@ -261,7 +260,7 @@ $body = function (): void { ?>
     <h3>Quero ativar o perfil de treinador</h3>
     <ol>
       <li>Carrega na tua fotografia, no canto superior direito, e em <b>Ver perfil</b>.</li>
-      <li>Em Dados pessoais, marca <b>Sou treinador</b> e carrega em <b>Guardar perfil</b>.</li>
+      <li>Carrega em <b>Editar perfil</b>, marca <b>Sou treinador</b> e carrega em <b>Guardar perfil</b>.</li>
       <li>Aparece o menu <b>Atletas</b>, e a etiqueta "Treinador" junto ao teu nome. No telemóvel, os Atletas abrem-se a partir da página <b>Rede</b>.</li>
     </ol>
   </article>
@@ -320,19 +319,19 @@ $body = function (): void { ?>
 
   <article class="usecase">
     <h3>Quero atualizar os meus dados</h3>
-    <p>Carrega na tua fotografia e em <b>Ver perfil</b>. Aí podes mudar o nome a apresentar, o avatar (JPG, PNG ou WebP até 2 MB), a data de nascimento, o sexo, o peso, a altura, o clube, o país, a prova principal e o idioma. Carrega em <b>Guardar perfil</b> no fim.</p>
+    <p>Carrega na tua fotografia, em <b>Ver perfil</b> e depois em <b>Editar perfil</b>. Aí podes mudar o nome a apresentar, o avatar (JPG, PNG ou WebP até 2 MB), a data de nascimento, o sexo, o peso, a altura, o clube, o país, a prova principal e o idioma. Carrega em <b>Guardar perfil</b> no fim.</p>
   </article>
 
   <article class="usecase">
     <h3>Quero mudar o email ou a password</h3>
-    <p>No <b>Perfil</b> há uma secção para cada. Para mudar a password tens de escrever a password atual.</p>
+    <p>Em <b>Ver perfil → Editar perfil</b> há uma secção para cada. Para mudar a password tens de escrever a password atual.</p>
   </article>
 
   <article class="usecase">
     <h3>Quero sair ou apagar a conta</h3>
     <ul>
       <li><b>Sair</b>: carrega na tua fotografia, no canto superior direito, e escolhe <b>Sair</b>.</li>
-      <li><b>Apagar conta</b> está no fundo do Perfil. Apaga a conta e todos os treinos para sempre. Exporta primeiro o CSV se quiseres guardar os dados.</li>
+      <li><b>Apagar conta</b> está no fundo de <b>Editar perfil</b>. Apaga a conta e todos os treinos para sempre. Exporta primeiro o CSV se quiseres guardar os dados.</li>
     </ul>
   </article>
 </section>

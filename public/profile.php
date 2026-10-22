@@ -124,8 +124,11 @@ if (is_post()) {
     }
 }
 
-render('profile', [
-    'title'   => t('p.title'),
+// sem ?edit=1 mostra só os dados; com erros fica no formulário
+$editing = isset($_GET['edit']) || $errors;
+
+render($editing ? 'profile_edit' : 'profile', [
+    'title'   => t($editing ? 'p.edit' : 'p.title'),
     'active'  => 'profile',
     'u'       => $user,
     'errors'  => $errors,

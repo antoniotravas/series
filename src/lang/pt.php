@@ -231,6 +231,14 @@ return [
     'p.danger_btn'   => 'Apagar a minha conta',
     'p.danger_confirm' => 'Tens a certeza? Todos os treinos serão apagados.',
     'p.deleted'      => 'Conta apagada.',
+    'p.edit'        => 'Editar perfil',
+    'p.back'        => '← Voltar ao perfil',
+    'p.account'     => 'Conta',
+    'p.signin'      => 'Entrada com',
+    'p.age'         => ':n anos',
+    'p.country_short' => 'País',
+    'p.yes'         => 'Sim',
+    'p.no'          => 'Não',
     'p.export'       => 'Exportar treinos (CSV)',
 
     // erros

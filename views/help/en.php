@@ -51,9 +51,8 @@ $body = function (): void { ?>
       <li><b>Workouts</b>: list with filters, import and export.</li>
       <li><b>Network</b>: people, requests and shared workouts. The number next to it shows requests waiting for you.</li>
       <li><b>Athletes</b>: only shown to coaches.</li>
-      <li><b>Your photo or initials</b>: opens a small menu with <b>View profile</b>, where you edit your details, and <b>Log out</b>.</li>
+      <li><b>Your photo or initials</b>: opens a small menu with <b>View profile</b>, <b>User guide</b> and <b>Log out</b>.</li>
       <li><b>Log workout</b>: the red button. On phones it stays in the bottom right corner.</li>
-      <li><b>?</b>: opens this guide.</li>
     </ul>
   </article>
 </section>
@@ -205,7 +204,7 @@ $body = function (): void { ?>
 
   <article class="usecase">
     <h3>I want my data in a spreadsheet</h3>
-    <p>In <b>Workouts</b> or <b>Profile</b>, press <b>Export workouts (CSV)</b>. It opens in Excel, Numbers or Google Sheets.</p>
+    <p>In <b>Workouts</b> or <b>View profile</b>, press <b>Export workouts (CSV)</b>. It opens in Excel, Numbers or Google Sheets.</p>
   </article>
 </section>
 
@@ -261,7 +260,7 @@ $body = function (): void { ?>
     <h3>I want to turn on the coach profile</h3>
     <ol>
       <li>Press your photo at the top right, then <b>View profile</b>.</li>
-      <li>Under personal details, tick <b>I am a coach</b> and press <b>Save profile</b>.</li>
+      <li>Press <b>Edit profile</b>, tick <b>I am a coach</b> and press <b>Save profile</b>.</li>
       <li>The <b>Athletes</b> menu appears, and a "Coach" badge by your name. On phones, open Athletes from the <b>Network</b> page.</li>
     </ol>
   </article>
@@ -320,19 +319,19 @@ $body = function (): void { ?>
 
   <article class="usecase">
     <h3>I want to update my details</h3>
-    <p>Press your photo and <b>View profile</b>. There you can change your display name, avatar (JPG, PNG or WebP up to 2 MB), birth date, sex, weight, height, club, country, main event and language. Press <b>Save profile</b> at the end.</p>
+    <p>Press your photo, <b>View profile</b>, then <b>Edit profile</b>. There you can change your display name, avatar (JPG, PNG or WebP up to 2 MB), birth date, sex, weight, height, club, country, main event and language. Press <b>Save profile</b> at the end.</p>
   </article>
 
   <article class="usecase">
     <h3>I want to change my email or password</h3>
-    <p><b>Profile</b> has a section for each. Changing the password needs your current one.</p>
+    <p><b>View profile → Edit profile</b> has a section for each. Changing the password needs your current one.</p>
   </article>
 
   <article class="usecase">
     <h3>I want to log out or delete my account</h3>
     <ul>
       <li><b>Log out</b>: press your photo at the top right and choose <b>Log out</b>.</li>
-      <li><b>Delete account</b> is at the bottom of Profile. It removes the account and every workout for good. Export the CSV first if you want to keep your data.</li>
+      <li><b>Delete account</b> is at the bottom of <b>Edit profile</b>. It removes the account and every workout for good. Export the CSV first if you want to keep your data.</li>
     </ul>
   </article>
 </section>

@@ -38,7 +38,6 @@ $pending = $user ? pending_requests_count((int)$user['id']) : 0;
       <?php if ($user['is_admin']): ?>
       <a href="<?= url('admin.php') ?>" class="nav__extra" <?= $active === 'admin' ? 'aria-current="page"' : '' ?>><?= e(t('nav.admin')) ?></a>
       <?php endif; ?>
-      <a href="<?= url('help.php') ?>" class="nav__help" title="<?= e(t('help.title')) ?>" aria-label="<?= e(t('help.title')) ?>" <?= $active === 'help' ? 'aria-current="page"' : '' ?>>?</a>
       <div class="me" data-menu>
         <button type="button" class="nav__me<?= $active === 'profile' ? ' is-current' : '' ?>" aria-expanded="false" aria-controls="me-menu" aria-label="<?= e(t('nav.account')) ?>">
           <?php if ($av = avatar_url($user)): ?>
@@ -54,6 +53,7 @@ $pending = $user ? pending_requests_count((int)$user['id']) : 0;
           <a href="<?= url('profile.php') ?>"><?= e(t('nav.view_profile')) ?></a>
           <?php if ($user['is_coach']): ?><a href="<?= url('athletes.php') ?>" class="me__extra"><?= e(t('nav.athletes')) ?></a><?php endif; ?>
           <?php if ($user['is_admin']): ?><a href="<?= url('admin.php') ?>" class="me__extra"><?= e(t('nav.admin')) ?></a><?php endif; ?>
+          <a href="<?= url('help.php') ?>"><?= e(t('help.title')) ?></a>
           <form method="post" action="<?= url('logout.php') ?>">
             <?= csrf_field() ?>
             <button type="submit"><?= e(t('nav.logout')) ?></button>
