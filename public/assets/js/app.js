@@ -563,7 +563,7 @@
   var canvas = dlg.querySelector('[data-share-canvas]');
   var preview = dlg.querySelector('.share__preview');
   var sendBtn = dlg.querySelector('[data-share-send]');
-  var W = 1080, SIZES = { post: 1350, story: 1920 };
+  var W = 1080, SIZES = { post: 1350, story: 1920, fit: 0 };   // fit: altura conforme o conteúdo
   var COND = '"Barlow Condensed", "Arial Narrow", sans-serif', BODY = '"Barlow", system-ui, sans-serif';
 
   var THEMES = {
@@ -576,10 +576,10 @@
   };
 
   var state = { format: 'post', theme: 'night', content: 'chart', clear: false,
-                show: { author: true, date: true, stats: true } };
+                show: { author: true, date: true, title: true, stats: true, footer: true } };
   try {
     var saved = JSON.parse(localStorage.getItem('series.share') || '{}');
-    if (SIZES[saved.format]) state.format = saved.format;
+    if (saved.format in SIZES) state.format = saved.format;
     if (THEMES[saved.theme]) state.theme = saved.theme;
     if (['times', 'lines', 'none'].indexOf(saved.content) >= 0) state.content = saved.content;
     if (saved.show) Object.keys(state.show).forEach(function (k) { if (saved.show[k] === false) state.show[k] = false; });
@@ -927,7 +927,8 @@
       return { S: S, sets: sets, total: total, gapX: gapX, nW: nW };
     }
     var L;
-    for (var S = 64; S >= 20; S -= 2) { L = layout(S); if (L.total <= avail) break; }
+    // sem limite de altura (imagem ajustada ao conteúdo): tamanho fixo e confortável
+    for (var S = isFinite(h) ? 64 : 56; S >= 20; S -= 2) { L = layout(S); if (L.total <= avail) break; }
     var cy = top;
     data.sets.forEach(function (s, k) {
       ctx.fillStyle = th.ink;
@@ -958,12 +959,19 @@
       });
       cy += setGap;
     });
+    return cy - setGap - y;   // altura usada
   }
 
   // offset: deslocação vertical do conteúdo (para centrar quando sobra espaço)
-  function draw(offset) {
-    var H = SIZES[state.format], story = state.format === 'story', th = THEMES[state.theme];
+  // fitH: altura final da imagem ajustada (na 1.ª passagem ainda não se sabe)
+  function draw(offset, fitH) {
+    var fit = state.format === 'fit';
+    var H = fit ? (fitH || 4000) : SIZES[state.format], story = state.format === 'story', th = THEMES[state.theme];
     var sh = state.show, content = state.content;
+    // sem o título grande (ou na imagem ajustada) os quadros sobem: a curva da pista fica mais pequena
+    var small = fit || !sh.title;
+    TRACK.inner = small ? 170 : 270;
+    TRACK.lw = small ? 26 : 40;
     var M = 80, top = story ? 180 : 90, bottom = story ? 200 : 80, cw = W - 2 * M, av = story ? 120 : 104;
     canvas.width = W; canvas.height = H;
     var ctx = canvas.getContext('2d');
@@ -978,11 +986,12 @@
       track(ctx, th);
     }
 
-    var y = top + (offset || 0);
+    var y = top + (offset || 0), y0 = y;   // y0: onde começa o conteúdo (para saber se já há algo antes)
     var hh = header(ctx, th, M, y, av);
     y += hh ? hh + 70 : 0;
 
     // título: o nome do treino (se houver) por cima das séries
+    if (sh.title) {
     if (data.title) {
       ctx.fillStyle = th.accent;
       spacing(ctx, 3);
@@ -1013,11 +1022,12 @@
     if (!lines) { font(ctx, 700, size, COND); lines = wrap(ctx, words.join(' '), cw, 3); }
     font(ctx, 700, size, COND);
     lines.forEach(function (l) { y += size * .88; ctx.fillText(l, M - 4, y); });
+    }
 
     if (data.pbs) {
       // etiqueta dourada; maior na história, que se vê no ecrã inteiro do telemóvel
       var ph = story ? 68 : 52, pf = story ? 40 : 30;
-      y += story ? 40 : 34;
+      y += sh.title ? (story ? 40 : 34) : 0;
       var label = (data.pbs > 1 ? data.labels.pbn.replace(':n', data.pbs) : data.labels.pb1).toUpperCase();
       font(ctx, 700, pf, COND);
       spacing(ctx, 2);
@@ -1031,23 +1041,35 @@
     }
 
     if (sh.stats) {
-      y += 50;
+      y += y > y0 ? 50 : 0;
       y = tiles(ctx, th, M, y, cw, story ? 2 : 4, story);
     }
 
-    // gráfico ou tempos no espaço que sobra até ao rodapé
-    var fy = H - bottom - 44;
-    var chartTop = y + (story ? 64 : 56), chartH = fy - 50 - chartTop;
-    if (content !== 'none' && chartH > 160) {
-      if (content === 'times') times(ctx, th, M, chartTop, cw, chartH);
-      else chart(ctx, th, M, chartTop, cw, chartH, content === 'lines');
+    var fy, gap = y > y0 ? (story ? 64 : 56) : 0;
+    if (fit) {
+      // imagem ajustada: o gráfico tem altura fixa e os tempos a que precisarem
+      if (content !== 'none') {
+        var ct = y + gap;
+        y = ct + (content === 'times' ? times(ctx, th, M, ct, cw, Infinity) : (chart(ctx, th, M, ct, cw, 480, content === 'lines'), 480));
+      }
+      fy = y + 78;
+    } else {
+      // gráfico ou tempos no espaço que sobra até ao rodapé (ou até ao fundo, sem rodapé)
+      fy = H - bottom - 44;
+      var chartTop = y + gap, chartH = (sh.footer ? fy - 50 : H - bottom) - chartTop;
+      if (content !== 'none' && chartH > 160) {
+        if (content === 'times') times(ctx, th, M, chartTop, cw, chartH);
+        else chart(ctx, th, M, chartTop, cw, chartH, content === 'lines');
+      }
     }
 
     // rodapé com a marca
+    if (sh.footer) {
     ctx.fillStyle = th.grid;
     ctx.fillRect(M, fy - 28, cw, 2);
     brand(ctx, th, M, fy, 44);
-    if (data.site) {
+    }
+    if (sh.footer && data.site) {
       ctx.fillStyle = th.muted;
       font(ctx, 500, 28, BODY);
       ctx.textAlign = 'right';
@@ -1058,16 +1080,17 @@
     }
     preview.setAttribute('data-format', state.format);
     preview.classList.toggle('is-clear', state.clear);
-    return { end: y, room: fy - 28 - top };
+    return { top: top, end: y, room: (sh.footer ? fy - 28 : H - bottom) - top, need: (sh.footer ? fy + 44 : y) + bottom };
   }
 
   function render() {
     return Promise.all([fontsReady, avatarReady]).then(function () {
       var r = draw(0);
+      // ajustada: 2.ª passagem já com a altura certa
+      if (state.format === 'fit') return draw(0, Math.ceil(r.need));
       // sem gráfico nem tempos: o bloco fica a meio, entre o topo e o rodapé
       if (state.content === 'none') {
-        var used = r.end - (SIZES[state.format] === 1920 ? 180 : 90);
-        var free = r.room - used;
+        var free = r.room - (r.end - r.top);
         if (free > 40) draw(Math.min(free / 2, free - 60));
       }
     });

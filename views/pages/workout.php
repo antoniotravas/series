@@ -130,6 +130,7 @@ $combined = array_filter($byDist, fn($g) => count($g) > 1);
         <div class="viewtoggle" role="group">
           <button type="button" class="chip is-on" data-share-format="post" aria-pressed="true"><?= e(t('share.post')) ?> <small>4:5</small></button>
           <button type="button" class="chip" data-share-format="story" aria-pressed="false"><?= e(t('share.story')) ?> <small>9:16</small></button>
+          <button type="button" class="chip" data-share-format="fit" aria-pressed="false"><?= e(t('share.fit')) ?></button>
         </div>
       </fieldset>
       <fieldset>
@@ -141,7 +142,7 @@ $combined = array_filter($byDist, fn($g) => count($g) > 1);
           <button type="button" class="chip" data-share-content="none" aria-pressed="false"><?= e(t('share.content.none')) ?></button>
         </div>
         <div class="share__show">
-          <?php foreach (['author', 'date', 'stats'] as $k): ?>
+          <?php foreach (['author', 'date', 'title', 'stats', 'footer'] as $k): ?>
           <label class="check"><input type="checkbox" data-share-show="<?= $k ?>" checked> <?= e(t('share.show.' . $k)) ?></label>
           <?php endforeach; ?>
         </div>

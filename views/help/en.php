@@ -227,8 +227,8 @@ $body = function (): void { ?>
     <h3>I want to post a workout on Instagram or another social network</h3>
     <ol>
       <li>Open the workout and press <b>Share</b>.</li>
-      <li>Pick the format: <b>Post</b> (4:5, for the feed) or <b>Story</b> (9:16).</li>
-      <li>Pick what to show: the speed of each rep as <b>Bars</b> or <b>Lines</b>, the <b>Times</b> of every rep, or <b>Nothing</b>. You can also tick or untick the avatar and name, the date and place and the numbers (average, fastest, volume and reps). Personal bests set in the workout always show, in gold.</li>
+      <li>Pick the format: <b>Post</b> (4:5, for the feed), <b>Story</b> (9:16) or <b>Fit to content</b> (the image height follows what you choose to show, with no empty space).</li>
+      <li>Pick what to show: the speed of each rep as <b>Bars</b> or <b>Lines</b>, the <b>Times</b> of every rep, or <b>Nothing</b>. You can also tick or untick the avatar and name, the date and place, the title and sets, the numbers (average, fastest, volume and reps) and the footer with logo and website. Personal bests set in the workout always show, in gold.</li>
       <li>Pick the colours: <b>Night</b>, <b>Tartan</b>, <b>Light</b>, <b>Grass</b> or <b>Blue</b>. Tick <b>Transparent background</b> to place the image over one of your photos (the colours then apply to the text).</li>
       <li>On a phone, press <b>Share image</b> and choose the app. On a computer, press <b>Copy image</b> and paste it anywhere (Ctrl+V), or <b>Download PNG</b>.</li>
     </ol>
