@@ -217,6 +217,7 @@ return [
     'share.show.stats'    => 'Average, fastest, volume and reps',
     'share.fit'      => 'Fit to content',
     'share.show.title'    => 'Title and sets',
+    'share.show.rest'     => 'Recovery between reps',
     'share.show.footer'   => 'Footer with logo and website',
     'share.copy'     => 'Copy image',
     'share.copied'   => 'Copied ✓',

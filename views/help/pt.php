@@ -228,7 +228,7 @@ $body = function (): void { ?>
     <ol>
       <li>Abre o treino e carrega em <b>Partilhar</b>.</li>
       <li>Escolhe o formato: <b>Publicação</b> (4:5, para o feed), <b>História</b> (9:16) ou <b>Ajustada ao conteúdo</b> (a altura da imagem acompanha o que escolheres mostrar, sem espaço vazio).</li>
-      <li>Escolhe o que mostrar: a velocidade de cada repetição em <b>Barras</b> ou <b>Linhas</b>, os <b>Tempos</b> de todas as repetições ou <b>Nada</b>. Marca ou desmarca também o avatar e nome, a data e local, o título e séries, os números (média, mais rápida, volume e repetições) e o rodapé com o logótipo e o site. Os recordes pessoais batidos no treino aparecem sempre, a dourado.</li>
+      <li>Escolhe o que mostrar: a velocidade de cada repetição em <b>Barras</b> ou <b>Linhas</b>, os <b>Tempos</b> de todas as repetições ou <b>Nada</b>. Marca ou desmarca também o avatar e nome, a data e local, o título e séries, a recuperação entre repetições, os números (média, mais rápida, volume e repetições) e o rodapé com o logótipo e o site. Os recordes pessoais batidos no treino aparecem sempre, a dourado.</li>
       <li>Escolhe as cores: <b>Noite</b>, <b>Tartan</b>, <b>Claro</b>, <b>Relva</b> ou <b>Azul</b>. Marca <b>Fundo transparente</b> para pores a imagem por cima de uma foto tua (as cores escolhidas passam a ser as do texto).</li>
       <li>No telemóvel, carrega em <b>Partilhar imagem</b> e escolhe a aplicação. No computador, carrega em <b>Copiar imagem</b> e cola-a onde quiseres (Ctrl+V), ou em <b>Descarregar PNG</b>.</li>
     </ol>

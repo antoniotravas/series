@@ -142,7 +142,7 @@ $combined = array_filter($byDist, fn($g) => count($g) > 1);
           <button type="button" class="chip" data-share-content="none" aria-pressed="false"><?= e(t('share.content.none')) ?></button>
         </div>
         <div class="share__show">
-          <?php foreach (['author', 'date', 'title', 'stats', 'footer'] as $k): ?>
+          <?php foreach (['author', 'date', 'title', 'rest', 'stats', 'footer'] as $k): ?>
           <label class="check"><input type="checkbox" data-share-show="<?= $k ?>" checked> <?= e(t('share.show.' . $k)) ?></label>
           <?php endforeach; ?>
         </div>

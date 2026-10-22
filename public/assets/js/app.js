@@ -576,7 +576,7 @@
   };
 
   var state = { format: 'post', theme: 'night', content: 'chart', clear: false,
-                show: { author: true, date: true, title: true, stats: true, footer: true } };
+                show: { author: true, date: true, title: true, rest: true, stats: true, footer: true } };
   try {
     var saved = JSON.parse(localStorage.getItem('series.share') || '{}');
     if (saved.format in SIZES) state.format = saved.format;
@@ -783,7 +783,9 @@
     ctx.fillText(data.labels.chart.toUpperCase(), x, y + 26);
     spacing(ctx, 0);
 
-    var top = y + 70, labelH = 50, base = y + h - labelH, ch = base - top;
+    // por baixo de cada série: o nome e, se pedido, a recuperação
+    var withRest = state.show.rest && data.sets.some(function (s) { return s.rest; });
+    var top = y + 70, labelH = withRest ? 82 : 50, base = y + h - labelH, ch = base - top;
     var total = 0;
     data.sets.forEach(function (s) { total += s.reps.length; });
     // escala comum a todas as séries: a mais rápida é a barra mais alta;
@@ -876,12 +878,16 @@
       ctx.lineWidth = 3;
       ctx.beginPath(); ctx.moveTo(gx - 6, ay); ctx.lineTo(gx + gw + 6, ay); ctx.stroke();
       ctx.restore();
-      // etiqueta da série
+      // etiqueta da série (e a recuperação por baixo)
       font(ctx, 600, 28, COND);
       if (ctx.measureText(s.label).width <= gw + gapSet * .8) {
         ctx.fillStyle = th.muted;
         ctx.textAlign = 'center';
         ctx.fillText(s.label, gx + gw / 2, base + 40);
+        if (withRest && s.rest) {
+          font(ctx, 500, 22, BODY);
+          ctx.fillText(clip(ctx, s.rest, gw + gapSet * .8), gx + gw / 2, base + 72);
+        }
         ctx.textAlign = 'left';
       }
       cx += gapSet;
@@ -937,7 +943,7 @@
       var lx = x + ctx.measureText(s.label).width + 16;
       ctx.fillStyle = th.muted;
       font(ctx, 500, 26, BODY);
-      ctx.fillText(clip(ctx, data.labels.avg.toLowerCase() + ' ' + s.avgTxt + (s.rest ? ' · ' + s.rest : ''), x + w - lx), lx, cy + 29);
+      ctx.fillText(clip(ctx, data.labels.avg.toLowerCase() + ' ' + s.avgTxt + (s.rest && state.show.rest ? ' · ' + s.rest : ''), x + w - lx), lx, cy + 29);
       cy += headH;
       L.sets[k].forEach(function (line) {
         var lx2 = x, base = cy + L.S * .95;
@@ -1022,6 +1028,18 @@
     if (!lines) { font(ctx, 700, size, COND); lines = wrap(ctx, words.join(' '), cw, 3); }
     font(ctx, 700, size, COND);
     lines.forEach(function (l) { y += size * .88; ctx.fillText(l, M - 4, y); });
+
+    // recuperação por baixo das séries: uma só se for igual em todas, senão série a série
+    var rests = data.sets.filter(function (s) { return s.rest; });
+    if (sh.rest && rests.length) {
+      var same = rests.length === data.sets.length && rests.every(function (s) { return s.rest === rests[0].rest; });
+      var rtxt = same ? rests[0].rest : rests.map(function (s) { return s.label + ' ' + s.rest; }).join(' · ');
+      ctx.fillStyle = th.muted;
+      font(ctx, 500, story ? 40 : 34, BODY);
+      var rl = wrap(ctx, rtxt, Math.min(cw, clearOfTrack(y) - M), 2);
+      rl.forEach(function (l) { y += story ? 54 : 46; ctx.fillText(l, M, y); });
+      y += 6;
+    }
     }
 
     if (data.pbs) {

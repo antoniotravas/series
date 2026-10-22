@@ -221,6 +221,7 @@ return [
     'share.show.stats'    => 'Média, mais rápida, volume e repetições',
     'share.fit'      => 'Ajustada ao conteúdo',
     'share.show.title'    => 'Título e séries',
+    'share.show.rest'     => 'Recuperação entre repetições',
     'share.show.footer'   => 'Rodapé com o logótipo e o site',
     'share.copy'     => 'Copiar imagem',
     'share.copied'   => 'Copiada ✓',
