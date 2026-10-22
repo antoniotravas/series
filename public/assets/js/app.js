@@ -759,30 +759,17 @@
     font(ctx, 600, 26, COND);
     ctx.fillText(data.labels.chart.toUpperCase(), x, y + 26);
     spacing(ctx, 0);
-    var lx = x + w;
-    ctx.textAlign = 'right';
-    font(ctx, 500, 24, BODY);
-    [[th.slow, data.labels.slower], [th.fast, data.labels.faster]].forEach(function (it) {
-      ctx.fillStyle = th.muted;
-      ctx.fillText(it[1], lx, y + 25);
-      lx -= ctx.measureText(it[1]).width + 14;
-      ctx.fillStyle = it[0];
-      ctx.beginPath(); ctx.arc(lx - 8, y + 17, 9, 0, Math.PI * 2); ctx.fill();
-      lx -= 40;
-    });
-    ctx.textAlign = 'left';
 
     var top = y + 70, labelH = 50, base = y + h - labelH, ch = base - top;
     var total = 0;
     data.sets.forEach(function (s) { total += s.reps.length; });
-    // escala de cada série: a base fica abaixo da mais lenta, para as diferenças se verem
-    var Y;
-    function scale(s) {
-      var sp = s.reps.map(function (t) { return s.d / t; });
-      var hi = Math.max.apply(null, sp), lo = Math.min.apply(null, sp);
-      var floor = Math.max(0, lo - Math.max((hi - lo) * 1.2, hi * .01));
-      Y = function (v) { return base - (v - floor) / (hi - floor) * ch * .9; };
-    }
+    // escala comum a todas as séries: a mais rápida é a barra mais alta;
+    // a base fica abaixo da mais lenta, para as diferenças se verem
+    var speeds = [];
+    data.sets.forEach(function (s) { s.reps.forEach(function (t) { speeds.push(s.d / t); }); });
+    var hi = Math.max.apply(null, speeds), lo = Math.min.apply(null, speeds);
+    var floor = Math.max(0, lo - Math.max((hi - lo) * .6, hi * .01));
+    var Y = function (v) { return base - (v - floor) / (hi - floor) * ch * .9; };
 
     var gapSet = data.sets.length > 1 ? Math.max(24, w * .04) : 0;
     var slot = (w - gapSet * (data.sets.length - 1)) / total;
@@ -798,14 +785,14 @@
     var cx = x;
     data.sets.forEach(function (s) {
       var gx = cx, gw = slot * s.reps.length;
-      scale(s);
       s.reps.forEach(function (t, i) {
         var bx = cx + (slot - bw) / 2, by = Y(s.d / t);
-        ctx.fillStyle = s.pb[i] ? th.pb : (t <= s.avg ? th.fast : th.slow);
+        ctx.fillStyle = th.accent;
         roundRect(ctx, bx, by, bw, base - by, r);
         ctx.fill();
         ctx.fillRect(bx, base - r, bw, r);   // base reta
         if (s.pb[i] && bw >= 18) {
+          ctx.fillStyle = th.pb;
           font(ctx, 700, 30, COND);
           ctx.textAlign = 'center';
           ctx.fillText('PB', bx + bw / 2, by - 12);
