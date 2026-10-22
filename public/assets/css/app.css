@@ -355,6 +355,10 @@ input[type="search"] { -webkit-appearance: none; appearance: none; }
 .bulk { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; position: sticky; bottom: 0; z-index: 4; background: var(--bg); padding: .75rem 0; border-top: 1px solid var(--line); }
 .bulk__count { margin-right: auto; }
 .bulk-form:not(:has(.wlist__pick:checked)) .bulk { display: none; }
+/* no telemóvel o botão fixo "Registar treino" tapava a barra de ações: sai enquanto houver treinos selecionados */
+@media (max-width: 40rem) {
+  body:has(.wlist__pick:checked) .nav__new { display: none; }
+}
 .ilist__warn { font-size: .85rem; color: var(--tartan); font-weight: 500; }
 .import__actions { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; position: sticky; bottom: 0; background: var(--bg); padding: 1rem 0; border-top: 1px solid var(--line); }
 
