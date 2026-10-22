@@ -1,7 +1,7 @@
 <?php
 /**
  * Uma série desenhada como pistas: cada repetição é uma linha com uma barra
- * que cresce para a esquerda (mais rápida que a média) ou para a direita (mais lenta).
+ * que cresce para a direita (mais rápida que a média, verde) ou para a esquerda (mais lenta, vermelha).
  * @var array $set   linha de workout_sets com 'reps' e 'stats'
  * @var int   $index posição da série (1..n)
  * @var array $pbs   distance_m => melhor tempo de sempre

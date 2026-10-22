@@ -14,6 +14,7 @@
   --tartan-soft: #F7E4E1;
   --fast: #1F64B5;
   --slow: #C2362B;
+  --ahead: #2E8A57;   /* repetição mais rápida que a média */
   --pb: #F0C02E;
   --grass: #2E6A4E;
   --grass-soft: #E2EFE7;
@@ -45,6 +46,7 @@
     --tartan-soft: #3A2224;
     --fast: #4A8FE0;
     --slow: #E0574A;
+    --ahead: #5CC08A;
     --grass: #6FBF95;
     --grass-soft: #1D3328;
     --board: #0A1015;
@@ -55,7 +57,7 @@
 :root[data-theme="dark"] {
   --bg: #10171E; --surface: #18222C; --ink: #E8ECEA; --ink-2: #C3CBD0; --muted: #96A1AA;
   --line: #2A3641; --line-strong: #3C4955; --tartan: #E0574A; --tartan-hover: #EA6E62;
-  --tartan-soft: #3A2224; --fast: #4A8FE0; --slow: #E0574A; --grass: #6FBF95;
+  --tartan-soft: #3A2224; --fast: #4A8FE0; --slow: #E0574A; --ahead: #5CC08A; --grass: #6FBF95;
   --grass-soft: #1D3328; --board: #0A1015; --focus: #7FB3F0; color-scheme: dark;
 }
 
@@ -269,10 +271,11 @@ input[type="search"] { -webkit-appearance: none; appearance: none; }
 .lane__track { position: relative; height: 1.1rem; }
 .lane__track::before { content: ""; position: absolute; left: 50%; top: -.7rem; bottom: -.7rem; border-left: 1px dashed var(--line-strong); }
 .lane__bar { position: absolute; top: 0; bottom: 0; width: var(--w); border-radius: 4px; }
-.lane__bar--fast { right: calc(50% + 1px); background: var(--fast); border-radius: 4px 0 0 4px; }
-.lane__bar--slow { left: calc(50% + 1px); background: var(--slow); border-radius: 0 4px 4px 0; }
+/* mais rápida que a média: verde, para a direita; mais lenta: vermelho, para a esquerda */
+.lane__bar--fast { left: calc(50% + 1px); background: var(--ahead); border-radius: 0 4px 4px 0; }
+.lane__bar--slow { right: calc(50% + 1px); background: var(--slow); border-radius: 4px 0 0 4px; }
 .lane__dev, .lane__target { font: 500 .9rem/1 var(--f-body); font-variant-numeric: tabular-nums; text-align: right; color: var(--muted); }
-.lane__dev.is-fast, .lane__target.is-fast { color: var(--fast); }
+.lane__dev.is-fast, .lane__target.is-fast { color: var(--ahead); }
 .lane__dev.is-slow, .lane__target.is-slow { color: var(--slow); }
 .lane__target { width: 3.75rem; border-left: 1px solid var(--line); padding-left: .5rem; }
 .lane--pb .lane__time { color: var(--ink); }
@@ -285,7 +288,7 @@ input[type="search"] { -webkit-appearance: none; appearance: none; }
 .lane__speed { position: relative; height: 1.1rem; }
 .lane__sbar {
   position: absolute; left: 0; top: 0; bottom: 0; width: var(--len);
-  background: color-mix(in oklab, var(--fast) var(--mix), var(--surface));
+  background: color-mix(in oklab, var(--ink-2) var(--mix), var(--surface));
   border-radius: 0 4px 4px 0;
 }
 .lane__pace { font: 500 .9rem/1 var(--f-body); font-variant-numeric: tabular-nums; text-align: right; color: var(--ink-2); }

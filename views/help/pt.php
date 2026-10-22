@@ -137,7 +137,7 @@ $body = function (): void { ?>
     <ul>
       <li><b>Média</b>, <b>Melhor</b>, <b>Pior</b> e <b>Ritmo</b> por km.</li>
       <li><b>Desvio</b>: quanto os tempos variaram. Quanto mais baixo, mais regular.</li>
-      <li>Um gráfico com a diferença de cada repetição para a média: azul se foi mais rápida, vermelho se foi mais lenta.</li>
+      <li>Um gráfico com a diferença de cada repetição para a média: verde e para a direita se foi mais rápida, vermelho e para a esquerda se foi mais lenta.</li>
       <li>Com o botão <b>Velocidade</b> vês a velocidade de cada repetição em vez da diferença.</li>
       <li>A marca dourada <b>Recorde pessoal</b> aparece na repetição que bateu o teu melhor tempo nessa distância.</li>
     </ul>

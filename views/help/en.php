@@ -137,7 +137,7 @@ $body = function (): void { ?>
     <ul>
       <li><b>Average</b>, <b>Best</b>, <b>Worst</b> and <b>Pace</b> per km.</li>
       <li><b>Deviation</b>: how much your times varied. Lower means more consistent.</li>
-      <li>A chart of each rep against the average: blue when faster, red when slower.</li>
+      <li>A chart of each rep against the average: green and to the right when faster, red and to the left when slower.</li>
       <li>The <b>Speed</b> button shows the speed of each rep instead.</li>
       <li>A gold <b>Personal best</b> mark on any rep that beat your best for that distance.</li>
     </ul>
