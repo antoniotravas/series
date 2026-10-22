@@ -64,7 +64,7 @@ $pending = $user ? pending_requests_count((int)$user['id']) : 0;
     </nav>
     <?php else: ?>
     <nav class="nav" aria-label="Principal">
-      <a href="<?= url('help.php') ?>" <?= $active === 'help' ? 'aria-current="page"' : '' ?>><?= e(t('nav.help')) ?></a>
+      <?php if ($_view !== 'home'): ?><a href="<?= url('help.php') ?>" <?= $active === 'help' ? 'aria-current="page"' : '' ?>><?= e(t('nav.help')) ?></a><?php endif; ?>
       <a href="<?= url('login.php') ?>" <?= $active === 'login' ? 'aria-current="page"' : '' ?>><?= e(t('nav.login')) ?></a>
       <a href="<?= url('register.php') ?>" class="btn btn--primary btn--sm"><?= e(t('nav.register')) ?></a>
     </nav>
@@ -81,7 +81,7 @@ $pending = $user ? pending_requests_count((int)$user['id']) : 0;
 
 <footer class="footer">
   <div class="wrap footer__inner">
-    <span><?= e(config('app_name')) ?>. <?= e(t('app.tagline')) ?> <a href="<?= url('help.php') ?>"><?= e(t('help.title')) ?></a></span>
+    <?php if ($_view !== 'home'): ?><span><?= e(config('app_name')) ?>. <?= e(t('app.tagline')) ?> <a href="<?= url('help.php') ?>"><?= e(t('help.title')) ?></a></span><?php endif; ?>
     <form method="post" action="<?= url('lang.php') ?>" class="lang">
       <?= csrf_field() ?>
       <input type="hidden" name="back" value="<?= e($here) ?>">
