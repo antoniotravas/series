@@ -5,9 +5,10 @@ declare(strict_types=1);
 
 const VISIBILITIES = ['private', 'connections', 'public'];
 
+/** Utilizador ativo (as contas desativadas pelo administrador não aparecem na rede). */
 function find_user(int $id): ?array
 {
-    return q('SELECT * FROM users WHERE id = ?', [$id])->fetch() ?: null;
+    return q('SELECT * FROM users WHERE id = ? AND active = 1', [$id])->fetch() ?: null;
 }
 
 // ---------- Conexões ----------
@@ -73,7 +74,7 @@ function list_connections(int $uid): array
         "SELECT c.id AS link_id, c.accepted_at, u.*
            FROM connections c
            JOIN users u ON u.id = IF(c.requester_id = ?, c.addressee_id, c.requester_id)
-          WHERE (c.requester_id = ? OR c.addressee_id = ?) AND c.status = 'accepted'
+          WHERE (c.requester_id = ? OR c.addressee_id = ?) AND c.status = 'accepted' AND u.active = 1
        ORDER BY u.display_name",
         [$uid, $uid, $uid]
     )->fetchAll();
@@ -84,7 +85,7 @@ function connection_requests_in(int $uid): array
     return q(
         "SELECT c.id AS link_id, c.created_at AS requested_at, u.*
            FROM connections c JOIN users u ON u.id = c.requester_id
-          WHERE c.addressee_id = ? AND c.status = 'pending' ORDER BY c.created_at DESC",
+          WHERE c.addressee_id = ? AND c.status = 'pending' AND u.active = 1 ORDER BY c.created_at DESC",
         [$uid]
     )->fetchAll();
 }
@@ -94,7 +95,7 @@ function connection_requests_out(int $uid): array
     return q(
         "SELECT c.id AS link_id, c.created_at AS requested_at, u.*
            FROM connections c JOIN users u ON u.id = c.addressee_id
-          WHERE c.requester_id = ? AND c.status = 'pending' ORDER BY c.created_at DESC",
+          WHERE c.requester_id = ? AND c.status = 'pending' AND u.active = 1 ORDER BY c.created_at DESC",
         [$uid]
     )->fetchAll();
 }
@@ -111,7 +112,7 @@ function is_coach_of(int $coachId, int $athleteId): bool
 {
     return (bool)q(
         "SELECT 1 FROM coach_athletes ca JOIN users u ON u.id = ca.coach_id
-          WHERE ca.coach_id = ? AND ca.athlete_id = ? AND ca.status = 'accepted' AND u.is_coach = 1",
+          WHERE ca.coach_id = ? AND ca.athlete_id = ? AND ca.status = 'accepted' AND u.is_coach = 1 AND u.active = 1",
         [$coachId, $athleteId]
     )->fetchColumn();
 }
@@ -167,7 +168,7 @@ function list_athletes(int $coachId): array
                    JOIN workout_sets s ON s.workout_id = w.id JOIN workout_reps r ON r.set_id = s.id
                   WHERE w.user_id = u.id AND w.active = 1 AND w.workout_date >= CURDATE() - INTERVAL 30 DAY) AS meters_30d
            FROM coach_athletes ca JOIN users u ON u.id = ca.athlete_id
-          WHERE ca.coach_id = ? AND ca.status = 'accepted'
+          WHERE ca.coach_id = ? AND ca.status = 'accepted' AND u.active = 1
        ORDER BY u.display_name",
         [$coachId]
     )->fetchAll();
@@ -179,7 +180,7 @@ function list_coaches(int $athleteId): array
     return q(
         "SELECT ca.id AS link_id, ca.accepted_at, u.*
            FROM coach_athletes ca JOIN users u ON u.id = ca.coach_id
-          WHERE ca.athlete_id = ? AND ca.status = 'accepted' AND u.is_coach = 1
+          WHERE ca.athlete_id = ? AND ca.status = 'accepted' AND u.is_coach = 1 AND u.active = 1
        ORDER BY u.display_name",
         [$athleteId]
     )->fetchAll();
@@ -192,7 +193,7 @@ function coaching_requests(int $uid): array
         "SELECT ca.id AS link_id, ca.coach_id, ca.athlete_id, ca.requested_by, ca.created_at AS requested_at, u.*
            FROM coach_athletes ca
            JOIN users u ON u.id = IF(ca.coach_id = ?, ca.athlete_id, ca.coach_id)
-          WHERE (ca.coach_id = ? OR ca.athlete_id = ?) AND ca.status = 'pending'
+          WHERE (ca.coach_id = ? OR ca.athlete_id = ?) AND ca.status = 'pending' AND u.active = 1
        ORDER BY ca.created_at DESC",
         [$uid, $uid, $uid]
     )->fetchAll();
@@ -208,8 +209,10 @@ function coaching_requests(int $uid): array
 function pending_requests_count(int $uid): int
 {
     return (int)q(
-        "SELECT (SELECT COUNT(*) FROM connections WHERE addressee_id = ? AND status = 'pending')
-              + (SELECT COUNT(*) FROM coach_athletes WHERE (coach_id = ? OR athlete_id = ?) AND requested_by <> ? AND status = 'pending')",
+        "SELECT (SELECT COUNT(*) FROM connections c JOIN users u ON u.id = c.requester_id
+                  WHERE c.addressee_id = ? AND c.status = 'pending' AND u.active = 1)
+              + (SELECT COUNT(*) FROM coach_athletes ca JOIN users u ON u.id = ca.requested_by
+                  WHERE (ca.coach_id = ? OR ca.athlete_id = ?) AND ca.requested_by <> ? AND ca.status = 'pending' AND u.active = 1)",
         [$uid, $uid, $uid, $uid]
     )->fetchColumn();
 }
@@ -260,7 +263,7 @@ function search_users(int $me, string $term, int $limit = 30): array
 {
     $like = '%' . addcslashes($term, '%_\\') . '%';
     return q(
-        'SELECT * FROM users WHERE id <> ? AND (display_name LIKE ? OR club LIKE ?)
+        'SELECT * FROM users WHERE id <> ? AND active = 1 AND (display_name LIKE ? OR club LIKE ?)
        ORDER BY display_name LIMIT ' . (int)$limit,
         [$me, $like, $like]
     )->fetchAll();
@@ -272,13 +275,13 @@ function activity_feed(int $uid, int $limit = 20): array
     $rows = q(
         "SELECT w.*, u.display_name AS author_name, u.avatar AS author_avatar
            FROM workouts w JOIN users u ON u.id = w.user_id
-          WHERE (w.user_id IN (
+          WHERE u.active = 1 AND ((w.user_id IN (
                     SELECT IF(c.requester_id = ?, c.addressee_id, c.requester_id) FROM connections c
                      WHERE (c.requester_id = ? OR c.addressee_id = ?) AND c.status = 'accepted')
                  AND w.visibility IN ('connections', 'public'))
              OR w.user_id IN (
                     SELECT ca.athlete_id FROM coach_athletes ca JOIN users cu ON cu.id = ca.coach_id
-                     WHERE ca.coach_id = ? AND ca.status = 'accepted' AND cu.is_coach = 1)
+                     WHERE ca.coach_id = ? AND ca.status = 'accepted' AND cu.is_coach = 1))
        ORDER BY w.workout_date DESC, w.start_time DESC, w.id DESC
           LIMIT " . (int)$limit,
         [$uid, $uid, $uid, $uid]

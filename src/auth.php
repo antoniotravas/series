@@ -12,8 +12,8 @@ function current_user(): ?array
     if ($user === false) {
         $user = null;
         if (!empty($_SESSION['uid'])) {
-            $user = q('SELECT * FROM users WHERE id = ?', [$_SESSION['uid']])->fetch() ?: null;
-            if (!$user) {
+            $user = q('SELECT * FROM users WHERE id = ? AND active = 1', [$_SESSION['uid']])->fetch() ?: null;
+            if (!$user) {   // conta apagada ou desativada: termina a sessão
                 unset($_SESSION['uid']);
             }
         }
@@ -33,6 +33,10 @@ function require_login(): array
 
 function login_user(array $user): void
 {
+    if (!$user['active']) {
+        flash('error', t('auth.disabled'));
+        redirect('login.php');
+    }
     $admins = array_map('mb_strtolower', (array)config('admin_emails', ADMIN_EMAILS));
     if (!$user['is_admin'] && in_array($user['email'], $admins, true)) {
         q('UPDATE users SET is_admin = 1 WHERE id = ?', [$user['id']]);

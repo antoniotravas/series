@@ -10,7 +10,7 @@ $qs = fn(array $extra) => http_build_query(array_filter(['q' => $term] + $extra)
 </header>
 
 <section class="totals totals--admin" aria-label="<?= e(t('admin.stats')) ?>">
-  <div><strong><?= (int)$stats['users'] ?></strong><span><?= e(t('admin.s.users', ['n' => (int)$stats['users_30d']])) ?></span></div>
+  <div><strong><?= (int)$stats['users'] ?></strong><span><?= e(t('admin.s.users', ['n' => (int)$stats['users_30d']])) ?><?php if ($stats['disabled']): ?><br><?= e(t('admin.s.disabled', ['n' => (int)$stats['disabled']])) ?><?php endif; ?></span></div>
   <div><strong><?= (int)$stats['coaches'] ?></strong><span><?= e(t('admin.s.coaches')) ?></span></div>
   <div><strong><?= (int)$stats['workouts'] ?></strong><span><?= e(t('admin.s.workouts', ['n' => (int)$stats['workouts_7d']])) ?></span></div>
   <div><strong><?= (int)$stats['connections'] ?></strong><span><?= e(t('admin.s.connections')) ?></span></div>
@@ -41,7 +41,7 @@ $qs = fn(array $extra) => http_build_query(array_filter(['q' => $term] + $extra)
   </thead>
   <tbody>
     <?php foreach ($users as $u): $self = (int)$u['id'] === (int)$me['id']; ?>
-    <tr>
+    <tr<?= $u['active'] ? '' : ' class="is-off"' ?>>
       <th scope="row">
         <a class="person person--row" href="<?= url($self ? 'profile.php' : 'user.php?id=' . (int)$u['id']) ?>">
           <?php view('partials/avatar', ['u' => $u, 'size' => 'sm']); ?>
@@ -51,6 +51,7 @@ $qs = fn(array $extra) => http_build_query(array_filter(['q' => $term] + $extra)
       <td><?= e(fmt_date(substr($u['created_at'], 0, 10))) ?></td>
       <td class="num"><?= (int)$u['workouts'] ?><?php if ($u['last_workout']): ?><small class="muted"><?= e(fmt_date($u['last_workout'])) ?></small><?php endif; ?></td>
       <td>
+        <?php if (!$u['active']): ?><span class="badge badge--admin"><?= e(t('admin.role.disabled')) ?></span><?php endif; ?>
         <?php if ($u['is_admin']): ?><span class="badge badge--admin"><?= e(t('admin.role.admin')) ?></span><?php endif; ?>
         <?php if ($u['is_coach']): ?><span class="badge badge--coach"><?= e(t('coach.badge')) ?></span><?php endif; ?>
         <?php if ($u['google_id']): ?><span class="badge">Google</span><?php endif; ?>
@@ -63,7 +64,11 @@ $qs = fn(array $extra) => http_build_query(array_filter(['q' => $term] + $extra)
           <input type="hidden" name="back" value="<?= e($_SERVER['REQUEST_URI'] ?? '') ?>">
           <button class="btn btn--ghost btn--sm" type="submit" name="action" value="coach"><?= e(t($u['is_coach'] ? 'admin.coach_off' : 'admin.coach_on')) ?></button>
           <button class="btn btn--ghost btn--sm" type="submit" name="action" value="admin" data-confirm="<?= e(t('admin.admin_confirm', ['name' => $u['display_name']])) ?>"><?= e(t($u['is_admin'] ? 'admin.admin_off' : 'admin.admin_on')) ?></button>
-          <button class="btn btn--danger btn--sm" type="submit" name="action" value="delete" data-confirm="<?= e(t('admin.delete_confirm', ['name' => $u['display_name'], 'n' => (int)$u['workouts']])) ?>"><?= e(t('w.delete')) ?></button>
+          <?php if ($u['active']): ?>
+            <button class="btn btn--danger btn--sm" type="submit" name="action" value="active" data-confirm="<?= e(t('admin.disable_confirm', ['name' => $u['display_name']])) ?>"><?= e(t('admin.disable')) ?></button>
+          <?php else: ?>
+            <button class="btn btn--ghost btn--sm" type="submit" name="action" value="active"><?= e(t('admin.enable')) ?></button>
+          <?php endif; ?>
         </form>
         <?php endif; ?>
       </td>

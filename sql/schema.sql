@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS users (
     lang          CHAR(2) NOT NULL DEFAULT 'pt',
     is_admin      TINYINT(1) NOT NULL DEFAULT 0,
     is_coach      TINYINT(1) NOT NULL DEFAULT 0,
+    active        TINYINT(1) NOT NULL DEFAULT 1,   -- 0 = desativada pelo administrador
     created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
