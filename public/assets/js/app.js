@@ -67,7 +67,7 @@
     });
   });
 
-  // ---------- Feed da rede: carregar mais ao descer ----------
+  // ---------- Feed da rede: carregar treinos mais antigos ----------
 
   var more = document.querySelector('[data-feed-more]');
   if (more) {
@@ -92,22 +92,13 @@
             list.appendChild(li);
           });
           more.setAttribute('data-next', parseInt(more.getAttribute('data-next'), 10) + items.length);
-          if (!res.more || !items.length) { if (io) io.disconnect(); more.remove(); return 'end'; }
-          return 'ok';
+          if (!res.more || !items.length) more.remove();
         })
-        .catch(function () { return 'error'; })   // fica o botão para tentar de novo
-        .then(function (end) {
-          busy = false;
-          btn.disabled = false;
-          // se o fim da lista continua à vista, carrega já a página seguinte
-          if (end === 'ok' && io && more.getBoundingClientRect().top < window.innerHeight + 200) load();
-        });
+        .catch(function () {})   // fica o botão para tentar de novo
+        .then(function () { busy = false; btn.disabled = false; });
     };
+    // só carrega quando se pede: assim a página não cresce sem fim
     btn.addEventListener('click', load);
-    var io = 'IntersectionObserver' in window ? new IntersectionObserver(function (en) {
-      if (en[0].isIntersecting) load();
-    }, { rootMargin: '200px' }) : null;
-    if (io) io.observe(more);
   }
 
   // ---------- Confirmações e auto-submit ----------

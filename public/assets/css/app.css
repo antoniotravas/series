@@ -547,6 +547,12 @@ h1 .badge { font: 600 .8rem/1.3 var(--f-body); vertical-align: middle; }
 .net { display: grid; gap: 1.5rem; align-items: start; }
 @media (min-width: 60rem) { .net { grid-template-columns: 1fr 22rem; } }
 .net__main, .net__side { display: grid; gap: 1.5rem; min-width: 0; }
+/* no telemóvel: pedidos, depois procurar/treinadores/conexões, e a atividade no fim */
+@media (max-width: 59.99rem) {
+  .net__main { display: contents; }
+  .net__side { order: 1; }
+  .feed-panel { order: 2; }
+}
 .people-panel--alert { border-left: 6px solid var(--tartan); }
 .search-row { display: flex; gap: .5rem; margin: .75rem 0; }
 .search-row input { flex: 1; }

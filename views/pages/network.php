@@ -22,7 +22,7 @@
   </section>
   <?php endif; ?>
 
-  <section class="panel" aria-labelledby="feed-h">
+  <section class="panel feed-panel" aria-labelledby="feed-h">
     <h2 id="feed-h"><?= e(t('net.feed')) ?></h2>
     <?php if ($feed): ?>
       <?php view('partials/workout_rows', ['rows' => array_slice($feed, 0, FEED_PAGE), 'showAuthor' => true]); ?>
