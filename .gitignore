@@ -11,3 +11,6 @@ client_secret_*.json
 /*.xls
 /*.csv
 /*.gpx
+
+# diários de treino antigos e ficheiros de importação (dados pessoais)
+/todos/
