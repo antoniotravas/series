@@ -13,16 +13,6 @@ return [
 
     // landing
     'home.title'    => 'Cada repetição, registada ao décimo.',
-    'home.lead'     => 'Regista séries como as escreves no caderno: 10 × 500 m com 70 s de recuperação. Vê a regularidade de cada série, os teus melhores tempos e a evolução semana a semana.',
-    'home.cta'      => 'Criar conta grátis',
-    'home.have_account' => 'Já tens conta? Entrar',
-    'home.f1.t' => 'Registo rápido na pista',
-    'home.f1.d' => 'Escreve 1:32.4 ou 92.4. O ritmo, a média e o desvio calculam-se enquanto escreves.',
-    'home.f2.t' => 'Regularidade à vista',
-    'home.f2.d' => 'Cada série mostra quanto te afastaste da média em cada repetição.',
-    'home.f3.t' => 'Recordes e volume',
-    'home.f3.d' => 'Melhor tempo por distância, metros por semana e evolução numa distância à tua escolha.',
-    'home.demo.label' => 'Exemplo: 10 × 500 m, recuperação 70 s',
 
     // auth
     'auth.login.title'   => 'Entrar',

@@ -12,16 +12,6 @@ return [
     'nav.skip'      => 'Skip to content',
 
     'home.title'    => 'Every rep, logged to the tenth.',
-    'home.lead'     => 'Log sessions the way you write them in your notebook: 10 × 500 m with 70 s recovery. See how even each set was, your best times and your progress week by week.',
-    'home.cta'      => 'Create a free account',
-    'home.have_account' => 'Already have an account? Log in',
-    'home.f1.t' => 'Quick logging at the track',
-    'home.f1.d' => 'Type 1:32.4 or 92.4. Pace, average and spread update as you type.',
-    'home.f2.t' => 'Consistency at a glance',
-    'home.f2.d' => 'Every set shows how far each rep was from the set average.',
-    'home.f3.t' => 'Bests and volume',
-    'home.f3.d' => 'Best time per distance, metres per week, and progress over any distance you choose.',
-    'home.demo.label' => 'Example: 10 × 500 m, 70 s recovery',
 
     'auth.login.title'   => 'Log in',
     'auth.register.title'=> 'Create account',

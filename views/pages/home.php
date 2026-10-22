@@ -1,20 +1,13 @@
-<section class="hero">
-  <div class="hero__text">
-    <h1 class="hero__title"><?= e(t('home.title')) ?></h1>
-    <p class="hero__lead"><?= e(t('home.lead')) ?></p>
-    <div class="hero__actions">
-      <a class="btn btn--primary btn--lg" href="<?= url('register.php') ?>"><?= e(t('home.cta')) ?></a>
-      <a class="link" href="<?= url('login.php') ?>"><?= e(t('home.have_account')) ?></a>
+<section class="cover">
+  <picture class="cover__img">
+    <source type="image/webp" srcset="<?= asset('img/atleta-800.webp') ?> 800w, <?= asset('img/atleta-1536.webp') ?> 1536w" sizes="100vw">
+    <img src="<?= asset('img/atleta-1536.jpg') ?>" srcset="<?= asset('img/atleta-800.jpg') ?> 800w, <?= asset('img/atleta-1536.jpg') ?> 1536w" sizes="100vw" alt="" fetchpriority="high">
+  </picture>
+  <div class="wrap cover__content">
+    <h1 class="cover__title"><?= e(t('home.title')) ?></h1>
+    <div class="cover__actions">
+      <a class="btn btn--primary btn--lg" href="<?= url('register.php') ?>"><?= e(t('nav.register')) ?></a>
+      <a class="btn btn--light btn--lg" href="<?= url('login.php') ?>"><?= e(t('nav.login')) ?></a>
     </div>
   </div>
-  <figure class="hero__demo">
-    <?php view('partials/set_lanes', ['set' => $demo, 'index' => 0, 'pbs' => []]); ?>
-    <figcaption><?= e(t('home.demo.label')) ?></figcaption>
-  </figure>
-</section>
-
-<section class="features">
-  <div><h2><?= e(t('home.f1.t')) ?></h2><p><?= e(t('home.f1.d')) ?></p></div>
-  <div><h2><?= e(t('home.f2.t')) ?></h2><p><?= e(t('home.f2.d')) ?></p></div>
-  <div><h2><?= e(t('home.f3.t')) ?></h2><p><?= e(t('home.f3.d')) ?></p></div>
 </section>
