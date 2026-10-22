@@ -99,12 +99,22 @@ foreach ($w['sets'] as $s) {
         </div>
       </fieldset>
       <fieldset>
+        <legend><?= e(t('share.content')) ?></legend>
+        <div class="viewtoggle" role="group">
+          <button type="button" class="chip is-on" data-share-content="chart" aria-pressed="true"><?= e(t('share.content.chart')) ?></button>
+          <button type="button" class="chip" data-share-content="times" aria-pressed="false"><?= e(t('share.content.times')) ?></button>
+        </div>
+      </fieldset>
+      <fieldset>
         <legend><?= e(t('share.theme')) ?></legend>
         <div class="share__themes" role="group">
           <button type="button" class="swatch swatch--night is-on" data-share-theme="night" aria-pressed="true"><span><?= e(t('share.theme.night')) ?></span></button>
           <button type="button" class="swatch swatch--tartan" data-share-theme="tartan" aria-pressed="false"><span><?= e(t('share.theme.tartan')) ?></span></button>
           <button type="button" class="swatch swatch--light" data-share-theme="light" aria-pressed="false"><span><?= e(t('share.theme.light')) ?></span></button>
+          <button type="button" class="swatch swatch--grass" data-share-theme="grass" aria-pressed="false"><span><?= e(t('share.theme.grass')) ?></span></button>
+          <button type="button" class="swatch swatch--blue" data-share-theme="blue" aria-pressed="false"><span><?= e(t('share.theme.blue')) ?></span></button>
         </div>
+        <label class="check share__clear"><input type="checkbox" data-share-clear> <?= e(t('share.clear')) ?></label>
       </fieldset>
       <p class="share__actions">
         <button type="button" class="btn btn--primary" data-share-send hidden><?= e(t('share.send')) ?></button>
@@ -113,6 +123,6 @@ foreach ($w['sets'] as $s) {
       <p class="muted share__hint"><?= e(t('share.hint')) ?></p>
     </div>
   </div>
-  <script type="application/json" data-share-data><?= json_encode(share_card_data($w, $owner, $pbs) + ['site' => ($_SERVER['HTTP_HOST'] ?? '') . config('base_url')], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
+  <script type="application/json" data-share-data><?= json_encode(share_card_data($w, $owner, $pbs) + ['site' => config('site_host', 'series.corridas.com')], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
 </dialog>
 <?php endif; ?>

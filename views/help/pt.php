@@ -228,10 +228,11 @@ $body = function (): void { ?>
     <ol>
       <li>Abre o treino e carrega em <b>Partilhar</b>.</li>
       <li>Escolhe o formato: <b>Publicação</b> (4:5, para o feed) ou <b>História</b> (9:16).</li>
-      <li>Escolhe as cores: <b>Noite</b>, <b>Tartan</b> ou <b>Claro</b>.</li>
+      <li>Escolhe o que mostrar: o <b>Gráfico</b> da velocidade de cada repetição ou os <b>Tempos</b> de todas as repetições.</li>
+      <li>Escolhe as cores: <b>Noite</b>, <b>Tartan</b>, <b>Claro</b>, <b>Relva</b> ou <b>Azul</b>. Marca <b>Fundo transparente</b> para pores a imagem por cima de uma foto tua (as cores escolhidas passam a ser as do texto).</li>
       <li>No telemóvel, carrega em <b>Partilhar imagem</b> e escolhe a aplicação. No computador, carrega em <b>Descarregar PNG</b>.</li>
     </ol>
-    <p>A imagem leva o teu avatar, a média, a repetição mais rápida, o volume, os recordes pessoais do dia e um gráfico com a velocidade de cada repetição.</p>
+    <p>A imagem leva o teu avatar, a média, a repetição mais rápida, o volume, os recordes pessoais do dia e o gráfico ou os tempos, com o endereço series.corridas.com no rodapé.</p>
     <p class="tip">Só o autor pode criar a imagem. Os treinadores não veem o botão nos treinos dos atletas.</p>
   </article>
 </section>

@@ -3,6 +3,7 @@
 return [
     'app_name' => 'Séries',
     'base_url' => '/series',          // caminho público (sem barra final)
+    'site_host' => 'series.corridas.com', // endereço mostrado nas imagens de partilha
     'debug'    => false,
 
     'db' => [

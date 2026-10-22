@@ -570,14 +570,19 @@
   var THEMES = {
     night:  { bg: ['#1B2833', '#0D141A'], ink: '#F5F7F4', muted: '#94A1AC', accent: '#E0574A', fast: '#4A8FE0', slow: '#E0574A', pb: '#F0C02E', grid: 'rgba(255,255,255,.08)', tile: 'rgba(255,255,255,.05)', track: '#C2362B', lane: 'rgba(255,255,255,.55)', trackAlpha: .9 },
     tartan: { bg: ['#CC3B2F', '#952619'], ink: '#FFFFFF', muted: 'rgba(255,255,255,.74)', accent: '#FFFFFF', fast: '#FFFFFF', slow: 'rgba(22,33,43,.5)', pb: '#F0C02E', grid: 'rgba(255,255,255,.16)', tile: 'rgba(0,0,0,.13)', track: '#16212B', lane: 'rgba(255,255,255,.5)', trackAlpha: .28 },
-    light:  { bg: ['#FFFFFF', '#ECEFEA'], ink: '#16212B', muted: '#66717B', accent: '#C2362B', fast: '#1F64B5', slow: '#C2362B', pb: '#D9A400', grid: 'rgba(22,33,43,.09)', tile: 'rgba(22,33,43,.045)', track: '#C2362B', lane: 'rgba(255,255,255,.8)', trackAlpha: .92 }
+    light:  { bg: ['#FFFFFF', '#ECEFEA'], ink: '#16212B', muted: '#66717B', accent: '#C2362B', fast: '#1F64B5', slow: '#C2362B', pb: '#D9A400', grid: 'rgba(22,33,43,.09)', tile: 'rgba(22,33,43,.045)', track: '#C2362B', lane: 'rgba(255,255,255,.8)', trackAlpha: .92 },
+    // relva do interior do estádio, com a pista em tartan
+    grass:  { bg: ['#2F6E50', '#163A29'], ink: '#F5F7F4', muted: 'rgba(245,247,244,.72)', accent: '#FFFFFF', fast: '#9AD0FF', slow: '#F08A7E', pb: '#F0C02E', grid: 'rgba(255,255,255,.12)', tile: 'rgba(0,0,0,.16)', track: '#C2362B', lane: 'rgba(255,255,255,.7)', trackAlpha: .95 },
+    blue:   { bg: ['#2370C8', '#123C6E'], ink: '#FFFFFF', muted: 'rgba(255,255,255,.74)', accent: '#FFFFFF', fast: '#FFFFFF', slow: 'rgba(10,16,21,.45)', pb: '#F0C02E', grid: 'rgba(255,255,255,.16)', tile: 'rgba(0,0,0,.15)', track: '#0A1015', lane: 'rgba(255,255,255,.5)', trackAlpha: .25 }
   };
 
-  var state = { format: 'post', theme: 'night' };
+  var state = { format: 'post', theme: 'night', content: 'chart', clear: false };
   try {
     var saved = JSON.parse(localStorage.getItem('series.share') || '{}');
     if (SIZES[saved.format]) state.format = saved.format;
     if (THEMES[saved.theme]) state.theme = saved.theme;
+    if (saved.content === 'times') state.content = 'times';
+    state.clear = saved.clear === true;
   } catch (e) { /* sem armazenamento: valores por omissão */ }
 
   // avatar (mesma origem, por isso o canvas pode ser exportado)
@@ -637,8 +642,16 @@
   }
 
   // curva de pista no canto: anel de tartan com as linhas das pistas
+  var TRACK = { cx: W + 40, cy: -60, inner: 270, lanes: 6, lw: 40 };
+  // até onde o texto pode ir, a esta altura, sem tocar na curva da pista
+  function clearOfTrack(y) {
+    var t = TRACK, R = t.inner + t.lanes * t.lw + 24;
+    if (state.clear || y - t.cy >= R) return W;
+    return t.cx - Math.sqrt(R * R - (y - t.cy) * (y - t.cy));
+  }
+
   function track(ctx, th) {
-    var cx = W + 40, cy = -60, inner = 270, lanes = 6, lw = 40;
+    var cx = TRACK.cx, cy = TRACK.cy, inner = TRACK.inner, lanes = TRACK.lanes, lw = TRACK.lw;
     ctx.save();
     ctx.globalAlpha = th.trackAlpha;
     ctx.fillStyle = th.track;
@@ -825,6 +838,74 @@
     ctx.globalAlpha = 1;
   }
 
+  // em vez do gráfico: os tempos de cada série numa grelha
+  function times(ctx, th, x, y, w, h) {
+    ctx.fillStyle = th.muted;
+    spacing(ctx, 2);
+    font(ctx, 600, 26, COND);
+    ctx.fillText(data.labels.times.toUpperCase(), x, y + 26);
+    spacing(ctx, 0);
+    ctx.textAlign = 'right';
+    font(ctx, 500, 24, BODY);
+    ctx.fillText(data.labels.faster, x + w, y + 25);
+    var lw = ctx.measureText(data.labels.faster).width;
+    ctx.fillStyle = th.fast;
+    ctx.beginPath(); ctx.arc(x + w - lw - 22, y + 17, 9, 0, Math.PI * 2); ctx.fill();
+    ctx.textAlign = 'left';
+
+    // cada série: cabeçalho e os tempos em linha; o maior tamanho de letra que couber
+    var top = y + 50, avail = y + h - top, headH = 42, setGap = 14;
+    function layout(S) {
+      font(ctx, 700, S, COND);
+      var gapX = S * .62, nW = S * .42, total = 0;
+      var sets = data.sets.map(function (s) {
+        var lines = [[]], lineW = 0;
+        s.txt.forEach(function (t, i) {
+          var iw = nW + ctx.measureText(t).width;
+          if (lineW && lineW + gapX + iw > w) { lines.push([]); lineW = 0; }
+          lines[lines.length - 1].push({ i: i, w: iw });
+          lineW += (lineW ? gapX : 0) + iw;
+        });
+        total += headH + lines.length * S * 1.18;
+        return lines;
+      });
+      total += (data.sets.length - 1) * setGap;
+      return { S: S, sets: sets, total: total, gapX: gapX, nW: nW };
+    }
+    var L;
+    for (var S = 64; S >= 20; S -= 2) { L = layout(S); if (L.total <= avail) break; }
+    var cy = top;
+    data.sets.forEach(function (s, k) {
+      ctx.fillStyle = th.ink;
+      font(ctx, 700, 34, COND);
+      ctx.fillText(s.label, x, cy + 30);
+      var lx = x + ctx.measureText(s.label).width + 16;
+      ctx.fillStyle = th.muted;
+      font(ctx, 500, 26, BODY);
+      ctx.fillText(clip(ctx, data.labels.avg.toLowerCase() + ' ' + s.avgTxt + (s.rest ? ' · ' + s.rest : ''), x + w - lx), lx, cy + 29);
+      cy += headH;
+      L.sets[k].forEach(function (line) {
+        var lx2 = x, base = cy + L.S * .95;
+        line.forEach(function (it) {
+          var t = s.reps[it.i], pb = s.pb[it.i];
+          // número da repetição, pequeno, por cima
+          ctx.fillStyle = th.muted;
+          font(ctx, 600, Math.round(L.S * .36), COND);
+          ctx.fillText(it.i + 1, lx2, base - L.S * .5);
+          ctx.fillStyle = pb ? th.pb : (t <= s.avg ? th.fast : th.ink);
+          font(ctx, 700, L.S, COND);
+          ctx.fillText(s.txt[it.i], lx2 + L.nW, base);
+          if (pb) {
+            ctx.fillRect(lx2 + L.nW, base + L.S * .1, it.w - L.nW, Math.max(3, L.S * .06));
+          }
+          lx2 += it.w + L.gapX;
+        });
+        cy += L.S * 1.18;
+      });
+      cy += setGap;
+    });
+  }
+
   function draw() {
     var H = SIZES[state.format], story = state.format === 'story', th = THEMES[state.theme];
     var M = 80, top = story ? 180 : 90, bottom = story ? 200 : 80, cw = W - 2 * M, av = story ? 120 : 104;
@@ -832,11 +913,14 @@
     var ctx = canvas.getContext('2d');
     ctx.textBaseline = 'alphabetic';
 
-    var bg = ctx.createLinearGradient(0, 0, W * .35, H);
-    bg.addColorStop(0, th.bg[0]); bg.addColorStop(1, th.bg[1]);
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
-    track(ctx, th);
+    // fundo transparente: só os textos e os quadros, para pôr sobre uma foto
+    if (!state.clear) {
+      var bg = ctx.createLinearGradient(0, 0, W * .35, H);
+      bg.addColorStop(0, th.bg[0]); bg.addColorStop(1, th.bg[1]);
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+      track(ctx, th);
+    }
 
     author(ctx, th, M, top, av);
     var y = top + av + 70;
@@ -851,10 +935,11 @@
       y += story ? 20 : 14;
     }
     ctx.fillStyle = th.ink;
-    var big = story ? 190 : 160, size = big;
+    var big = state.content === 'times' ? (story ? 160 : 112) : (story ? 190 : 160), size = big;
     font(ctx, 700, big, COND);
-    var lines = wrap(ctx, data.summary.replace(/ × /g, '×'), cw, 2);
-    lines.forEach(function (l) { size = Math.min(size, fit(ctx, l, 700, big, 70, COND, cw)); });
+    var tw = Math.min(cw, clearOfTrack(y) - M);
+    var lines = wrap(ctx, data.summary.replace(/ × /g, '×'), tw, 2);
+    lines.forEach(function (l) { size = Math.min(size, fit(ctx, l, 700, big, 70, COND, tw)); });
     font(ctx, 700, size, COND);
     lines.forEach(function (l) { y += size * .88; ctx.fillText(l, M - 4, y); });
 
@@ -878,7 +963,7 @@
     // gráfico no espaço que sobra até ao rodapé
     var fy = H - bottom - 44;
     var chartTop = y + (story ? 64 : 56), chartH = fy - 50 - chartTop;
-    if (chartH > 160) chart(ctx, th, M, chartTop, cw, chartH);
+    if (chartH > 160) (state.content === 'times' ? times : chart)(ctx, th, M, chartTop, cw, chartH);
 
     // rodapé com a marca
     ctx.fillStyle = th.grid;
@@ -894,6 +979,7 @@
       ctx.textBaseline = 'alphabetic';
     }
     preview.setAttribute('data-format', state.format);
+    preview.classList.toggle('is-clear', state.clear);
   }
 
   function render() { return Promise.all([fontsReady, avatarReady]).then(draw); }
@@ -913,7 +999,7 @@
   function choose(key, value) {
     state[key] = value;
     try { localStorage.setItem('series.share', JSON.stringify(state)); } catch (e) { /* ignorar */ }
-    pick('data-share-' + key, value);
+    if (key !== 'clear') pick('data-share-' + key, value);
     render();
   }
 
@@ -924,6 +1010,7 @@
     if (b.hasAttribute('data-share-close')) dlg.close();
     else if (b.hasAttribute('data-share-format')) choose('format', b.getAttribute('data-share-format'));
     else if (b.hasAttribute('data-share-theme')) choose('theme', b.getAttribute('data-share-theme'));
+    else if (b.hasAttribute('data-share-content')) choose('content', b.getAttribute('data-share-content'));
     else if (b.hasAttribute('data-share-download')) {
       blob().then(function (bl) {
         var a = document.createElement('a');
@@ -949,9 +1036,14 @@
   } catch (e) { sendBtn.hidden = true; }
   if (sendBtn.hidden) dlg.querySelector('[data-share-download]').className = 'btn btn--primary';
 
+  var clearBox = dlg.querySelector('[data-share-clear]');
+  clearBox.addEventListener('change', function () { choose('clear', clearBox.checked); });
+
   opener.addEventListener('click', function () {
     pick('data-share-format', state.format);
     pick('data-share-theme', state.theme);
+    pick('data-share-content', state.content);
+    clearBox.checked = state.clear;
     dlg.showModal();
     render();
   });

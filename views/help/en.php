@@ -228,10 +228,11 @@ $body = function (): void { ?>
     <ol>
       <li>Open the workout and press <b>Share</b>.</li>
       <li>Pick the format: <b>Post</b> (4:5, for the feed) or <b>Story</b> (9:16).</li>
-      <li>Pick the colours: <b>Night</b>, <b>Tartan</b> or <b>Light</b>.</li>
+      <li>Pick what to show: the <b>Chart</b> with the speed of each rep, or the <b>Times</b> of every rep.</li>
+      <li>Pick the colours: <b>Night</b>, <b>Tartan</b>, <b>Light</b>, <b>Grass</b> or <b>Blue</b>. Tick <b>Transparent background</b> to place the image over one of your photos (the colours then apply to the text).</li>
       <li>On a phone, press <b>Share image</b> and choose the app. On a computer, press <b>Download PNG</b>.</li>
     </ol>
-    <p>The image shows your avatar, the average, the fastest rep, the volume, the day's personal bests and a chart with the speed of each rep.</p>
+    <p>The image shows your avatar, the average, the fastest rep, the volume, the day's personal bests and the chart or the times, with the address series.corridas.com at the bottom.</p>
     <p class="tip">Only the author can make the image. Coaches don't see the button on their athletes' workouts.</p>
   </article>
 </section>

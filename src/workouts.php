@@ -517,6 +517,11 @@ function share_card_data(array $w, array $owner, array $pbs): array
             'reps'  => array_map('floatval', $s['reps']),
             'avg'   => $s['stats']['avg'],
             'pb'    => $flags,
+            'txt'   => array_map(fn($r) => fmt_time((float)$r, 1), $s['reps']),
+            'avgTxt'=> fmt_time($s['stats']['avg'], 1),
+            'rest'  => $s['rest_seconds'] !== null
+                ? t('w.rest_desc', ['t' => fmt_time((float)$s['rest_seconds'], 0), 'type' => t('w.rest.' . $s['rest_type'])])
+                : '',
         ];
     }
     $single = count(array_unique(array_column($reps, 'd'))) === 1;
@@ -543,6 +548,8 @@ function share_card_data(array $w, array $owner, array $pbs): array
         'sets'    => $sets,
         'labels'  => [
             'chart'  => t('share.chart'),
+            'times'  => t('share.times'),
+            'avg'    => t('share.avg'),
             'faster' => t('share.faster'),
             'slower' => t('share.slower'),
             'pb1'    => t('share.pb.one'),
