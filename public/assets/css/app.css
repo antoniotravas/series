@@ -386,6 +386,8 @@ input[type="search"] { -webkit-appearance: none; appearance: none; }
 }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 1.25rem; min-width: 0; }
 .panel h2 { font-size: 1.35rem; margin-bottom: .15rem; }
+/* ao mudar a distância da evolução a página volta a este painel, abaixo da barra fixa */
+.panel--progress { scroll-margin-top: 4.5rem; }
 .panel__head { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; }
 .inline-select select { min-height: 2.25rem; padding: .3rem 2rem .3rem .6rem; width: auto; }
 

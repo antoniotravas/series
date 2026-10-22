@@ -105,13 +105,13 @@ $link = function (string $page, string $qs = '') use ($uq): string {
     </table>
   </section>
 
-  <section class="panel panel--progress" aria-labelledby="pr-h">
+  <section class="panel panel--progress" id="evolucao" aria-labelledby="pr-h">
     <div class="panel__head">
       <div>
         <h2 id="pr-h"><?= e(t('dash.progress')) ?></h2>
         <p class="muted small"><?= e(t('dash.progress.lead')) ?></p>
       </div>
-      <form method="get" class="inline-select">
+      <form method="get" action="#evolucao" class="inline-select">
         <?php if (!$isOwner): ?><input type="hidden" name="u" value="<?= (int)$athlete['id'] ?>"><?php endif; ?>
         <label class="sr-only" for="d"><?= e(t('w.filter.distance')) ?></label>
         <select id="d" name="d" data-autosubmit>
