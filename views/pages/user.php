@@ -66,6 +66,13 @@ $hidden = fn(string $action, array $extra = []) => csrf_field()
   </div>
 </header>
 
+<?php if ($other['is_coach'] && $other['bio']): ?>
+  <section class="panel" aria-labelledby="ub-h">
+    <h2 id="ub-h"><?= e(t('p.bio')) ?></h2>
+    <p class="bio"><?= e($other['bio']) ?></p>
+  </section>
+<?php endif; ?>
+
 <?php if ($isCoach): ?>
   <p class="callout">
     <?= e(t('athletes.you_coach', ['name' => $other['display_name']])) ?>

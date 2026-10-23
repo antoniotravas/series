@@ -67,6 +67,56 @@
     });
   });
 
+  // ---------- Foto do avatar: reduzir no browser antes de enviar ----------
+  // as fotos do telemóvel têm vários MB (e o iPhone usa HEIC): passam a um JPEG pequeno
+
+  var avatarInput = document.querySelector('input[type=file][name=avatar]');
+  if (avatarInput && window.DataTransfer && HTMLCanvasElement.prototype.toBlob) {
+    avatarInput.addEventListener('change', function () {
+      var file = avatarInput.files[0];
+      if (!file || !/^image\//.test(file.type || 'image/')) return;
+      var submits = avatarInput.form.querySelectorAll('button[type=submit], button:not([type])');
+      submits.forEach(function (b) { b.disabled = true; });
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      var done = function () {
+        URL.revokeObjectURL(url);
+        submits.forEach(function (b) { b.disabled = false; });
+      };
+      img.onload = function () {
+        var max = 640;
+        var k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+        var c = document.createElement('canvas');
+        c.width = Math.round(img.naturalWidth * k);
+        c.height = Math.round(img.naturalHeight * k);
+        var ctx = c.getContext('2d');
+        ctx.fillStyle = '#fff';   // PNG transparente não fica com fundo preto
+        ctx.fillRect(0, 0, c.width, c.height);
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+        c.toBlob(function (blob) {
+          if (blob) {
+            var dt = new DataTransfer();
+            dt.items.add(new File([blob], 'avatar.jpg', { type: 'image/jpeg' }));
+            avatarInput.files = dt.files;
+          }
+          done();
+        }, 'image/jpeg', 0.88);
+      };
+      img.onerror = done;   // formato que o browser não lê: vai tal como está
+      img.src = url;
+    });
+  }
+
+  // ---------- Perfil: o currículo só aparece a quem se marca como treinador ----------
+
+  var coachBox = document.querySelector('input[type=checkbox][name=is_coach]');
+  if (coachBox) {
+    var coachOnly = document.querySelectorAll('[data-coach-only]');
+    var syncCoach = function () { coachOnly.forEach(function (el) { el.hidden = !coachBox.checked; }); };
+    coachBox.addEventListener('change', syncCoach);
+    syncCoach();
+  }
+
   // ---------- Feed da rede: carregar treinos mais antigos ----------
 
   var more = document.querySelector('[data-feed-more]');

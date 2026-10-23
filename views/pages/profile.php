@@ -38,6 +38,10 @@ $rows = [
         <div><dt><?= e($label) ?></dt><dd<?= $value === null || $value === '' ? ' class="muted"' : '' ?>><?= e($value === null || $value === '' ? $dash : $value) ?></dd></div>
       <?php endforeach; ?>
     </dl>
+    <?php if ($u['is_coach'] && $u['bio']): ?>
+      <h3><?= e(t('p.bio')) ?></h3>
+      <p class="bio"><?= e($u['bio']) ?></p>
+    <?php endif; ?>
   </section>
 
   <div class="profile__side">

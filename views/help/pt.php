@@ -65,7 +65,7 @@ $body = function (): void { ?>
     <ol>
       <li>Carrega em <b>Registar treino</b>.</li>
       <li>Confirma a <b>data</b> e a <b>hora</b>. Se quiseres, escreve um título, por exemplo "Séries de 500 no Jamor", e o local.</li>
-      <li>Na <b>Série 1</b> escreve <b>10</b> em Repetições e <b>500</b> em Distância (m). Aparecem 10 caixas de tempo.</li>
+      <li>No <b>Bloco 1</b> escreve <b>10</b> em Repetições e <b>500</b> em Distância (m). Aparecem 10 caixas de tempo.</li>
       <li>Em <b>Recuperação</b> escreve <kbd>1:10</kbd> ou <kbd>70</kbd>. Em <b>Tipo</b> escolhe se ficaste parado, a andar ou a trotar.</li>
       <li>Escreve o tempo de cada repetição, por exemplo <kbd>1:32.4</kbd> ou <kbd>92.4</kbd>. A média, o ritmo e o desvio vão sendo calculados enquanto escreves.</li>
       <li>Carrega em <b>Guardar treino</b>.</li>
@@ -74,29 +74,29 @@ $body = function (): void { ?>
   </article>
 
   <article class="usecase">
-    <h3>O treino tinha várias séries (ex.: 4 × 400 m + 4 × 200 m)</h3>
+    <h3>O treino tinha vários blocos (ex.: 4 × 400 m + 4 × 200 m)</h3>
     <ol>
-      <li>Preenche a primeira série com 4 × 400.</li>
-      <li>Carrega em <b>Adicionar série</b> e preenche 4 × 200.</li>
-      <li>Cada série tem a sua recuperação, o seu tempo alvo e as suas estatísticas. Para tirar uma série, usa <b>Remover série</b>.</li>
+      <li>Preenche o primeiro bloco com 4 × 400.</li>
+      <li>Carrega em <b>Adicionar bloco</b> e preenche 4 × 200.</li>
+      <li>Cada bloco tem a sua recuperação, o seu tempo alvo e as suas estatísticas. Para tirar um bloco, usa <b>Remover bloco</b>.</li>
     </ol>
   </article>
 
   <article class="usecase">
     <h3>Tinha um tempo alvo para cada repetição</h3>
-    <p>Escreve-o em <b>Tempo alvo</b> na série, por exemplo <kbd>1:32</kbd>. Na página do treino passas a ver a diferença de cada repetição para o alvo.</p>
+    <p>Escreve-o em <b>Tempo alvo</b> no bloco, por exemplo <kbd>1:32</kbd>. Na página do treino passas a ver a diferença de cada repetição para o alvo.</p>
   </article>
 
   <article class="usecase">
     <h3>Quero guardar as condições e as sensações</h3>
-    <p>Por baixo das séries há campos opcionais: <b>Tipo de piso</b> (pista ao ar livre, coberta, estrada…), <b>Condições</b> (vento, chuva), <b>Temperatura</b>, <b>Esforço percebido</b> de 1 a 10 e <b>Notas</b> para o aquecimento, as sapatilhas ou o que quiseres.</p>
+    <p>Por baixo dos blocos há campos opcionais: <b>Tipo de piso</b> (pista ao ar livre, coberta, estrada…), <b>Condições</b> (vento, chuva), <b>Temperatura</b>, <b>Esforço percebido</b> de 1 a 10 e <b>Notas</b> para o aquecimento, as sapatilhas ou o que quiseres.</p>
   </article>
 
   <article class="usecase">
     <h3>Repito o mesmo treino todas as semanas</h3>
     <ol>
       <li>Abre o treino da semana passada.</li>
-      <li>Carrega em <b>Duplicar</b>. Abre um treino novo com as mesmas séries e a data de hoje.</li>
+      <li>Carrega em <b>Duplicar</b>. Abre um treino novo com os mesmos blocos e a data de hoje.</li>
       <li>Escreve os tempos novos e guarda.</li>
     </ol>
   </article>
@@ -133,7 +133,7 @@ $body = function (): void { ?>
 
   <article class="usecase">
     <h3>Quero saber se fui regular</h3>
-    <p>Abre o treino na lista <b>Treinos</b>. Cada série mostra:</p>
+    <p>Abre o treino na lista <b>Treinos</b>. Cada bloco mostra:</p>
     <ul>
       <li><b>Média</b>, <b>Melhor</b>, <b>Pior</b> e <b>Ritmo</b> por km.</li>
       <li><b>Desvio</b>: quanto os tempos variaram. Quanto mais baixo, mais regular.</li>
@@ -228,7 +228,7 @@ $body = function (): void { ?>
     <ol>
       <li>Abre o treino e carrega em <b>Partilhar</b>.</li>
       <li>Escolhe o formato: <b>Publicação</b> (4:5, para o feed), <b>História</b> (9:16) ou <b>Ajustada ao conteúdo</b> (a altura da imagem acompanha o que escolheres mostrar, sem espaço vazio).</li>
-      <li>Escolhe o que mostrar: a velocidade de cada repetição em <b>Barras</b> ou <b>Linhas</b>, os <b>Tempos</b> de todas as repetições ou <b>Nada</b>. Marca ou desmarca também o avatar e nome, a data e local, o título e séries, a recuperação entre repetições, os números (média, mais rápida, volume e repetições) e o rodapé com o logótipo e o site. Os recordes pessoais batidos no treino aparecem sempre, a dourado.</li>
+      <li>Escolhe o que mostrar: a velocidade de cada repetição em <b>Barras</b> ou <b>Linhas</b>, os <b>Tempos</b> de todas as repetições ou <b>Nada</b>. Marca ou desmarca também o avatar e nome, a data e local, o título e blocos, a recuperação entre repetições, os números (média, mais rápida, volume e repetições) e o rodapé com o logótipo e o site. Os recordes pessoais batidos no treino aparecem sempre, a dourado.</li>
       <li>Escolhe as cores: <b>Noite</b>, <b>Tartan</b>, <b>Claro</b>, <b>Relva</b> ou <b>Azul</b>. Marca <b>Fundo transparente</b> para pores a imagem por cima de uma foto tua (as cores escolhidas passam a ser as do texto).</li>
       <li>No telemóvel, carrega em <b>Partilhar imagem</b> e escolhe a aplicação. No computador, carrega em <b>Copiar imagem</b> e cola-a onde quiseres (Ctrl+V), ou em <b>Descarregar PNG</b>.</li>
     </ol>

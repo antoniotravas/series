@@ -30,7 +30,7 @@ $isSection = fn(string $s) => $section === $s;
       </div>
       <div class="field field--wide">
         <label for="avatar"><?= e(t('p.avatar')) ?></label>
-        <input id="avatar" name="avatar" type="file" accept="image/jpeg,image/png,image/webp"<?= field_attrs($errors, 'avatar') ?>>
+        <input id="avatar" name="avatar" type="file" accept="image/*"<?= field_attrs($errors, 'avatar') ?>>
         <p class="field__hint"><?= e(t('p.avatar_hint')) ?></p>
         <?php if ($u['avatar']): ?>
           <label class="check"><input type="checkbox" name="remove_avatar" value="1"> <?= e(t('p.avatar_remove')) ?></label>
@@ -80,6 +80,12 @@ $isSection = fn(string $s) => $section === $s;
       <div class="field field--wide">
         <label class="check"><input type="checkbox" name="is_coach" value="1" <?= ($isSection('profile') ? old('is_coach') : $u['is_coach']) ? 'checked' : '' ?>> <?= e(t('coach.profile_toggle')) ?></label>
         <p class="field__hint"><?= e(t('coach.profile_hint')) ?></p>
+      </div>
+      <div class="field field--wide" data-coach-only>
+        <label for="bio"><?= e(t('p.bio')) ?></label>
+        <textarea id="bio" name="bio" rows="5" maxlength="1000" placeholder="<?= e(t('p.bio_ph')) ?>"<?= field_attrs($errors, 'bio') ?>><?= e((string)$o('bio')) ?></textarea>
+        <p class="field__hint"><?= e(t('p.bio_hint')) ?></p>
+        <?= field_error($errors, 'bio') ?>
       </div>
     </div>
     <button class="btn btn--primary" type="submit"><?= e(t('p.save')) ?></button>
