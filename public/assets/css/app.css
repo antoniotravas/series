@@ -353,11 +353,6 @@ input[type="search"] { -webkit-appearance: none; appearance: none; }
 .gpxfill__row p { margin: 0; flex: 1 1 16rem; }
 .gpxfill__row label.btn { cursor: pointer; }
 .gpxfill__row label.btn:has(+ input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
-.gpxfill__link { margin-top: .75rem; padding-top: .75rem; border-top: 1px solid var(--line); }
-.gpxfill__link label { display: block; font-weight: 500; margin-bottom: .3rem; }
-.gpxfill__linkrow { display: flex; gap: .5rem; }
-.gpxfill__linkrow input { flex: 1; min-width: 0; }
-.gpxfill__link .field__hint { margin: .3rem 0 0; }
 .gpxfill__ok { margin: .75rem 0 .25rem; font-weight: 600; }
 .gpxfill__reps { margin: 0; padding-left: 1.4rem; font-size: .875rem; color: var(--ink-2); font-variant-numeric: tabular-nums; line-height: 1.6; }
 .gpxfill__reps .is-ignored { color: var(--muted); }

@@ -104,14 +104,6 @@ $setBlock = function ($i, array $s, ?string $error) use ($quickDistances) {
       <input id="gpx-auto" type="file" accept=".gpx,application/gpx+xml" class="sr-only" data-gpx-input>
       <p class="muted small"><?= e(t('gpx.lead')) ?></p>
     </div>
-    <div class="gpxfill__link">
-      <label for="gpx-link" class="small"><?= e(t('gpx.link_label')) ?></label>
-      <div class="gpxfill__linkrow">
-        <input id="gpx-link" type="url" inputmode="url" placeholder="https://api.sports-tracker.com/…" data-gpx-link>
-        <button type="button" class="btn btn--ghost btn--sm" data-gpx-link-go><?= e(t('gpx.link_btn')) ?></button>
-      </div>
-      <p class="field__hint"><?= e(t('gpx.link_hint')) ?></p>
-    </div>
     <div class="gpxfill__result" data-gpx-result aria-live="polite"></div>
   </section>
 
