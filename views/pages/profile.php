@@ -14,6 +14,13 @@ $rows = [
     t('p.lang')   => LANGS[$u['lang']] ?? $u['lang'],
     t('coach.profile_toggle') => t($u['is_coach'] ? 'p.yes' : 'p.no'),
 ];
+// quem vê cada linha (nome e idioma não têm escolha)
+$priv = profile_privacy($u);
+$privFor = [
+    t('p.birth') => $priv['age'], t('p.sex') => $priv['sex'], t('p.weight') => $priv['weight'],
+    t('p.height') => $priv['height'], t('p.club') => $priv['club'], t('p.event') => $priv['main_event'],
+    t('p.country_short') => $priv['country'],
+];
 ?>
 <header class="page-head">
   <div class="profile-head">
@@ -34,12 +41,12 @@ $rows = [
   <section class="panel" aria-labelledby="pd-h">
     <h2 id="pd-h"><?= e(t('p.personal')) ?></h2>
     <dl class="datalist">
-      <?php foreach ($rows as $label => $value): ?>
-        <div><dt><?= e($label) ?></dt><dd<?= $value === null || $value === '' ? ' class="muted"' : '' ?>><?= e($value === null || $value === '' ? $dash : $value) ?></dd></div>
+      <?php foreach ($rows as $label => $value): $vis = $privFor[$label] ?? null; ?>
+        <div><dt><?= e($label) ?></dt><dd<?= $value === null || $value === '' ? ' class="muted"' : '' ?>><?= e($value === null || $value === '' ? $dash : $value) ?><?php if ($vis): ?> <span class="badge badge--vis-<?= $vis ?>" title="<?= e(t('vis.label')) ?>"><?= e(t('vis.' . $vis)) ?></span><?php endif; ?></dd></div>
       <?php endforeach; ?>
     </dl>
     <?php if ($u['is_coach'] && $u['bio']): ?>
-      <h3><?= e(t('p.bio')) ?></h3>
+      <h3><?= e(t('p.bio')) ?> <span class="badge badge--vis-<?= $priv['bio'] ?>"><?= e(t('vis.' . $priv['bio'])) ?></span></h3>
       <p class="bio"><?= e($u['bio']) ?></p>
     <?php endif; ?>
   </section>

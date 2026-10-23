@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS users (
     country       CHAR(2) NULL,
     main_event    VARCHAR(40) NULL,
     bio           TEXT NULL,                       -- currículo do treinador
+    privacy       TEXT NULL,                       -- JSON: quem vê cada campo do perfil
     lang          CHAR(2) NOT NULL DEFAULT 'pt',
     is_admin      TINYINT(1) NOT NULL DEFAULT 0,
     is_coach      TINYINT(1) NOT NULL DEFAULT 0,

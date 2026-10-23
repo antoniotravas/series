@@ -31,7 +31,8 @@ $facts = array_filter([
   </div>
   <?php if ($isOwner): ?>
   <div class="actions">
-    <?php if ($w['sets']): ?><button type="button" class="btn btn--primary btn--sm" data-share-open><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg><?= e(t('share.btn')) ?></button><?php endif; ?>
+    <?php if ($w['sets']): ?><button type="button" class="btn btn--primary btn--sm" data-share-open><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg><?= e(t('share.btn')) ?></button>
+    <a class="btn btn--ghost btn--sm" href="<?= url('compare.php?a=' . (int)$w['id']) ?>"><?= e(t('cmp.btn')) ?></a><?php endif; ?>
     <a class="btn btn--ghost btn--sm" href="<?= url('workout_edit.php?copy=' . (int)$w['id']) ?>" title="<?= e(t('w.dup_title')) ?>"><?= e(t('w.dup')) ?></a>
     <a class="btn btn--ghost btn--sm" href="<?= url('workout_edit.php?id=' . (int)$w['id']) ?>"><?= e(t('w.edit')) ?></a>
     <form method="post" action="<?= url('workouts_bulk.php') ?>">
@@ -46,14 +47,18 @@ $facts = array_filter([
       <button class="btn btn--danger btn--sm" type="submit"><?= e(t('w.delete')) ?></button>
     </form>
   </div>
-  <?php elseif ($canEdit): ?>
+  <?php elseif ($full): ?>
   <div class="actions">
+    <?php if ($w['sets']): ?><button type="button" class="btn btn--primary btn--sm" data-share-open><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg><?= e(t('share.btn')) ?></button>
+    <a class="btn btn--ghost btn--sm" href="<?= url('compare.php?a=' . (int)$w['id']) ?>"><?= e(t('cmp.btn')) ?></a><?php endif; ?>
+    <?php if ($canEdit): ?>
     <a class="btn btn--ghost btn--sm" href="<?= url('workout_edit.php?id=' . (int)$w['id']) ?>"><?= e(t('w.edit')) ?></a>
     <form method="post" action="<?= url('workout_delete.php') ?>" data-confirm="<?= e(t('w.delete_confirm')) ?>">
       <?= csrf_field() ?>
       <input type="hidden" name="id" value="<?= (int)$w['id'] ?>">
       <button class="btn btn--danger btn--sm" type="submit"><?= e(t('w.delete')) ?></button>
     </form>
+    <?php endif; ?>
   </div>
   <?php endif; ?>
 </header>
@@ -116,7 +121,7 @@ $combined = array_filter($byDist, fn($g) => count($g) > 1);
 </section>
 <?php endif; ?>
 
-<?php if ($isOwner && $w['sets']): ?>
+<?php if ($full && $w['sets']): ?>
 <dialog class="share" data-share aria-labelledby="share-h">
   <div class="share__head">
     <h2 id="share-h"><?= e(t('share.title')) ?></h2>
@@ -163,7 +168,7 @@ $combined = array_filter($byDist, fn($g) => count($g) > 1);
         <button type="button" class="btn btn--ghost" data-share-copy hidden data-done="<?= e(t('share.copied')) ?>"><?= e(t('share.copy')) ?></button>
         <button type="button" class="btn btn--ghost" data-share-download><?= e(t('share.download')) ?></button>
       </p>
-      <p class="muted share__hint"><?= e(t('share.hint')) ?></p>
+      <p class="muted share__hint"><?= e(t($isOwner ? 'share.hint' : 'share.hint_coach')) ?></p>
     </div>
   </div>
   <script type="application/json" data-share-data><?= json_encode(share_card_data($w, $owner, $pbs) + ['site' => config('site_host', 'www.series.corridas.eu')], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>

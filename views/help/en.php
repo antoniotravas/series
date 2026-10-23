@@ -233,7 +233,7 @@ $body = function (): void { ?>
       <li>On a phone, press <b>Share image</b> and choose the app. On a computer, press <b>Copy image</b> and paste it anywhere (Ctrl+V), or <b>Download PNG</b>.</li>
     </ol>
     <p>The image shows your avatar, the average, the fastest rep, the volume, the day's personal bests and the chart or the times, with the address www.series.corridas.eu at the bottom.</p>
-    <p class="tip">Only the author can make the image. Coaches don't see the button on their athletes' workouts.</p>
+    <p class="tip">Coaches can also make the image for one of their athletes' workouts: open it from <b>Athletes</b> and press <b>Share</b>. The image carries the athlete's name and avatar.</p>
   </article>
 </section>
 
@@ -315,6 +315,16 @@ $body = function (): void { ?>
   </article>
 
   <article class="usecase">
+    <h3>I want to compare two workouts</h3>
+    <ol>
+      <li>In <b>Workouts</b>, tick the two workouts you want to compare and press <b>Compare selected</b>. They can be from the same athlete or from different athletes.</li>
+      <li>Or open a workout and press <b>Compare</b>. Choose the athlete and the distance, then press the second workout.</li>
+    </ol>
+    <p>You see both workouts side by side: volume, reps, average pace, recovery and effort, and for each distance the average, best, slowest, consistency, a chart with every rep's time and the rep-by-rep table. The difference is always B − A, green when B was faster.</p>
+    <p class="tip">Use <b>Swap A and B</b> to flip the comparison. Athletes can also compare two of their own workouts with the <b>Compare</b> button.</p>
+  </article>
+
+  <article class="usecase">
     <h3>I no longer coach an athlete</h3>
     <p>In <b>Athletes</b>, press <b>Stop coaching</b>. You lose access to their workouts at once.</p>
   </article>
@@ -349,6 +359,17 @@ $body = function (): void { ?>
   <article class="usecase">
     <h3>I want to update my details</h3>
     <p>Press your photo, <b>View profile</b>, then <b>Edit profile</b>. There you can change your display name, avatar (JPG, PNG or WebP up to 2 MB), birth date, sex, weight, height, club, country, main event and language. Press <b>Save profile</b> at the end.</p>
+  </article>
+
+  <article class="usecase">
+    <h3>I want to choose who sees my details</h3>
+    <ol>
+      <li>In <b>View profile → Edit profile</b>, scroll to <b>Who sees your details</b>.</li>
+      <li>For each field (club, main event, country, résumé, age, sex, weight and height) choose <b>Only me</b>, <b>Connections</b> or <b>Public</b>.</li>
+      <li>Press <b>Save profile</b>.</li>
+    </ol>
+    <p>By default club, event, country and résumé are public; age, sex, weight and height are only for you. <b>View profile</b> shows who can see each detail.</p>
+    <p class="tip">Your name and avatar are always visible, and your coaches always see everything. If you hide your club you won't show up when others search for that club. Your birth date is never shown: others only see your age.</p>
   </article>
 
   <article class="usecase">

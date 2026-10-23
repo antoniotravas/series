@@ -74,16 +74,23 @@ if (is_post()) {
             }
         }
 
+        $privacy = [];
+        foreach (array_keys(PROFILE_FIELDS) as $f) {
+            $v = $_POST['privacy'][$f] ?? '';
+            $privacy[$f] = in_array($v, VISIBILITIES, true) ? $v : profile_privacy($user)[$f];
+        }
+
         if (!$errors) {
             q(
                 'UPDATE users SET display_name = ?, birth_date = ?, sex = ?, weight_kg = ?, height_cm = ?,
-                        club = ?, country = ?, main_event = ?, bio = ?, lang = ?, avatar = ?, is_coach = ? WHERE id = ?',
+                        club = ?, country = ?, main_event = ?, bio = ?, privacy = ?, lang = ?, avatar = ?, is_coach = ? WHERE id = ?',
                 [
                     $name, $birth ?: null, $sex, $weight, $height === null ? null : (int)$height,
                     mb_substr(trim((string)($_POST['club'] ?? '')), 0, 120) ?: null,
                     $country,
                     mb_substr(trim((string)($_POST['main_event'] ?? '')), 0, 40) ?: null,
                     $bio !== '' ? $bio : null,
+                    json_encode($privacy),
                     $lang, $avatar, $isCoach, $uid,
                 ]
             );

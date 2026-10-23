@@ -106,7 +106,14 @@ $listUrl = url('workouts.php' . ($u && !$coachAll ? '?u=' . $u['u'] : ''));
     <?php endif; ?>
   </section>
 <?php elseif (!$isOwner): ?>
-  <?php view('partials/workout_rows', ['rows' => $result['rows'], 'showAuthor' => $coachAll]); ?>
+  <form method="get" action="<?= url('compare.php') ?>" class="bulk-form" data-compare>
+    <p class="muted small bulk__all"><?= e(t('cmp.list_hint')) ?></p>
+    <?php view('partials/workout_rows', ['rows' => $result['rows'], 'showAuthor' => $coachAll, 'selectable' => true, 'showVis' => false]); ?>
+    <div class="bulk" role="region" aria-label="<?= e(t('cmp.title')) ?>">
+      <span class="bulk__count muted small" data-compare-count data-label="<?= e(t('w.bulk.count', ['n' => '%n'])) ?>"></span>
+      <button class="btn btn--primary btn--sm" type="submit" data-compare-go data-label="<?= e(t('cmp.list_btn')) ?>" data-two="<?= e(t('cmp.list_two')) ?>"><?= e(t('cmp.list_btn')) ?></button>
+    </div>
+  </form>
 <?php else: ?>
   <form method="post" action="<?= url('workouts_bulk.php') ?>" class="bulk-form">
     <?= csrf_field() ?>

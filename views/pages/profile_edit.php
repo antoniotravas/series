@@ -88,6 +88,22 @@ $isSection = fn(string $s) => $section === $s;
         <?= field_error($errors, 'bio') ?>
       </div>
     </div>
+    <fieldset class="privacy">
+      <legend><?= e(t('p.priv.title')) ?></legend>
+      <p class="field__hint"><?= e(t('p.priv.lead')) ?></p>
+      <?php $priv = profile_privacy($u); $oldPriv = $isSection('profile') ? (array)old('privacy', []) : []; ?>
+      <div class="privacy__list">
+        <?php foreach (PROFILE_FIELDS as $f => $default): $cur = $oldPriv[$f] ?? $priv[$f]; ?>
+        <div class="privacy__row"<?= $f === 'bio' ? ' data-coach-only' : '' ?>>
+          <label for="priv-<?= $f ?>"><?= e(t('p.priv.' . $f)) ?></label>
+          <select id="priv-<?= $f ?>" name="privacy[<?= $f ?>]">
+            <?php foreach (VISIBILITIES as $vis): ?><option value="<?= $vis ?>" <?= $cur === $vis ? 'selected' : '' ?>><?= e(t('vis.' . $vis)) ?></option><?php endforeach; ?>
+          </select>
+        </div>
+        <?php endforeach; ?>
+      </div>
+      <p class="field__hint"><?= e(t('p.priv.coach')) ?></p>
+    </fieldset>
     <button class="btn btn--primary" type="submit"><?= e(t('p.save')) ?></button>
   </form>
 

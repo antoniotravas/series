@@ -1,7 +1,9 @@
 <?php
 $me = current_user();
 $oid = (int)$other['id'];
-$meta = array_filter([$other['club'], $other['main_event'], $other['country']]);
+$shown = visible_profile((int)$me['id'], $other);   // só o que o outro deixa ver
+$meta = array_intersect_key($shown, array_flip(['club', 'main_event', 'country']));
+$personal = array_intersect_key($shown, array_flip(['age', 'sex', 'weight', 'height']));
 $hidden = fn(string $action, array $extra = []) => csrf_field()
     . '<input type="hidden" name="back" value="' . e($_SERVER['REQUEST_URI'] ?? '') . '">'
     . '<input type="hidden" name="action" value="' . e($action) . '">'
@@ -66,10 +68,16 @@ $hidden = fn(string $action, array $extra = []) => csrf_field()
   </div>
 </header>
 
-<?php if ($other['is_coach'] && $other['bio']): ?>
+<?php if ($personal): ?>
+  <dl class="facts facts--profile">
+    <?php foreach ($personal as $f => $v): ?><div><dt><?= e(t('p.priv.' . $f)) ?></dt><dd><?= e($v) ?></dd></div><?php endforeach; ?>
+  </dl>
+<?php endif; ?>
+
+<?php if (isset($shown['bio'])): ?>
   <section class="panel" aria-labelledby="ub-h">
     <h2 id="ub-h"><?= e(t('p.bio')) ?></h2>
-    <p class="bio"><?= e($other['bio']) ?></p>
+    <p class="bio"><?= e($shown['bio']) ?></p>
   </section>
 <?php endif; ?>
 

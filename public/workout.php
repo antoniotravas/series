@@ -28,6 +28,7 @@ render('workout', [
     'w'       => $w,
     'pbs'     => $pbs,
     'isOwner' => $isOwner,
+    'full'    => $full,   // o próprio ou o treinador: partilhar e comparar
     'owner'   => $owner,
     // o treinador pode editar e apagar os treinos que registou na conta do atleta
     'canEdit' => !$isOwner && can_edit_workout($uid, $w),

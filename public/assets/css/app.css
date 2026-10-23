@@ -699,3 +699,52 @@ h1 .badge { font: 600 .8rem/1.3 var(--f-body); vertical-align: middle; }
 .pick-list a:hover, .pick-list a:focus-visible { border-color: var(--tartan); }
 .pick-list span { display: grid; }
 .pick-list small { color: var(--muted); }
+
+/* ---------- Comparar treinos ---------- */
+:root { --cmp-a: #1F64B5; --cmp-b: #D9822B; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --cmp-a: #5B9BE6; --cmp-b: #F0A04B; } }
+:root[data-theme="dark"] { --cmp-a: #5B9BE6; --cmp-b: #F0A04B; }
+.cmp-cards { display: grid; gap: 1rem; margin: 0 0 1.25rem; }
+@media (min-width: 48rem) { .cmp-cards { grid-template-columns: 1fr 1fr; } }
+.cmp-card { background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--cmp-a); border-radius: var(--r-md); padding: 1rem 1.25rem; min-width: 0; }
+.cmp-card--b { border-top-color: var(--cmp-b); }
+.cmp-card p { margin: 0 0 .35rem; }
+.cmp-card h2 { margin: .25rem 0 .2rem; font-size: 1.4rem; }
+.cmp-card h2 a { text-decoration: none; }
+.cmp-card h2 a:hover { text-decoration: underline; }
+.cmp-card__side { display: flex; align-items: center; gap: .6rem; }
+.cmp-card__side .author { margin: 0; }
+.cmp-key { display: inline-grid; place-items: center; width: 1.4rem; height: 1.4rem; border-radius: 50%; background: var(--cmp-a); color: #fff; font: 700 .8rem/1 var(--f-display); vertical-align: middle; }
+.cmp-key--b { background: var(--cmp-b); }
+.cmp-sec { margin-bottom: 1.25rem; }
+.cmp-sec h2 { display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem .75rem; }
+.cmp-table { width: 100%; border-collapse: collapse; font-size: .95rem; font-variant-numeric: tabular-nums; }
+.cmp-table th, .cmp-table td { padding: .5rem .5rem; border-top: 1px solid var(--line); text-align: left; font-weight: 400; white-space: nowrap; }
+.cmp-table thead th { border-top: 0; font-size: .8rem; color: var(--muted); font-weight: 600; }
+.cmp-table tbody th { color: var(--ink-2); }
+.cmp-table .num { text-align: right; }
+.cmp-table small { color: var(--muted); font-size: .8rem; }
+.cmp-table .is-fast { color: var(--ahead); font-weight: 600; }
+.cmp-table .is-slow { color: var(--slow); font-weight: 600; }
+.cmp-chart { margin: .5rem 0 1rem; }
+.cmp-chart svg { width: 100%; height: auto; display: block; }
+.cmp-chart__grid { stroke: var(--line); stroke-width: 1; }
+.cmp-chart__tick { fill: var(--muted); font: 12px var(--f-body); font-variant-numeric: tabular-nums; }
+.cmp-chart__line { fill: none; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.cmp-chart__line--a, .cmp-chart__dot--a { stroke: var(--cmp-a); }
+.cmp-chart__line--b, .cmp-chart__dot--b { stroke: var(--cmp-b); }
+.cmp-chart__dot { fill: var(--surface); stroke-width: 2.5; }
+.cmp-chart figcaption { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; margin-top: .25rem; }
+.cmp-reps summary { cursor: pointer; font-weight: 600; margin-bottom: .5rem; }
+.cmp-pick .filters { margin-bottom: .75rem; }
+.cmp-pick__list { margin: 0; }
+
+/* ---------- Privacidade do perfil ---------- */
+.privacy { border: 1px solid var(--line); border-radius: var(--r-md); padding: .9rem 1rem 1rem; margin: 0 0 1.25rem; }
+.privacy legend { font: 600 1.15rem/1.1 var(--f-display); padding: 0 .35rem; }
+.privacy__list { display: grid; gap: .5rem 1.5rem; margin: .5rem 0; }
+@media (min-width: 40rem) { .privacy__list { grid-template-columns: 1fr 1fr; } }
+.privacy__row { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+.privacy__row label { font-weight: 500; }
+.privacy__row select { width: auto; min-width: 8.5rem; min-height: 2.25rem; padding: .3rem .5rem; }
+.facts--profile { margin-top: -.5rem; }

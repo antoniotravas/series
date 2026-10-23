@@ -206,6 +206,28 @@
     update();
   });
 
+  // lista do treinador: marcar dois treinos para comparar (um terceiro tira o mais antigo)
+  document.querySelectorAll('[data-compare]').forEach(function (form) {
+    var count = form.querySelector('[data-compare-count]');
+    var go = form.querySelector('[data-compare-go]');
+    var order = [];
+    function update() {
+      var n = order.length;
+      count.textContent = n ? count.getAttribute('data-label').replace('%n', n) : '';
+      go.disabled = n !== 2;
+      go.textContent = go.getAttribute(n === 2 ? 'data-label' : 'data-two');
+    }
+    form.querySelectorAll('input[name="ids[]"]').forEach(function (b) {
+      b.addEventListener('change', function () {
+        order = order.filter(function (x) { return x !== b; });
+        if (b.checked) order.push(b);
+        if (order.length > 2) order.shift().checked = false;
+        update();
+      });
+    });
+    update();
+  });
+
   document.querySelectorAll('[data-autosubmit]').forEach(function (el) {
     el.addEventListener('change', function () { el.form.submit(); });
   });

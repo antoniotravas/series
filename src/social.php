@@ -234,6 +234,61 @@ function visible_levels(int $viewerId, int $ownerId): array
     return are_connected($viewerId, $ownerId) ? ['connections', 'public'] : ['public'];
 }
 
+// ---------- Privacidade do perfil ----------
+
+/** Campos do perfil que o dono escolhe quem vê, com o valor por omissão. */
+const PROFILE_FIELDS = [
+    'club'       => 'public',
+    'main_event' => 'public',
+    'country'    => 'public',
+    'bio'        => 'public',
+    'age'        => 'private',
+    'sex'        => 'private',
+    'weight'     => 'private',
+    'height'     => 'private',
+];
+
+/** Visibilidade de cada campo do perfil (campo => private|connections|public). */
+function profile_privacy(array $u): array
+{
+    $saved = json_decode((string)($u['privacy'] ?? ''), true) ?: [];
+    $out = [];
+    foreach (PROFILE_FIELDS as $f => $default) {
+        $out[$f] = in_array($saved[$f] ?? null, VISIBILITIES, true) ? $saved[$f] : $default;
+    }
+    return $out;
+}
+
+/** Dados do perfil de $u que $viewerId pode ver, já formatados (campo => texto). */
+function visible_profile(int $viewerId, array $u): array
+{
+    $levels = null;   // só pergunta pela conexão se for preciso
+    $values = [
+        'club'       => $u['club'],
+        'main_event' => $u['main_event'],
+        'country'    => $u['country'],
+        'bio'        => $u['is_coach'] ? $u['bio'] : null,
+        'age'        => $u['birth_date'] ? t('p.age', ['n' => (new DateTime($u['birth_date']))->diff(new DateTime('today'))->y]) : null,
+        'sex'        => $u['sex'] ? t('p.sex.' . $u['sex']) : null,
+        'weight'     => $u['weight_kg'] !== null ? rtrim(rtrim(number_format((float)$u['weight_kg'], 1, ',', ''), '0'), ',') . ' kg' : null,
+        'height'     => $u['height_cm'] !== null ? (int)$u['height_cm'] . ' cm' : null,
+    ];
+    $out = [];
+    foreach (profile_privacy($u) as $f => $vis) {
+        if ($values[$f] === null || $values[$f] === '') {
+            continue;
+        }
+        if ($vis !== 'public') {
+            $levels ??= visible_levels($viewerId, (int)$u['id']);
+            if (!in_array($vis, $levels, true)) {
+                continue;
+            }
+        }
+        $out[$f] = $values[$f];
+    }
+    return $out;
+}
+
 function can_view_workout(int $viewerId, array $w): bool
 {
     return in_array($w['visibility'], visible_levels($viewerId, (int)$w['user_id']), true);
@@ -262,11 +317,14 @@ function viewed_athlete(array $viewer): array
 function search_users(int $me, string $term, int $limit = 30): array
 {
     $like = '%' . addcslashes($term, '%_\\') . '%';
-    return q(
+    $rows = q(
         'SELECT * FROM users WHERE id <> ? AND active = 1 AND (display_name LIKE ? OR club LIKE ?)
        ORDER BY display_name LIMIT ' . (int)$limit,
         [$me, $like, $like]
     )->fetchAll();
+    // quem só aparece pelo clube tem de deixar ver o clube
+    return array_values(array_filter($rows, fn($u) => mb_stripos($u['display_name'], $term) !== false
+        || isset(visible_profile($me, $u)['club'])));
 }
 
 /** Treinos recentes das conexões (os que me deixam ver) e de todos os meus atletas. */

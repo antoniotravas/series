@@ -583,3 +583,58 @@ function share_card_data(array $w, array $owner, array $pbs): array
         'file'    => 'series-' . $w['workout_date'] . '.png',
     ];
 }
+
+// ---------- Comparar dois treinos ----------
+
+/** Distância com mais metros no treino (a que mais pesa). */
+function compare_main_distance(array $w): ?int
+{
+    $vol = [];
+    foreach ($w['sets'] as $s) {
+        $d = (int)$s['distance_m'];
+        $vol[$d] = ($vol[$d] ?? 0) + $d * count($s['reps']);
+    }
+    arsort($vol);
+    return $vol ? (int)array_key_first($vol) : null;
+}
+
+/** Repetições dos dois treinos juntas por distância (pela ordem do treino A, depois as que só o B tem). */
+function compare_by_distance(array $a, array $b): array
+{
+    $reps = fn(array $w) => array_reduce($w['sets'], function ($acc, $s) {
+        $acc[(int)$s['distance_m']] = array_merge($acc[(int)$s['distance_m']] ?? [], $s['reps']);
+        return $acc;
+    }, []);
+    $ra = $reps($a);
+    $rb = $reps($b);
+    $groups = [];
+    foreach (array_unique(array_merge(array_keys($ra), array_keys($rb))) as $d) {
+        $groups[] = [
+            'd'  => $d,
+            'a'  => $ra[$d] ?? [],
+            'b'  => $rb[$d] ?? [],
+            'sa' => isset($ra[$d]) ? set_stats($ra[$d]) : null,
+            'sb' => isset($rb[$d]) ? set_stats($rb[$d]) : null,
+        ];
+    }
+    // primeiro as distâncias que os dois fizeram
+    usort($groups, fn($x, $y) => (int)!($x['a'] && $x['b']) <=> (int)!($y['a'] && $y['b']));
+    return $groups;
+}
+
+/** Totais de um treino: volume, repetições, tempo a correr e velocidade média. */
+function compare_totals(array $w): array
+{
+    $m = $t = 0.0;
+    $n = 0;
+    $rest = [];
+    foreach ($w['sets'] as $s) {
+        $m += $s['distance_m'] * count($s['reps']);
+        $t += array_sum($s['reps']);
+        $n += count($s['reps']);
+        if ($s['rest_seconds'] !== null) {
+            $rest[] = (float)$s['rest_seconds'];
+        }
+    }
+    return ['m' => $m, 't' => $t, 'n' => $n, 'rest' => $rest ? array_sum($rest) / count($rest) : null];
+}

@@ -4,8 +4,8 @@
 /** @var string $mode incoming | outgoing | coaching | connections | coaches | search */
 ?>
 <ul class="people">
-  <?php foreach ($people as $p):
-      $meta = array_filter([$p['club'] ?? null, $p['main_event'] ?? null, $p['country'] ?? null]);
+  <?php $viewerId = (int)current_user()['id']; foreach ($people as $p):
+      $meta = array_intersect_key(visible_profile($viewerId, $p), array_flip(['club', 'main_event', 'country']));
   ?>
   <li class="people__item">
     <a class="person" href="<?= url('user.php?id=' . (int)$p['id']) ?>">

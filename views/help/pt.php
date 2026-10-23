@@ -233,7 +233,7 @@ $body = function (): void { ?>
       <li>No telemóvel, carrega em <b>Partilhar imagem</b> e escolhe a aplicação. No computador, carrega em <b>Copiar imagem</b> e cola-a onde quiseres (Ctrl+V), ou em <b>Descarregar PNG</b>.</li>
     </ol>
     <p>A imagem leva o teu avatar, a média, a repetição mais rápida, o volume, os recordes pessoais do dia e o gráfico ou os tempos, com o endereço www.series.corridas.eu no rodapé.</p>
-    <p class="tip">Só o autor pode criar a imagem. Os treinadores não veem o botão nos treinos dos atletas.</p>
+    <p class="tip">Os treinadores também podem criar a imagem de um treino de um atleta seu: abrem o treino em <b>Atletas</b> e carregam em <b>Partilhar</b>. A imagem leva o nome e o avatar do atleta.</p>
   </article>
 </section>
 
@@ -315,6 +315,16 @@ $body = function (): void { ?>
   </article>
 
   <article class="usecase">
+    <h3>Quero comparar dois treinos</h3>
+    <ol>
+      <li>Em <b>Treinos</b>, marca os dois treinos que queres comparar e carrega em <b>Comparar selecionados</b>. Podem ser do mesmo atleta ou de atletas diferentes.</li>
+      <li>Ou abre um treino e carrega em <b>Comparar</b>. Escolhe o atleta e a distância e carrega no segundo treino.</li>
+    </ol>
+    <p>Vês os dois treinos lado a lado: volume, repetições, ritmo médio, recuperação e esforço, e para cada distância a média, a melhor, a mais lenta, a regularidade, um gráfico com o tempo de cada repetição e a tabela repetição a repetição. A diferença é sempre B − A, a verde quando B foi mais rápido.</p>
+    <p class="tip">Usa <b>Trocar A e B</b> para inverter a comparação. Os atletas também podem comparar dois treinos seus com o botão <b>Comparar</b>.</p>
+  </article>
+
+  <article class="usecase">
     <h3>Deixei de treinar um atleta</h3>
     <p>Em <b>Atletas</b>, carrega em <b>Deixar de treinar</b>. Perdes logo o acesso aos treinos dele.</p>
   </article>
@@ -349,6 +359,17 @@ $body = function (): void { ?>
   <article class="usecase">
     <h3>Quero atualizar os meus dados</h3>
     <p>Carrega na tua fotografia, em <b>Ver perfil</b> e depois em <b>Editar perfil</b>. Aí podes mudar o nome a apresentar, o avatar (JPG, PNG ou WebP até 2 MB), a data de nascimento, o sexo, o peso, a altura, o clube, o país, a prova principal e o idioma. Carrega em <b>Guardar perfil</b> no fim.</p>
+  </article>
+
+  <article class="usecase">
+    <h3>Quero escolher quem vê os meus dados</h3>
+    <ol>
+      <li>Em <b>Ver perfil → Editar perfil</b>, desce até <b>Quem vê os teus dados</b>.</li>
+      <li>Para cada campo (clube, prova principal, país, currículo, idade, sexo, peso e altura) escolhe <b>Só eu</b>, <b>Conexões</b> ou <b>Público</b>.</li>
+      <li>Carrega em <b>Guardar perfil</b>.</li>
+    </ol>
+    <p>Por omissão o clube, a prova, o país e o currículo são públicos; a idade, o sexo, o peso e a altura ficam só para ti. Em <b>Ver perfil</b> vês ao lado de cada dado quem o pode ver.</p>
+    <p class="tip">O nome e o avatar são sempre visíveis, e os teus treinadores veem sempre tudo. Quem esconde o clube não aparece quando outros procuram pelo nome do clube. A data de nascimento nunca aparece: os outros só veem a idade.</p>
   </article>
 
   <article class="usecase">
