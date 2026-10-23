@@ -403,14 +403,15 @@
       var gpxInput = gpxBox.querySelector('[data-gpx-input]');
       var gpxOut = gpxBox.querySelector('[data-gpx-result]');
 
-      gpxInput.addEventListener('change', function () {
-        var file = gpxInput.files[0];
-        if (!file) return;
+      var gpxLink = gpxBox.querySelector('[data-gpx-link]');
+      var gpxLinkGo = gpxBox.querySelector('[data-gpx-link-go]');
+
+      var gpxSend = function (key, value) {
         var hasTimes = Array.prototype.some.call(form.querySelectorAll('[data-rep]'), function (i) { return i.value.trim() !== ''; });
         if (hasTimes && !window.confirm(gpxBox.getAttribute('data-replace'))) { gpxInput.value = ''; return; }
 
         var fd = new FormData();
-        fd.append('gpx', file);
+        fd.append(key, value);
         fd.append('_csrf', form.querySelector('[name="_csrf"]').value);
         gpxOut.innerHTML = '<p class="muted small">' + escapeHtml(gpxBox.getAttribute('data-loading')) + '</p>';
 
@@ -430,6 +431,19 @@
           .catch(function (err) {
             gpxOut.innerHTML = '<p class="field__error" role="alert">' + escapeHtml(err.message || gpxBox.getAttribute('data-error')) + '</p>';
           });
+      };
+
+      gpxInput.addEventListener('change', function () {
+        if (gpxInput.files[0]) gpxSend('gpx', gpxInput.files[0]);
+      });
+      var gpxFromLink = function () {
+        var v = gpxLink.value.trim();
+        if (v) gpxSend('url', v);
+      };
+      gpxLinkGo.addEventListener('click', gpxFromLink);
+      // Enter no campo do link não deve guardar o treino
+      gpxLink.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); gpxFromLink(); }
       });
     }
 

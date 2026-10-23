@@ -638,3 +638,49 @@ function compare_totals(array $w): array
     }
     return ['m' => $m, 't' => $t, 'n' => $n, 'rest' => $rest ? array_sum($rest) / count($rest) : null];
 }
+
+// ---------- GPX a partir de um link ----------
+
+/** Servidores de onde aceitamos links de GPX (exportação da app Suunto). */
+const GPX_LINK_HOSTS = ['api.sports-tracker.com', 'www.sports-tracker.com', 'sports-tracker.com'];
+
+/**
+ * Descarrega o GPX de um link de exportação para um ficheiro temporário.
+ * Devolve o caminho do ficheiro, ou a chave da mensagem de erro ('error....').
+ */
+function gpx_fetch_link(string $link): string
+{
+    $u = parse_url($link);
+    if (!$u || ($u['scheme'] ?? '') !== 'https' || !in_array(strtolower($u['host'] ?? ''), GPX_LINK_HOSTS, true)
+        || isset($u['user']) || isset($u['port'])) {
+        return 'error.gpx_link_host';
+    }
+    $tmp = tempnam(sys_get_temp_dir(), 'gpx');
+    $fh = fopen($tmp, 'wb');
+    $size = 0;
+    $ch = curl_init($link);
+    curl_setopt_array($ch, [
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_PROTOCOLS      => CURLPROTO_HTTPS,
+        CURLOPT_CONNECTTIMEOUT => 10,
+        CURLOPT_TIMEOUT        => 30,
+        CURLOPT_USERAGENT      => 'Series/1.0 (+' . config('site_host', 'series') . ')',
+        CURLOPT_HTTPHEADER     => ['Accept: application/gpx+xml, application/xml;q=0.9, */*;q=0.1'],
+        // escreve à medida que chega e pára se passar do limite
+        CURLOPT_WRITEFUNCTION  => function ($ch, $chunk) use ($fh, &$size) {
+            $size += strlen($chunk);
+            return $size > GPX_MAX_BYTES ? 0 : fwrite($fh, $chunk);
+        },
+    ]);
+    $ok = curl_exec($ch);
+    $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $err = curl_error($ch);
+    curl_close($ch);
+    fclose($fh);
+    if (!$ok || $code !== 200) {
+        error_log("GPX por link: HTTP $code $err");
+        @unlink($tmp);
+        return $size > GPX_MAX_BYTES ? 'error.gpx_upload' : 'error.gpx_link_fetch';
+    }
+    return $tmp;
+}

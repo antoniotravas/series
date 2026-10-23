@@ -16,24 +16,35 @@ if (!is_post()) {
 }
 csrf_check();
 
-$file = $_FILES['gpx'] ?? null;
-if (!$file || $file['error'] !== UPLOAD_ERR_OK || $file['size'] > GPX_MAX_BYTES) {
-    $fail(t('error.gpx_upload'));
+$link = trim((string)($_POST['url'] ?? ''));
+if ($link !== '') {
+    // link de exportação da Suunto (Sports Tracker): o servidor vai buscar o GPX
+    $tmp = gpx_fetch_link($link);
+    if (is_string($tmp) && str_starts_with($tmp, 'error.')) {
+        $fail(t($tmp));
+    }
+} else {
+    $file = $_FILES['gpx'] ?? null;
+    if (!$file || $file['error'] !== UPLOAD_ERR_OK || $file['size'] > GPX_MAX_BYTES) {
+        $fail(t('error.gpx_upload'));
+    }
+    $tmp = $file['tmp_name'];
 }
-$head = file_get_contents($file['tmp_name'], false, null, 0, 2048);
+$head = file_get_contents($tmp, false, null, 0, 2048);
 if ($head === false || stripos($head, '<gpx') === false) {
+    @unlink($tmp);
     $fail(t('error.gpx_invalid'));
 }
 
 // O GPX só serve para preencher o formulário: nunca é guardado no servidor.
 try {
-    $r = gpx_detect($file['tmp_name']);
+    $r = gpx_detect($tmp);
 } catch (Throwable $ex) {
     error_log('Deteção GPX: ' . $ex->getMessage());
-    @unlink($file['tmp_name']);
+    @unlink($tmp);
     $fail(t('error.gpx_invalid'));
 }
-@unlink($file['tmp_name']);
+@unlink($tmp);
 if (!$r['sets']) {
     $fail(t('gpx.none'));
 }
