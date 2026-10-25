@@ -264,8 +264,8 @@ function smtp_send(string $from, string $to, string $message): void
         throw new RuntimeException("ligação a $host:$port falhou ($errstr)");
     }
     stream_set_timeout($fp, 15);
-    // $secret: não mostrar o comando nos erros (utilizador e password vão em base64, que é reversível)
-    $cmd = function (?string $line, int $expect, bool $secret = false) use ($fp): void {
+    // $label: o que mostrar nos erros em vez do comando (utilizador e password vão em base64, que é reversível)
+    $cmd = function (?string $line, int $expect, ?string $label = null) use ($fp): string {
         if ($line !== null) {
             fwrite($fp, $line . "\r\n");
         }
@@ -277,25 +277,34 @@ function smtp_send(string $from, string $to, string $message): void
             }
         }
         if ((int)substr($reply, 0, 3) !== $expect) {
-            $shown = $secret ? 'AUTH (utilizador/password)' : (string)$line;
-            throw new RuntimeException(trim("$shown -> $reply"));
+            throw new RuntimeException(trim(($label ?? (string)$line) . " -> $reply"));
         }
+        return $reply;
     };
     try {
         $ehlo = 'EHLO ' . (parse_url((string)config('site_url'), PHP_URL_HOST) ?: 'localhost');
         $cmd(null, 220);
-        $cmd($ehlo, 250);
+        $caps = $cmd($ehlo, 250);
         if ($secure === 'tls') {
             $cmd('STARTTLS', 220);
             if (!stream_socket_enable_crypto($fp, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
                 throw new RuntimeException('STARTTLS falhou');
             }
-            $cmd($ehlo, 250);
+            $caps = $cmd($ehlo, 250);
         }
         if (config('smtp.user')) {
-            $cmd('AUTH LOGIN', 334);
-            $cmd(base64_encode((string)config('smtp.user')), 334, true);
-            $cmd(base64_encode((string)config('smtp.pass')), 235, true);
+            $user = (string)config('smtp.user');
+            $pass = (string)config('smtp.pass');
+            // AUTH PLAIN se o servidor o anunciar (ou não anunciar nada); senão AUTH LOGIN
+            preg_match('/^250[ -]AUTH[ =](.*)$/mi', $caps, $m);
+            $mechs = strtoupper($m[1] ?? 'PLAIN');
+            if (str_contains($mechs, 'PLAIN') || !str_contains($mechs, 'LOGIN')) {
+                $cmd('AUTH PLAIN ' . base64_encode("\0$user\0$pass"), 235, 'AUTH PLAIN (utilizador/password)');
+            } else {
+                $cmd('AUTH LOGIN', 334);
+                $cmd(base64_encode($user), 334, 'AUTH LOGIN (utilizador)');
+                $cmd(base64_encode($pass), 235, 'AUTH LOGIN (password)');
+            }
         }
         $cmd("MAIL FROM:<$from>", 250);
         $cmd("RCPT TO:<$to>", 250);
