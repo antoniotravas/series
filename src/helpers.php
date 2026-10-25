@@ -236,7 +236,11 @@ function send_mail(string $to, string $subject, string $body): bool
     $encBody = chunk_split(base64_encode($body), 76, "\r\n");
     if (!config('smtp.host')) {
         // -f: remetente do envelope (Return-Path) igual ao From, para não ir como o utilizador do sistema
-        return mail($to, $encSubject, $encBody, implode("\r\n", $headers), '-f' . $from);
+        if (mail($to, $encSubject, $encBody, implode("\r\n", $headers), '-f' . $from)) {
+            return true;
+        }
+        log_mail($to, $subject, "[NÃO ENVIADO: mail() falhou]\n" . $body);
+        return false;
     }
     $domain = substr(strrchr($from, '@') ?: '@localhost', 1);
     array_unshift($headers, "To: <$to>", "Subject: $encSubject", 'Date: ' . date('r'),
