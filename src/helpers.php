@@ -264,7 +264,8 @@ function smtp_send(string $from, string $to, string $message): void
         throw new RuntimeException("ligação a $host:$port falhou ($errstr)");
     }
     stream_set_timeout($fp, 15);
-    $cmd = function (?string $line, int $expect) use ($fp): void {
+    // $secret: não mostrar o comando nos erros (utilizador e password vão em base64, que é reversível)
+    $cmd = function (?string $line, int $expect, bool $secret = false) use ($fp): void {
         if ($line !== null) {
             fwrite($fp, $line . "\r\n");
         }
@@ -276,7 +277,7 @@ function smtp_send(string $from, string $to, string $message): void
             }
         }
         if ((int)substr($reply, 0, 3) !== $expect) {
-            $shown = $line !== null && str_starts_with($line, 'AUTH') ? 'AUTH' : (string)$line;
+            $shown = $secret ? 'AUTH (utilizador/password)' : (string)$line;
             throw new RuntimeException(trim("$shown -> $reply"));
         }
     };
@@ -293,8 +294,8 @@ function smtp_send(string $from, string $to, string $message): void
         }
         if (config('smtp.user')) {
             $cmd('AUTH LOGIN', 334);
-            $cmd(base64_encode((string)config('smtp.user')), 334);
-            $cmd(base64_encode((string)config('smtp.pass')), 235);
+            $cmd(base64_encode((string)config('smtp.user')), 334, true);
+            $cmd(base64_encode((string)config('smtp.pass')), 235, true);
         }
         $cmd("MAIL FROM:<$from>", 250);
         $cmd("RCPT TO:<$to>", 250);
