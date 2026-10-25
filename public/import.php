@@ -16,7 +16,7 @@ if (is_post()) {
     // 2.º passo: gravar os treinos escolhidos na pré-visualização
     if (isset($_POST['confirm'])) {
         $items = $_SESSION['import'] ?? [];
-        $n = 0;
+        $saved = [];
         foreach ((array)($_POST['pick'] ?? []) as $i) {
             $item = $items[(int)$i] ?? null;
             if (!$item || $item['errors']) {
@@ -24,12 +24,12 @@ if (is_post()) {
             }
             $w = workout_from_input($item['input']);
             if (isset($w['data'])) {
-                save_workout($uid, $w['data'], $w['sets']);
-                $n++;
+                $saved[] = save_workout($uid, $w['data'], $w['sets']);
             }
         }
         unset($_SESSION['import']);
-        flash('ok', t('imp.done', ['n' => $n]));
+        notify_new_workouts($uid, $saved);
+        flash('ok', t('imp.done', ['n' => count($saved)]));
         redirect('workouts.php');
     }
 

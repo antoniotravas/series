@@ -5,6 +5,9 @@ const LANGS = ['pt' => 'Português', 'en' => 'English'];
 
 function current_lang(): string
 {
+    if (!empty($GLOBALS['lang_override'])) {
+        return $GLOBALS['lang_override'];
+    }
     static $lang = null;
     if ($lang !== null) {
         return $lang;
@@ -22,6 +25,18 @@ function set_lang(string $lang): void
 {
     if (isset(LANGS[$lang])) {
         $_SESSION['lang'] = $lang;
+    }
+}
+
+/** Corre $fn noutra língua (ex.: um email na língua de quem o recebe). */
+function in_lang(string $lang, callable $fn): mixed
+{
+    $prev = $GLOBALS['lang_override'] ?? null;
+    $GLOBALS['lang_override'] = isset(LANGS[$lang]) ? $lang : null;
+    try {
+        return $fn();
+    } finally {
+        $GLOBALS['lang_override'] = $prev;
     }
 }
 

@@ -216,12 +216,93 @@ function log_mail(string $to, string $subject, string $body): void
     file_put_contents(ROOT . '/storage/logs/mail.log', $line, FILE_APPEND | LOCK_EX);
 }
 
+/** Envia por SMTP se 'smtp.host' estiver na config; senão usa mail(). Em debug só escreve no log. */
 function send_mail(string $to, string $subject, string $body): bool
 {
-    if (config('debug')) {
+    if (config('debug') && !config('smtp.force')) {
         log_mail($to, $subject, $body);
         return true;
     }
-    $headers = 'From: ' . config('mail_from') . "\r\nContent-Type: text/plain; charset=UTF-8";
-    return mail($to, '=?UTF-8?B?' . base64_encode($subject) . '?=', $body, $headers);
+    $from = (string)config('mail_from');
+    $name = (string)config('mail_from_name', config('app_name'));
+    $encSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+    $headers = [
+        'From: =?UTF-8?B?' . base64_encode($name) . "?= <$from>",
+        'MIME-Version: 1.0',
+        'Content-Type: text/plain; charset=UTF-8',
+        'Content-Transfer-Encoding: base64',
+        'Auto-Submitted: auto-generated',
+    ];
+    $encBody = chunk_split(base64_encode($body), 76, "\r\n");
+    if (!config('smtp.host')) {
+        return mail($to, $encSubject, $encBody, implode("\r\n", $headers));
+    }
+    $domain = substr(strrchr($from, '@') ?: '@localhost', 1);
+    array_unshift($headers, "To: <$to>", "Subject: $encSubject", 'Date: ' . date('r'),
+        'Message-ID: <' . bin2hex(random_bytes(12)) . "@$domain>");
+    try {
+        smtp_send($from, $to, implode("\r\n", $headers) . "\r\n\r\n" . $encBody);
+        return true;
+    } catch (RuntimeException $e) {
+        error_log('smtp: ' . $e->getMessage());
+        log_mail($to, $subject, "[NÃO ENVIADO: {$e->getMessage()}]\n" . $body);
+        return false;
+    }
+}
+
+/**
+ * Cliente SMTP mínimo: 'secure' => 'ssl' (porta 465) ou 'tls' (STARTTLS, porta 587), com AUTH LOGIN.
+ * Lança RuntimeException se o servidor recusar algum passo.
+ */
+function smtp_send(string $from, string $to, string $message): void
+{
+    $secure = (string)config('smtp.secure', 'ssl');
+    $port = (int)config('smtp.port', $secure === 'ssl' ? 465 : 587);
+    $host = (string)config('smtp.host');
+    $fp = @stream_socket_client(($secure === 'ssl' ? 'ssl://' : 'tcp://') . "$host:$port", $errno, $errstr, 15);
+    if (!$fp) {
+        throw new RuntimeException("ligação a $host:$port falhou ($errstr)");
+    }
+    stream_set_timeout($fp, 15);
+    $cmd = function (?string $line, int $expect) use ($fp): void {
+        if ($line !== null) {
+            fwrite($fp, $line . "\r\n");
+        }
+        $reply = '';
+        while (($l = fgets($fp, 515)) !== false) {
+            $reply .= $l;
+            if (($l[3] ?? ' ') === ' ') {   // última linha da resposta ("250 ..." em vez de "250-...")
+                break;
+            }
+        }
+        if ((int)substr($reply, 0, 3) !== $expect) {
+            $shown = $line !== null && str_starts_with($line, 'AUTH') ? 'AUTH' : (string)$line;
+            throw new RuntimeException(trim("$shown -> $reply"));
+        }
+    };
+    try {
+        $ehlo = 'EHLO ' . (parse_url((string)config('site_url'), PHP_URL_HOST) ?: 'localhost');
+        $cmd(null, 220);
+        $cmd($ehlo, 250);
+        if ($secure === 'tls') {
+            $cmd('STARTTLS', 220);
+            if (!stream_socket_enable_crypto($fp, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
+                throw new RuntimeException('STARTTLS falhou');
+            }
+            $cmd($ehlo, 250);
+        }
+        if (config('smtp.user')) {
+            $cmd('AUTH LOGIN', 334);
+            $cmd(base64_encode((string)config('smtp.user')), 334);
+            $cmd(base64_encode((string)config('smtp.pass')), 235);
+        }
+        $cmd("MAIL FROM:<$from>", 250);
+        $cmd("RCPT TO:<$to>", 250);
+        $cmd('DATA', 354);
+        // linhas começadas por "." têm de ser duplicadas (o corpo é base64, mas por segurança)
+        $cmd(preg_replace('/^\./m', '..', $message) . "\r\n.", 250);
+        $cmd('QUIT', 221);
+    } finally {
+        fclose($fp);
+    }
 }

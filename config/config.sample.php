@@ -13,8 +13,20 @@ return [
         'pass' => 'mudar-esta-password',
     ],
 
-    // Email: se 'smtp' estiver vazio, os emails são escritos em storage/logs/mail.log
-    'mail_from' => 'no-reply@exemplo.com',
+    // Email. Com 'debug' => true os emails só são escritos em storage/logs/mail.log
+    // (para enviar mesmo em debug, pôr 'force' => true em 'smtp').
+    // Sem 'smtp' => 'host' usa a função mail() do PHP.
+    'mail_from' => 'no-reply@exemplo.com',   // tem de ser a conta (ou do domínio) do SMTP
+    'mail_from_name' => 'Séries',
+    'smtp' => [
+        'host'   => '',            // ex.: mail.corridas.eu
+        'port'   => 465,
+        'secure' => 'ssl',         // 'ssl' (porta 465) ou 'tls' (STARTTLS, porta 587)
+        'user'   => '',            // normalmente o endereço de email completo
+        'pass'   => '',
+    ],
+    // Endereço completo do site para os links dos emails (vazio = usa o endereço do pedido)
+    'site_url'  => '',          // ex.: https://series.corridas.eu
 
     // Login com Google (Fase 2): https://console.cloud.google.com/apis/credentials
     'google' => [

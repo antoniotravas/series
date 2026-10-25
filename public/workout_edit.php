@@ -46,6 +46,9 @@ if (is_post()) {
         $form = $_POST; // repor o formulário tal como foi enviado
     } else {
         $newId = save_workout($ownerId, $res['data'], $res['sets'], $existing ? $id : null, $ownerId !== $uid ? $uid : null);
+        if (!$existing && $ownerId === $uid) {
+            notify_new_workouts($uid, [$newId]);   // treino novo do próprio atleta: avisar os treinadores
+        }
         flash('ok', t('w.saved'));
         redirect('workout.php?id=' . $newId);
     }

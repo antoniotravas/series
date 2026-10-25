@@ -37,6 +37,7 @@ function request_connection(int $from, int $to): string
     $c = connection_between($from, $to);
     if (!$c) {
         q('INSERT INTO connections (requester_id, addressee_id) VALUES (?, ?)', [$from, $to]);
+        notify_connection_request($from, $to);
         return 'net.requested';
     }
     if ($c['status'] === 'pending' && (int)$c['addressee_id'] === $from) {
@@ -131,6 +132,7 @@ function request_coaching(int $by, int $coachId, int $athleteId): string
     $link = coach_link($coachId, $athleteId);
     if (!$link) {
         q('INSERT INTO coach_athletes (coach_id, athlete_id, requested_by) VALUES (?, ?, ?)', [$coachId, $athleteId, $by]);
+        notify_coaching_request($by, $coachId, $athleteId);
         return 'coach.requested';
     }
     if ($link['status'] === 'pending' && (int)$link['requested_by'] !== $by) {

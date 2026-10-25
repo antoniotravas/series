@@ -20,6 +20,8 @@ CREATE TABLE IF NOT EXISTS users (
     main_event    VARCHAR(40) NULL,
     bio           TEXT NULL,                       -- currículo do treinador
     privacy       TEXT NULL,                       -- JSON: quem vê cada campo do perfil
+    notify_requests TINYINT(1) NOT NULL DEFAULT 1,   -- email com pedidos de conexão/treino
+    notify_workouts TINYINT(1) NOT NULL DEFAULT 1,   -- email quando um atleta regista um treino
     lang          CHAR(2) NOT NULL DEFAULT 'pt',
     is_admin      TINYINT(1) NOT NULL DEFAULT 0,
     is_coach      TINYINT(1) NOT NULL DEFAULT 0,

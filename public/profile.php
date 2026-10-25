@@ -111,6 +111,13 @@ if (is_post()) {
             flash('ok', t('p.email_saved'));
             redirect('profile.php');
         }
+    } elseif ($section === 'notify') {
+        q(
+            'UPDATE users SET notify_requests = ?, notify_workouts = ? WHERE id = ?',
+            [empty($_POST['notify_requests']) ? 0 : 1, empty($_POST['notify_workouts']) ? 0 : 1, $uid]
+        );
+        flash('ok', t('p.notify_saved'));
+        redirect('profile.php');
     } elseif ($section === 'password') {
         if ($user['password_hash'] && !password_verify((string)($_POST['current_password'] ?? ''), $user['password_hash'])) {
             $errors['current_password'] = t('p.pw_wrong');

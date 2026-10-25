@@ -127,6 +127,20 @@ $isSection = fn(string $s) => $section === $s;
       <button class="btn btn--ghost" type="submit"><?= e(t('p.email_save')) ?></button>
     </form>
 
+    <form method="post" class="form panel" id="notify" novalidate>
+      <?= csrf_field() ?>
+      <input type="hidden" name="action" value="notify">
+      <h2><?= e(t('p.notify')) ?></h2>
+      <p class="field__hint"><?= e(t('p.notify_lead', ['email' => $u['email']])) ?></p>
+      <label class="check"><input type="checkbox" name="notify_requests" value="1" <?= $u['notify_requests'] ? 'checked' : '' ?>> <?= e(t('p.notify_requests')) ?></label>
+      <?php if ($u['is_coach']): ?>
+      <label class="check"><input type="checkbox" name="notify_workouts" value="1" <?= $u['notify_workouts'] ? 'checked' : '' ?>> <?= e(t('p.notify_workouts')) ?></label>
+      <?php else: ?>
+      <input type="hidden" name="notify_workouts" value="<?= (int)$u['notify_workouts'] ?>">
+      <?php endif; ?>
+      <button class="btn btn--ghost" type="submit"><?= e(t('p.notify_save')) ?></button>
+    </form>
+
     <form method="post" class="form panel" novalidate>
       <?= csrf_field() ?>
       <input type="hidden" name="action" value="password">

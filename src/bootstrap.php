@@ -43,3 +43,4 @@ require ROOT . '/src/import.php';
 require ROOT . '/src/gpx.php';
 require ROOT . '/src/places.php';
 require ROOT . '/src/social.php';
+require ROOT . '/src/notify.php';
