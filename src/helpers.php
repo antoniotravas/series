@@ -299,7 +299,17 @@ function smtp_send(string $from, string $to, string $message): void
             preg_match('/^250[ -]AUTH[ =](.*)$/mi', $caps, $m);
             $mechs = strtoupper($m[1] ?? 'PLAIN');
             if (str_contains($mechs, 'PLAIN') || !str_contains($mechs, 'LOGIN')) {
-                $cmd('AUTH PLAIN ' . base64_encode("\0$user\0$pass"), 235, 'AUTH PLAIN (utilizador/password)');
+                $plain = base64_encode("\0$user\0$pass");
+                try {
+                    $cmd("AUTH PLAIN $plain", 235, 'AUTH PLAIN (utilizador/password)');
+                } catch (RuntimeException $e) {
+                    // alguns servidores (ex.: o proxy da site.eu) não aceitam os dados na mesma linha
+                    if (!preg_match('/-> 50[0-4]/', $e->getMessage())) {
+                        throw $e;
+                    }
+                    $cmd('AUTH PLAIN', 334);
+                    $cmd($plain, 235, 'AUTH PLAIN (utilizador/password)');
+                }
             } else {
                 $cmd('AUTH LOGIN', 334);
                 $cmd(base64_encode($user), 334, 'AUTH LOGIN (utilizador)');
