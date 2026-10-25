@@ -277,7 +277,7 @@ function smtp_send(string $from, string $to, string $message): void
             }
         }
         if ((int)substr($reply, 0, 3) !== $expect) {
-            throw new RuntimeException(trim(($label ?? (string)$line) . " -> $reply"));
+            throw new RuntimeException(trim(($label ?? (string)$line) . ' -> ' . ($reply !== '' ? $reply : 'ligação fechada pelo servidor')));
         }
         return $reply;
     };
