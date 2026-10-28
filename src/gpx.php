@@ -128,7 +128,8 @@ function gpx_detect(string $path): array
     // duração de uma amostra (normalmente 1 s): o último ponto rápido também conta
     $sample = max(1, (int)round(($pts[$n - 1]['t'] - $pts[0]['t']) / ($n - 1)));
 
-    // trechos acima do limiar; pausas curtas (< 5 s) não cortam o trecho
+    // trechos acima do limiar; pausas até 20 s não cortam o trecho (o GPS congela posições
+    // durante ~15 s dentro de um esforço; as recuperações de treino duram quase sempre mais)
     $segs = [];
     $start = null;
     $lastFast = null;
@@ -136,7 +137,7 @@ function gpx_detect(string $path): array
         if ($speed[$i] >= $threshold) {
             if ($start === null) {
                 $start = $i;
-            } elseif ($pts[$i]['t'] - $pts[$lastFast]['t'] > 5) {
+            } elseif ($pts[$i]['t'] - $pts[$lastFast]['t'] > 20) {
                 $segs[] = [$start, $lastFast];
                 $start = $i;
             }
@@ -146,7 +147,6 @@ function gpx_detect(string $path): array
     if ($start !== null) {
         $segs[] = [$start, $lastFast];
     }
-
     $reps = [];
     foreach ($segs as [$a, $b]) {
         $time = $pts[$b]['t'] - $pts[$a]['t'] + $sample;
@@ -225,8 +225,8 @@ function gpx_detect(string $path): array
         $rests = count($s['rests']) > 1 && count($s['rests']) >= count($s['reps']) ? array_slice($s['rests'], 0, -1) : $s['rests'];
         $speeds = count($s['rest_speeds']) > 1 && count($s['rest_speeds']) >= count($s['reps']) ? array_slice($s['rest_speeds'], 0, -1) : $s['rest_speeds'];
         sort($rests);
-        // os intervalos costumam ser redondos (60", 1:30, 2:30...): arredondar aos 15 s
-        $s['rest'] = $rests ? max(15, (int)(round($rests[intdiv(count($rests), 2)] / 15) * 15)) : null;
+        // os intervalos costumam ser redondos (60", 70", 1:30, 2:30...): arredondar aos 5 s
+        $s['rest'] = $rests ? max(15, (int)(round($rests[intdiv(count($rests), 2)] / 5) * 5)) : null;
         $v = $speeds ? array_sum($speeds) / count($speeds) : 0;
         $s['rest_type'] = $v < 0.6 ? 'stand' : ($v < 1.9 ? 'walk' : 'jog');
         unset($s['rests'], $s['rest_speeds']);
