@@ -495,8 +495,10 @@ input[type="search"] { -webkit-appearance: none; appearance: none; }
 .chip:hover, .chip.is-on { border-color: var(--ink-2); color: var(--ink); }
 .chip.is-on { background: var(--ink); color: var(--bg); }
 .setform__label { margin: 0 0 .4rem; }
-.reps { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr)); }
-.rep { display: flex; align-items: stretch; border: 1px solid var(--line-strong); border-radius: var(--r-sm); overflow: hidden; background: var(--surface); }
+/* Repetições em colunas: enche a 1ª coluna de cima para baixo, depois a 2ª (a ordem do HTML é a mesma, por isso Tab e Enter seguem o mesmo sentido) */
+.reps { list-style: none; margin: 0; padding: 0; columns: 2; column-gap: .5rem; }
+@media (min-width: 40rem) { .reps { columns: 3; } }
+.rep { display: flex; align-items: stretch; margin: 0 0 .5rem; break-inside: avoid; border: 1px solid var(--line-strong); border-radius: var(--r-sm); overflow: hidden; background: var(--surface); }
 .rep:focus-within { border-color: var(--focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 25%, transparent); }
 .rep__n { display: grid; place-items: center; min-width: 1.9rem; background: var(--tartan); color: #fff; font: 700 1rem/1 var(--f-display) !important; }
 .rep input { border: 0 !important; box-shadow: none !important; font: 600 1.15rem/1 var(--f-display) !important; font-variant-numeric: tabular-nums; padding: .5rem !important; min-width: 0; }
