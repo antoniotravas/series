@@ -14,6 +14,8 @@
     if (dots >= 2) {
       var last = s.lastIndexOf('.');
       s = s.slice(0, last).replace(/\./g, ':') + s.slice(last);
+    } else if (dots === 1 && /^\d\.\d{2}$/.test(s)) {
+      s = s.replace('.', ':'); // "1.32" (teclado numérico) -> 1:32
     }
     var m = s.match(/^(?:(\d+):)?(?:(\d+):)?(\d+(?:\.\d{1,2})?)$/);
     if (!m) return null;

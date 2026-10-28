@@ -122,6 +122,9 @@ function parse_time(?string $s): ?float
     if (substr_count($s, '.') >= 2) {
         $last = strrpos($s, '.');
         $s = str_replace('.', ':', substr($s, 0, $last)) . substr($s, $last);
+    } elseif (preg_match('/^\d\.\d{2}$/', $s)) {
+        // "1.32" (teclado numérico) -> "1:32"
+        $s = str_replace('.', ':', $s);
     }
     if (!preg_match('/^(?:(\d+):)?(?:(\d+):)?(\d+(?:\.\d{1,2})?)$/', $s, $m)) {
         return null;

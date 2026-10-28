@@ -58,7 +58,7 @@ $setBlock = function ($i, array $s, ?string $error) use ($quickDistances) {
         <?php foreach ($reps as $k => $r): ?>
         <li class="rep">
           <label class="rep__n" for="s<?= $i ?>-r<?= $k ?>"><?= $k + 1 ?></label>
-          <input id="s<?= $i ?>-r<?= $k ?>" name="sets[<?= $i ?>][reps][]" inputmode="decimal" autocomplete="off" placeholder="0:00.0" value="<?= e((string)$r) ?>" data-rep aria-label="<?= e(t('w.rep', ['n' => $k + 1])) ?>">
+          <input id="s<?= $i ?>-r<?= $k ?>" name="sets[<?= $i ?>][reps][]" inputmode="decimal" autocomplete="off" placeholder="1.32.4" value="<?= e((string)$r) ?>" data-rep aria-label="<?= e(t('w.rep', ['n' => $k + 1])) ?>">
           <input type="hidden" name="sets[<?= $i ?>][hr][]" value="<?= e((string)($hr[$k] ?? '')) ?>" data-rep-hr>
           <input type="hidden" name="sets[<?= $i ?>][hr_max][]" value="<?= e((string)($hrMax[$k] ?? '')) ?>" data-rep-hr-max>
         </li>

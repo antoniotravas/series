@@ -66,8 +66,8 @@ $body = function (): void { ?>
       <li>Carrega em <b>Registar treino</b>.</li>
       <li>Confirma a <b>data</b> e a <b>hora</b>. Se quiseres, escreve um título, por exemplo "Séries de 500 no Jamor", e o local.</li>
       <li>No <b>Bloco 1</b> escreve <b>10</b> em Repetições e <b>500</b> em Distância (m). Aparecem 10 caixas de tempo.</li>
-      <li>Em <b>Recuperação</b> escreve <kbd>1:10</kbd> ou <kbd>70</kbd>. Em <b>Tipo</b> escolhe se ficaste parado, a andar ou a trotar.</li>
-      <li>Escreve o tempo de cada repetição, por exemplo <kbd>1:32.4</kbd> ou <kbd>92.4</kbd>. A média, o ritmo e o desvio vão sendo calculados enquanto escreves.</li>
+      <li>Em <b>Recuperação</b> escreve <kbd>1.10</kbd> ou <kbd>70</kbd>. Em <b>Tipo</b> escolhe se ficaste parado, a andar ou a trotar.</li>
+      <li>Escreve o tempo de cada repetição, por exemplo <kbd>1.32.4</kbd> ou <kbd>92.4</kbd> (o ponto separa os minutos; os dois pontos também funcionam). A média, o ritmo e o desvio vão sendo calculados enquanto escreves.</li>
       <li>Carrega em <b>Guardar treino</b>.</li>
     </ol>
     <p class="tip">Para saltar para a caixa seguinte usa a tecla Tab ou o "seguinte" do teclado do telemóvel.</p>
@@ -84,7 +84,7 @@ $body = function (): void { ?>
 
   <article class="usecase">
     <h3>Tinha um tempo alvo para cada repetição</h3>
-    <p>Escreve-o em <b>Tempo alvo</b> no bloco, por exemplo <kbd>1:32</kbd>. Na página do treino passas a ver a diferença de cada repetição para o alvo.</p>
+    <p>Escreve-o em <b>Tempo alvo</b> no bloco, por exemplo <kbd>1.32</kbd>. Na página do treino passas a ver a diferença de cada repetição para o alvo.</p>
   </article>
 
   <article class="usecase">
