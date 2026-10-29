@@ -164,6 +164,7 @@ return [
     'admin.strava_on'     => 'Strava: keep connected',
     'admin.strava_off'    => 'Strava: stop keeping connected',
     'admin.role.strava'   => 'Strava kept',
+    'admin.more'          => 'Manage',
     'strava.end'          => 'No more runs.',
     'strava.filter.year'  => 'Year',
     'strava.filter.all_years'  => 'All years',

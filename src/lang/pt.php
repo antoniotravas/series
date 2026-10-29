@@ -168,6 +168,7 @@ return [
     'admin.strava_on'     => 'Strava: manter ligado',
     'admin.strava_off'    => 'Strava: deixar de manter ligado',
     'admin.role.strava'   => 'Strava fixo',
+    'admin.more'          => 'Gerir',
     'strava.end'          => 'Não há mais corridas.',
     'strava.filter.year'  => 'Ano',
     'strava.filter.all_years'  => 'Todos os anos',

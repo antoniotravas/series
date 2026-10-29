@@ -50,7 +50,7 @@ $qs = fn(array $extra) => http_build_query(array_filter(['q' => $term] + $extra)
       </th>
       <td data-label="<?= e(t('admin.col.since')) ?>"><?= e(fmt_date(substr($u['created_at'], 0, 10))) ?></td>
       <td class="num" data-label="<?= e(t('admin.col.workouts')) ?>"><?= (int)$u['workouts'] ?><?php if ($u['last_workout']): ?><small class="muted"><?= e(fmt_date($u['last_workout'])) ?></small><?php endif; ?></td>
-      <td data-label="<?= e(t('admin.col.roles')) ?>">
+      <td class="admin-table__roles">
         <?php if (!$u['active']): ?><span class="badge badge--admin"><?= e(t('admin.role.disabled')) ?></span><?php endif; ?>
         <?php if ($u['is_admin']): ?><span class="badge badge--admin"><?= e(t('admin.role.admin')) ?></span><?php endif; ?>
         <?php if ($u['is_coach']): ?><span class="badge badge--coach"><?= e(t('coach.badge')) ?></span><?php endif; ?>
@@ -59,7 +59,9 @@ $qs = fn(array $extra) => http_build_query(array_filter(['q' => $term] + $extra)
       </td>
       <td class="admin-table__actions">
         <?php if (!$self): ?>
-        <form method="post">
+        <input type="checkbox" id="am-<?= (int)$u['id'] ?>" class="admin-more__toggle">
+        <label for="am-<?= (int)$u['id'] ?>" class="admin-more__label"><?= e(t('admin.more')) ?></label>
+        <form method="post" class="admin-more__form">
           <?= csrf_field() ?>
           <input type="hidden" name="id" value="<?= (int)$u['id'] ?>">
           <input type="hidden" name="back" value="<?= e($_SERVER['REQUEST_URI'] ?? '') ?>">
