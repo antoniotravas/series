@@ -41,6 +41,7 @@ require ROOT . '/src/auth.php';
 require ROOT . '/src/workouts.php';
 require ROOT . '/src/import.php';
 require ROOT . '/src/gpx.php';
+require ROOT . '/src/strava.php';
 require ROOT . '/src/places.php';
 require ROOT . '/src/social.php';
 require ROOT . '/src/notify.php';

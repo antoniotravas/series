@@ -421,18 +421,30 @@
           .then(function (res) {
             if (!res.ok) throw new Error(res.error || '');
             fillFromGpx(res);
-            gpxOut.innerHTML = '<p class="gpxfill__ok">' + escapeHtml(res.summary) + '</p>' +
-              (res.location_note ? '<p class="muted small">' + escapeHtml(res.location_note) + '</p>' : '') +
-              '<ol class="gpxfill__reps">' +
-              res.reps.map(function (r) {
-                return '<li' + (r.work ? '' : ' class="is-ignored"') + '>' + escapeHtml(r.label) +
-                  (r.work ? '' : ' (' + escapeHtml(gpxBox.getAttribute('data-ignored')) + ')') + '</li>';
-              }).join('') + '</ol>';
+            showGpxResult(res);
           })
           .catch(function (err) {
             gpxOut.innerHTML = '<p class="field__error" role="alert">' + escapeHtml(err.message || gpxBox.getAttribute('data-error')) + '</p>';
           });
       });
+
+      // corrida importada do Strava: o servidor já analisou a atividade
+      var prefill = gpxBox.getAttribute('data-prefill');
+      if (prefill) {
+        var pre = JSON.parse(prefill);
+        fillFromGpx(pre);
+        showGpxResult(pre);
+      }
+
+      function showGpxResult(res) {
+        gpxOut.innerHTML = '<p class="gpxfill__ok">' + escapeHtml(res.summary) + '</p>' +
+          (res.location_note ? '<p class="muted small">' + escapeHtml(res.location_note) + '</p>' : '') +
+          '<ol class="gpxfill__reps">' +
+          res.reps.map(function (r) {
+            return '<li' + (r.work ? '' : ' class="is-ignored"') + '>' + escapeHtml(r.label) +
+              (r.work ? '' : ' (' + escapeHtml(gpxBox.getAttribute('data-ignored')) + ')') + '</li>';
+          }).join('') + '</ol>';
+      }
     }
 
     function fillFromGpx(res) {

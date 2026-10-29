@@ -33,4 +33,10 @@ return [
         'client_id'     => '',
         'client_secret' => '',
     ],
+
+    // Strava: https://www.strava.com/settings/api (o client_secret é uma senha: só aqui, nunca no código)
+    'strava' => [
+        'client_id'     => '',
+        'client_secret' => '',
+    ],
 ];

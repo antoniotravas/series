@@ -17,6 +17,7 @@ $listUrl = url('workouts.php' . ($u && !$coachAll ? '?u=' . $u['u'] : ''));
   <?php if ($isOwner): ?>
   <div class="actions">
     <a class="btn btn--ghost btn--sm" href="<?= url('import.php') ?>"><?= e(t('imp.title')) ?></a>
+    <a class="btn btn--ghost btn--sm" href="<?= url('strava_activities.php') ?>"><?= e(t('strava.button')) ?></a>
     <a class="btn btn--ghost btn--sm" href="<?= url('export.php') ?>"><?= e(t('p.export')) ?></a>
   </div>
   <?php endif; ?>

@@ -38,24 +38,4 @@ if (!$r['sets']) {
     $fail(t('gpx.none'));
 }
 
-$place = $r['lat'] !== null ? place_name((int)$user['id'], $r['lat'], $r['lon']) : null;
-
-echo json_encode([
-    'ok'         => true,
-    'lat'        => $r['lat'],
-    'lon'        => $r['lon'],
-    'location'   => $place['name'] ?? null,
-    'location_note' => $place ? t('gpx.place_' . $place['source'], ['n' => $place['name']]) : null,
-    'date'       => $r['date'],
-    'start_time' => $r['start_time'],
-    'temperature_c' => $r['temperature_c'],
-    'summary'    => t('gpx.found', ['s' => sets_summary($r['sets'])])
-                  . ($r['temperature_c'] !== null ? ' ' . t('gpx.temp', ['t' => $r['temperature_c']]) : ''),
-    'sets'       => $r['sets'],
-    'reps'       => array_map(fn($x) => [
-        'label' => fmt_distance($x['distance_m']) . ' · ' . fmt_time((float)$x['seconds'], 0)
-                 . ' · ' . t('gpx.gps', ['m' => $x['gps_m']])
-                 . ($x['hr'] ? ' · ' . t('gpx.hr', ['n' => $x['hr'], 'max' => $x['hr_max']]) : ''),
-        'work'  => $x['work'],
-    ], $r['reps']),
-], JSON_UNESCAPED_UNICODE);
+echo json_encode(gpx_prefill_payload($r, (int)$user['id']), JSON_UNESCAPED_UNICODE);

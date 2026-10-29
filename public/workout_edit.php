@@ -92,6 +92,22 @@ if ($form === null) {
     }
 }
 
+// corrida importada do Strava (?strava=ID): o formulário novo vem preenchido pela deteção
+$prefill = null;
+if (!$existing && $ownerId === $uid && isset($_GET['strava']) && !is_post()) {
+    try {
+        $prefill = gpx_prefill_payload(strava_detect($uid, (int)$_GET['strava']), $uid);
+    } catch (Throwable $ex) {
+        error_log('Strava: ' . $ex->getMessage());
+        flash('error', t('strava.import_error'));
+        redirect('strava_activities.php');
+    }
+    if (!$prefill['sets']) {
+        flash('error', t('gpx.none'));
+        redirect('strava_activities.php');
+    }
+}
+
 render('workout_form', [
     'title'     => $existing ? t('w.edit.title') : t('w.new.title'),
     'active'    => $athlete ? 'athletes' : 'workouts',
@@ -100,4 +116,5 @@ render('workout_form', [
     'errors'    => $errors,
     'locations' => user_locations($ownerId),
     'athlete'   => $athlete,
+    'prefill'   => $prefill,
 ]);

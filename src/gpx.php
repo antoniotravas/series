@@ -259,3 +259,29 @@ function gpx_detect(string $path): array
         'sets'       => $sets,
     ];
 }
+
+/** Resposta de gpx_detect() no formato que o formulário de treino preenche (também usada pelo Strava). */
+function gpx_prefill_payload(array $r, int $userId): array
+{
+    $place = $r['lat'] !== null ? place_name($userId, $r['lat'], $r['lon']) : null;
+
+    return [
+        'ok'         => true,
+        'lat'        => $r['lat'],
+        'lon'        => $r['lon'],
+        'location'   => $place['name'] ?? null,
+        'location_note' => $place ? t('gpx.place_' . $place['source'], ['n' => $place['name']]) : null,
+        'date'       => $r['date'],
+        'start_time' => $r['start_time'],
+        'temperature_c' => $r['temperature_c'],
+        'summary'    => t('gpx.found', ['s' => sets_summary($r['sets'])])
+                      . ($r['temperature_c'] !== null ? ' ' . t('gpx.temp', ['t' => $r['temperature_c']]) : ''),
+        'sets'       => $r['sets'],
+        'reps'       => array_map(fn($x) => [
+            'label' => fmt_distance($x['distance_m']) . ' · ' . fmt_time((float)$x['seconds'], 0)
+                     . ' · ' . t('gpx.gps', ['m' => $x['gps_m']])
+                     . ($x['hr'] ? ' · ' . t('gpx.hr', ['n' => $x['hr'], 'max' => $x['hr_max']]) : ''),
+            'work'  => $x['work'],
+        ], $r['reps']),
+    ];
+}
