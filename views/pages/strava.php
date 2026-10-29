@@ -43,6 +43,7 @@
       </div>
       <noscript><button class="btn btn--ghost btn--sm" type="submit"><?= e(t('strava.filter.apply')) ?></button></noscript>
     </form>
+    <p class="muted small"><?= e(t('strava.idle_note')) ?></p>
 
     <?php if (!$runs): ?>
       <p class="muted"><?= e(t('strava.none')) ?></p>

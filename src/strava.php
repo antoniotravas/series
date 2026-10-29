@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 const STRAVA_SCOPE = 'activity:read_all';
 const STRAVA_RUN_TYPES = ['Run', 'TrailRun', 'VirtualRun'];
+const STRAVA_IDLE_SECONDS = 600;   // a ligação desfaz-se após 10 minutos sem uso
 
 function strava_config(): array
 {
@@ -84,13 +85,29 @@ function strava_account(int $userId): ?array
 
 function strava_save_tokens(int $userId, array $t, ?int $athleteId = null): void
 {
-    q('INSERT INTO strava_accounts (user_id, athlete_id, access_token, refresh_token, expires_at)
-       VALUES (?, ?, ?, ?, ?)
+    q('INSERT INTO strava_accounts (user_id, athlete_id, access_token, refresh_token, expires_at, last_used)
+       VALUES (?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE athlete_id = COALESCE(VALUES(athlete_id), athlete_id),
                                access_token = VALUES(access_token),
                                refresh_token = VALUES(refresh_token),
-                               expires_at = VALUES(expires_at)',
-        [$userId, $athleteId ?: null, $t['access_token'], $t['refresh_token'], (int)$t['expires_at']]);
+                               expires_at = VALUES(expires_at),
+                               last_used = VALUES(last_used)',
+        [$userId, $athleteId ?: null, $t['access_token'], $t['refresh_token'], (int)$t['expires_at'], time()]);
+}
+
+/** Desfaz as ligações sem uso há mais de 10 minutos, exceto as dos atletas com ligação fixa. */
+function strava_purge_idle(): void
+{
+    $rows = q('SELECT s.user_id FROM strava_accounts s
+               JOIN users u ON u.id = s.user_id
+               WHERE s.last_used < ? AND u.strava_keep = 0', [time() - STRAVA_IDLE_SECONDS])->fetchAll();
+    foreach ($rows as $r) {
+        try {
+            strava_disconnect((int)$r['user_id']);
+        } catch (Throwable $ex) {
+            error_log('Strava (limpeza): ' . $ex->getMessage());
+        }
+    }
 }
 
 /** Token de acesso do utilizador; renova-o se estiver para expirar. */
@@ -114,7 +131,8 @@ function strava_access_token(int $userId): string
 /** Chamada à API do Strava (GET). Devolve o JSON descodificado. */
 function strava_api(int $userId, string $path, array $query = []): array
 {
-    $url = 'https://www.strava.com/api/v3' . $path . ($query ? '?' . http_build_query($query) : '');
+    q('UPDATE strava_accounts SET last_used = ? WHERE user_id = ?', [time(), $userId]);
+    $url ='https://www.strava.com/api/v3' . $path . ($query ? '?' . http_build_query($query) : '');
     $r = strava_http($url, strava_access_token($userId));
     $data = json_decode($r['body'], true);
     if ($r['status'] !== 200 || !is_array($data)) {

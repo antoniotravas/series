@@ -4,7 +4,12 @@ require __DIR__ . '/../src/bootstrap.php';
 
 $user = require_login();
 $uid = (int)$user['id'];
+$hadConnection = strava_account($uid) !== null;
+strava_purge_idle();   // desfaz ligações paradas há mais de 10 minutos
 $connected = strava_account($uid) !== null;
+if ($hadConnection && !$connected) {
+    flash('error', t('strava.expired'));
+}
 $page = max(1, (int)($_GET['page'] ?? 1));
 
 $thisYear = (int)date('Y');

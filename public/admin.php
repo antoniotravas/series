@@ -13,9 +13,9 @@ if (is_post()) {
     $action = $_POST['action'] ?? '';
     if (!$target) {
         flash('error', t('admin.err_self'));
-    } elseif (in_array($action, ['coach', 'admin', 'active'], true)) {
+    } elseif (in_array($action, ['coach', 'admin', 'active', 'strava'], true)) {
         // o administrador não apaga contas: só desativa (os dados ficam guardados)
-        $col = ['coach' => 'is_coach', 'admin' => 'is_admin', 'active' => 'active'][$action];
+        $col = ['coach' => 'is_coach', 'admin' => 'is_admin', 'active' => 'active', 'strava' => 'strava_keep'][$action];
         q("UPDATE users SET $col = 1 - $col WHERE id = ?", [$id]);
         $msg = $action === 'active' ? ($target['active'] ? 'admin.disabled' : 'admin.enabled') : 'admin.updated';
         flash('ok', t($msg, ['name' => $target['display_name']]));

@@ -55,6 +55,7 @@ $qs = fn(array $extra) => http_build_query(array_filter(['q' => $term] + $extra)
         <?php if ($u['is_admin']): ?><span class="badge badge--admin"><?= e(t('admin.role.admin')) ?></span><?php endif; ?>
         <?php if ($u['is_coach']): ?><span class="badge badge--coach"><?= e(t('coach.badge')) ?></span><?php endif; ?>
         <?php if ($u['google_id']): ?><span class="badge">Google</span><?php endif; ?>
+        <?php if ($u['strava_keep']): ?><span class="badge"><?= e(t('admin.role.strava')) ?></span><?php endif; ?>
       </td>
       <td class="admin-table__actions">
         <?php if (!$self): ?>
@@ -64,6 +65,7 @@ $qs = fn(array $extra) => http_build_query(array_filter(['q' => $term] + $extra)
           <input type="hidden" name="back" value="<?= e($_SERVER['REQUEST_URI'] ?? '') ?>">
           <button class="btn btn--ghost btn--sm" type="submit" name="action" value="coach"><?= e(t($u['is_coach'] ? 'admin.coach_off' : 'admin.coach_on')) ?></button>
           <button class="btn btn--ghost btn--sm" type="submit" name="action" value="admin" data-confirm="<?= e(t('admin.admin_confirm', ['name' => $u['display_name']])) ?>"><?= e(t($u['is_admin'] ? 'admin.admin_off' : 'admin.admin_on')) ?></button>
+          <button class="btn btn--ghost btn--sm" type="submit" name="action" value="strava"><?= e(t($u['strava_keep'] ? 'admin.strava_off' : 'admin.strava_on')) ?></button>
           <?php if ($u['active']): ?>
             <button class="btn btn--danger btn--sm" type="submit" name="action" value="active" data-confirm="<?= e(t('admin.disable_confirm', ['name' => $u['display_name']])) ?>"><?= e(t('admin.disable')) ?></button>
           <?php else: ?>

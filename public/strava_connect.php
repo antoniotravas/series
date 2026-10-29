@@ -3,6 +3,7 @@
 require __DIR__ . '/../src/bootstrap.php';
 
 require_login();
+strava_purge_idle();   // liberta vagas de ligações paradas antes de pedir uma nova
 
 if (!strava_configured()) {
     flash('error', t('strava.not_configured'));
