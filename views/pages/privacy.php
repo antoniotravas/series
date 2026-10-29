@@ -9,7 +9,7 @@
 <?php if (!$en): ?>
 <section class="panel legal">
   <h2>1. Quem é responsável</h2>
-  <p>O Séries é operado por <b>[NOME DO RESPONSÁVEL]</b>. Para qualquer questão sobre os teus dados, escreve para <b>[EMAIL DE CONTACTO]</b>.</p>
+  <p>O Séries é operado por <b>António Travassos</b>. Para qualquer questão sobre os teus dados, escreve para <b>antoniovicentetravassos@gmail.com</b>.</p>
 
   <h2>2. Que dados guardamos</h2>
   <ul>
@@ -56,7 +56,7 @@
 <?php else: ?>
 <section class="panel legal">
   <h2>1. Who is responsible</h2>
-  <p>Séries is operated by <b>[NAME OF THE CONTROLLER]</b>. For any question about your data, write to <b>[CONTACT EMAIL]</b>.</p>
+  <p>Séries is operated by <b>António Travassos</b>. For any question about your data, write to <b>antoniovicentetravassos@gmail.com</b>.</p>
 
   <h2>2. What data we store</h2>
   <ul>
