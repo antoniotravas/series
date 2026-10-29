@@ -135,6 +135,7 @@ if (is_post()) {
             $errors['delete_password'] = t('p.pw_wrong');
         } else {
             remove_avatar_file($user['avatar']);
+            strava_disconnect($uid);   // revoga o acesso no Strava antes de apagar os tokens
             q('DELETE FROM users WHERE id = ?', [$uid]);
             logout_user();
             flash('ok', t('p.deleted'));

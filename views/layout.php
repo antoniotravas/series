@@ -90,7 +90,7 @@ $pending = $user ? pending_requests_count((int)$user['id']) : 0;
 
 <footer class="footer">
   <div class="wrap footer__inner">
-    <?php if ($_view !== 'home'): ?><span><?= e(config('app_name')) ?>. <?= e(t('app.tagline')) ?> <a href="<?= url('help.php') ?>"><?= e(t('help.title')) ?></a></span><?php endif; ?>
+    <?php if ($_view !== 'home'): ?><span><?= e(config('app_name')) ?>. <?= e(t('app.tagline')) ?> <a href="<?= url('help.php') ?>"><?= e(t('help.title')) ?></a> · <a href="<?= url('privacy.php') ?>"><?= e(current_lang() === 'en' ? 'Privacy policy' : 'Política de privacidade') ?></a></span><?php endif; ?>
     <form method="post" action="<?= url('lang.php') ?>" class="lang">
       <?= csrf_field() ?>
       <input type="hidden" name="back" value="<?= e($here) ?>">
