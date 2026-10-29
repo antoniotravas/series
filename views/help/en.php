@@ -2,7 +2,7 @@
 $toc = [
     'start'     => 'Getting started',
     'log'       => 'Logging a workout',
-    'gpx'       => 'Using your watch GPX file',
+    'gpx'       => 'Importing from your watch or Strava',
     'analyse'   => 'Analysing a workout',
     'find'      => 'Finding and organising workouts',
     'dashboard' => 'Dashboard and records',
@@ -108,7 +108,7 @@ $body = function (): void { ?>
 </section>
 
 <section id="gpx" class="help__section">
-  <h2>Using your watch GPX file</h2>
+  <h2>Importing from your watch or Strava</h2>
 
   <article class="usecase">
     <h3>I want to fill in the times from my watch</h3>
@@ -120,6 +120,18 @@ $body = function (): void { ?>
       <li><b>Check the times</b> before saving: GPS on a track is off by a few metres.</li>
     </ol>
     <p class="tip">The GPX file is not stored on the server. Only the times you confirm are saved.</p>
+  </article>
+
+  <article class="usecase">
+    <h3>I want to import a run from Strava</h3>
+    <p>If your watch syncs with Strava (for example Garmin), you can import runs without exporting any files.</p>
+    <ol>
+      <li>In <b>Log workout</b>, press <b>Import from Strava</b>. The first time, the app asks you to connect your Strava account and to read your activities.</li>
+      <li>You see your runs with date, name, distance and time. Press <b>Import</b> on the one you want.</li>
+      <li>The form opens already filled in, just like with a GPX file. <b>Check the times</b> before saving.</li>
+    </ol>
+    <p>Only runs appear (Run, Trail Run and Virtual Run). Cycling and other activities are left out.</p>
+    <p class="tip">You can disconnect your Strava account in <b>Import from Strava</b>, with the <b>Disconnect Strava</b> button. This revokes access and deletes the tokens the app stored.</p>
   </article>
 
   <article class="usecase">
@@ -397,6 +409,8 @@ $body = function (): void { ?>
     <dd>Deactivating hides the workout from stats and can be undone. Deleting removes it for good.</dd>
     <dt>Is the GPX file kept?</dt>
     <dd>No. Only the times and details you confirm are saved.</dd>
+    <dt>What is kept from my Strava account?</dt>
+    <dd>Only the access tokens, so the app can list your runs. We do not copy your Strava history: each run is read only when you import it. Disconnecting deletes those tokens.</dd>
     <dt>Can I use it on my phone?</dt>
     <dd>Yes, the app fits any screen. In your phone browser, use "Add to Home screen" to open it like an app.</dd>
     <dt>I can't log in and it says my account is disabled.</dt>

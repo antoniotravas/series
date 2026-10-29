@@ -25,31 +25,23 @@
     <?php if (!$runs): ?>
       <p class="muted"><?= e(t('strava.none')) ?></p>
     <?php else: ?>
-    <div class="table-scroll">
-    <table class="cmp-table">
-      <thead>
-        <tr>
-          <th><?= e(t('strava.col.date')) ?></th>
-          <th><?= e(t('strava.col.name')) ?></th>
-          <th class="num"><?= e(t('strava.col.distance')) ?></th>
-          <th class="num"><?= e(t('strava.col.time')) ?></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
+    <ul class="sact-list">
       <?php foreach ($runs as $r): ?>
-        <tr>
-          <td><?= e(date('d/m/Y H:i', strtotime((string)$r['start_date_local']))) ?></td>
-          <td><?= e((string)$r['name']) ?></td>
-          <td class="num"><?= e(fmt_km((float)$r['distance'])) ?> km</td>
-          <td class="num"><?= e(fmt_time((float)$r['moving_time'], 0)) ?></td>
-          <td><a class="btn btn--ghost btn--sm" href="<?= url('workout_edit.php?strava=' . (int)$r['id']) ?>"><?= e(t('strava.import')) ?></a></td>
-        </tr>
+        <li class="sact">
+          <div class="sact__info">
+            <span class="sact__name"><?= e((string)$r['name']) ?></span>
+            <span class="sact__meta">
+              <?= e(date('d/m/Y H:i', strtotime((string)$r['start_date_local']))) ?>
+              · <b><?= e(fmt_km((float)$r['distance'])) ?> km</b>
+              · <?= e(fmt_time((float)$r['moving_time'], 0)) ?>
+            </span>
+          </div>
+          <a class="btn btn--primary btn--sm sact__btn" href="<?= url('workout_edit.php?strava=' . (int)$r['id']) ?>"><?= e(t('strava.import')) ?></a>
+        </li>
       <?php endforeach; ?>
-      </tbody>
-    </table>
-    </div>
+    </ul>
     <?php endif; ?>
     <p><a class="btn btn--ghost btn--sm" href="<?= url('strava_activities.php?page=' . ($page + 1)) ?>"><?= e(t('strava.more')) ?></a></p>
   </section>
 <?php endif; ?>
+</content>

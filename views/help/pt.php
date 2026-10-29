@@ -2,7 +2,7 @@
 $toc = [
     'inicio'     => 'Primeiros passos',
     'registar'   => 'Registar um treino',
-    'gpx'        => 'Usar o ficheiro GPX do relógio',
+    'gpx'        => 'Importar do relógio ou do Strava',
     'analisar'   => 'Analisar um treino',
     'procurar'   => 'Encontrar e organizar treinos',
     'painel'     => 'Painel e recordes',
@@ -108,7 +108,7 @@ $body = function (): void { ?>
 </section>
 
 <section id="gpx" class="help__section">
-  <h2>Usar o ficheiro GPX do relógio</h2>
+  <h2>Importar do relógio ou do Strava</h2>
 
   <article class="usecase">
     <h3>Quero preencher os tempos a partir do relógio</h3>
@@ -120,6 +120,18 @@ $body = function (): void { ?>
       <li><b>Confirma os tempos</b> antes de guardar: o GPS na pista tem erros de alguns metros.</li>
     </ol>
     <p class="tip">O ficheiro GPX não fica guardado no servidor. Só os tempos que confirmares são guardados.</p>
+  </article>
+
+  <article class="usecase">
+    <h3>Quero importar uma corrida do Strava</h3>
+    <p>Se o teu relógio sincroniza com o Strava (por exemplo, o Garmin), podes importar as corridas sem exportar ficheiros.</p>
+    <ol>
+      <li>Em <b>Registar treino</b>, carrega em <b>Importar do Strava</b>. Na primeira vez, a aplicação pede para ligar a tua conta Strava e pede permissão para ler as tuas atividades.</li>
+      <li>Aparece a lista das tuas corridas, com data, nome, distância e tempo. Carrega em <b>Importar</b> na que quiseres.</li>
+      <li>O formulário abre já preenchido, da mesma forma que com o ficheiro GPX. <b>Confirma os tempos</b> antes de guardar.</li>
+    </ol>
+    <p>Só aparecem corridas (Run, Trail Run e Virtual Run). Bicicleta e outras atividades ficam de fora.</p>
+    <p class="tip">Podes desligar a conta Strava em <b>Importar do Strava</b>, com o botão <b>Desligar Strava</b>. Isso revoga o acesso e apaga os tokens guardados pela aplicação.</p>
   </article>
 
   <article class="usecase">
@@ -397,6 +409,8 @@ $body = function (): void { ?>
     <dd>Desativar esconde o treino das estatísticas e pode ser desfeito. Apagar remove-o para sempre.</dd>
     <dt>O ficheiro GPX fica guardado?</dt>
     <dd>Não. Só são guardados os tempos e os dados que confirmares.</dd>
+    <dt>O que é guardado da minha conta Strava?</dt>
+    <dd>Só os tokens de acesso, para listar as tuas corridas. Não copiamos o histórico do Strava: cada corrida só é lida quando a importas. Desligar a conta apaga esses tokens.</dd>
     <dt>Posso usar no telemóvel?</dt>
     <dd>Sim. A aplicação adapta-se ao ecrã. No browser do telemóvel, usa "Adicionar ao ecrã principal" para a abrires como uma app.</dd>
     <dt>A minha conta não entra e diz que está desativada.</dt>
