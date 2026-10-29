@@ -600,6 +600,21 @@ h1 .badge { font: 600 .8rem/1.3 var(--f-body); vertical-align: middle; }
 .admin-table__actions form { display: flex; gap: .35rem; justify-content: flex-end; flex-wrap: wrap; }
 .admin-table .badge { margin-right: .2rem; }
 .admin-table tr.is-off th, .admin-table tr.is-off td:not(:last-child) { opacity: .55; }
+@media (max-width: 40rem) {
+  /* telemóvel: cada utilizador num cartão; a data, os treinos e as funções lado a lado, as ações em baixo */
+  .admin-table { min-width: 0; }
+  .admin-table thead { display: none; }
+  .admin-table tbody tr { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem .75rem; padding: .75rem 0; border-top: 1px solid var(--line); }
+  .admin-table th, .admin-table td { border: 0; padding: 0; }
+  .admin-table th[scope="row"] { grid-column: 1 / -1; }
+  .admin-table td[data-label] { display: flex; flex-direction: column; gap: .15rem; }
+  .admin-table td[data-label]::before { content: attr(data-label); font-size: .7rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
+  .admin-table td.num { text-align: left; }
+  .admin-table td[data-label] > .badge { align-self: flex-start; }
+  .admin-table__actions { grid-column: 1 / -1; }
+  .admin-table__actions form { justify-content: flex-start; }
+  .admin-table__actions .btn { min-height: 2.5rem; }
+}
 .totals--admin { grid-template-columns: repeat(2, 1fr); margin-bottom: 1.5rem; }
 @media (min-width: 40rem) { .totals--admin { grid-template-columns: repeat(4, 1fr); } }
 @media (max-width: 39.99rem) { .totals--admin div:nth-child(3) { border-left: 0; } .totals--admin div:nth-child(n+3) { border-top: 1px solid var(--line); } }

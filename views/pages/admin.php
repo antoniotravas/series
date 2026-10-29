@@ -48,9 +48,9 @@ $qs = fn(array $extra) => http_build_query(array_filter(['q' => $term] + $extra)
           <span><?= e($u['display_name']) ?><small class="muted"><?= e($u['email']) ?></small></span>
         </a>
       </th>
-      <td><?= e(fmt_date(substr($u['created_at'], 0, 10))) ?></td>
-      <td class="num"><?= (int)$u['workouts'] ?><?php if ($u['last_workout']): ?><small class="muted"><?= e(fmt_date($u['last_workout'])) ?></small><?php endif; ?></td>
-      <td>
+      <td data-label="<?= e(t('admin.col.since')) ?>"><?= e(fmt_date(substr($u['created_at'], 0, 10))) ?></td>
+      <td class="num" data-label="<?= e(t('admin.col.workouts')) ?>"><?= (int)$u['workouts'] ?><?php if ($u['last_workout']): ?><small class="muted"><?= e(fmt_date($u['last_workout'])) ?></small><?php endif; ?></td>
+      <td data-label="<?= e(t('admin.col.roles')) ?>">
         <?php if (!$u['active']): ?><span class="badge badge--admin"><?= e(t('admin.role.disabled')) ?></span><?php endif; ?>
         <?php if ($u['is_admin']): ?><span class="badge badge--admin"><?= e(t('admin.role.admin')) ?></span><?php endif; ?>
         <?php if ($u['is_coach']): ?><span class="badge badge--coach"><?= e(t('coach.badge')) ?></span><?php endif; ?>
