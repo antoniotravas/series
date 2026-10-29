@@ -22,6 +22,28 @@
   </section>
 <?php else: ?>
   <section class="panel">
+    <form method="get" class="filters" role="search">
+      <div class="field field--sm">
+        <label for="s-year"><?= e(t('strava.filter.year')) ?></label>
+        <select id="s-year" name="year" data-autosubmit>
+          <option value="0"><?= e(t('strava.filter.all_years')) ?></option>
+          <?php foreach ($years as $y): ?>
+          <option value="<?= $y ?>"<?= $y === $year ? ' selected' : '' ?>><?= $y ?></option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+      <div class="field field--sm">
+        <label for="s-month"><?= e(t('w.filter.month')) ?></label>
+        <select id="s-month" name="month" data-autosubmit>
+          <option value="0"><?= e(t('strava.filter.all_months')) ?></option>
+          <?php for ($m = 1; $m <= 12; $m++): ?>
+          <option value="<?= $m ?>"<?= $m === $month ? ' selected' : '' ?>><?= e(t('month.' . $m)) ?></option>
+          <?php endfor; ?>
+        </select>
+      </div>
+      <noscript><button class="btn btn--ghost btn--sm" type="submit"><?= e(t('strava.filter.apply')) ?></button></noscript>
+    </form>
+
     <?php if (!$runs): ?>
       <p class="muted"><?= e(t('strava.none')) ?></p>
     <?php else: ?>
@@ -41,7 +63,12 @@
       <?php endforeach; ?>
     </ul>
     <?php endif; ?>
-    <p><a class="btn btn--ghost btn--sm" href="<?= url('strava_activities.php?page=' . ($page + 1)) ?>"><?= e(t('strava.more')) ?></a></p>
+
+    <?php if ($more): ?>
+    <p><a class="btn btn--ghost btn--sm" href="<?= url('strava_activities.php?' . http_build_query(array_filter(['year' => $year, 'month' => $month, 'page' => $next]))) ?>"><?= e(t('strava.more')) ?></a></p>
+    <?php else: ?>
+    <p class="muted small"><?= e(t('strava.end')) ?></p>
+    <?php endif; ?>
   </section>
 <?php endif; ?>
 </content>

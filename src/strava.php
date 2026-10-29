@@ -123,11 +123,26 @@ function strava_api(int $userId, string $path, array $query = []): array
     return $data;
 }
 
-/** Corridas de uma página da lista de atividades (30 por página, antes de filtrar). */
-function strava_list_runs(int $userId, int $page = 1): array
+/**
+ * Corridas a partir de uma página do Strava. Como nem todas as atividades são corridas, lê páginas
+ * de 100 atividades até juntar pelo menos 20 corridas (ou acabarem as atividades).
+ * $range pode ter 'after' e 'before' (timestamps). Devolve 'runs', 'next' (página seguinte) e 'more'.
+ */
+function strava_list_runs(int $userId, int $page = 1, array $range = []): array
 {
-    $acts = strava_api($userId, '/athlete/activities', ['page' => $page, 'per_page' => 30]);
-    return array_values(array_filter($acts, fn($a) => in_array($a['sport_type'] ?? $a['type'] ?? '', STRAVA_RUN_TYPES, true)));
+    $runs = [];
+    $p = $page;
+    $more = true;
+    for ($i = 0; $i < 10 && count($runs) < 20 && $more; $i++, $p++) {
+        $acts = strava_api($userId, '/athlete/activities', ['page' => $p, 'per_page' => 100] + $range);
+        foreach ($acts as $a) {
+            if (in_array($a['sport_type'] ?? $a['type'] ?? '', STRAVA_RUN_TYPES, true)) {
+                $runs[] = $a;
+            }
+        }
+        $more = count($acts) === 100;
+    }
+    return ['runs' => $runs, 'next' => $p, 'more' => $more];
 }
 
 /** Analisa uma atividade do Strava com a mesma deteção do GPX. */
